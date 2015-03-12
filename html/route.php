@@ -106,6 +106,8 @@ try {
 
 } catch (Exception $e) {
     
+    http_response_code($e->getCode());
+
     switch ($e->getCode()) {
 
         case 401:

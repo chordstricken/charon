@@ -16,6 +16,7 @@
 <body ng-app="Charon">
 
 <div ng-controller="Home">
+
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -55,99 +56,105 @@
                 </ul>
             </div>
 
-
             <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
-                <div class="alert alert-success" ng-if="success.length">
-                    <button type="button" class="close" ng-click="clear_messages()">&times;</button>
-                    {{success}}
-                </div>
-                <div class="alert alert-danger" ng-if="error.length">
-                    <button type="button" class="close" ng-click="clear_messages()">&times;</button>
-                    {{error}}
+                <div class="text-center" ng-show="loader">
+                    <img src="/css/loader.svg" width="100%">
                 </div>
 
-                <h1 class="page-header">
-                    <input type="text" class="form-control input-lg" ng-model="object.name" placeholder="Add New Group" autofocus>
-                </h1>
+                <div ng-show="!loader">
 
-                <br />
-
-                <div class="row clearfix">
-                    <div class="col-md-3">
-                        <div class="text-muted">Title</div>
+                    <div class="alert alert-success" ng-if="success.length">
+                        <button type="button" class="close" ng-click="clear_messages()">&times;</button>
+                        {{success}}
+                    </div>
+                    <div class="alert alert-danger" ng-if="error.length">
+                        <button type="button" class="close" ng-click="clear_messages()">&times;</button>
+                        {{error}}
                     </div>
 
-                    <div class="col-md-3">
-                        <div class="text-muted">URL</div>
+                    <h1 class="page-header">
+                        <input type="text" class="form-control input-lg" ng-model="object.name" placeholder="Add New Group" autofocus>
+                    </h1>
+
+                    <br />
+
+                    <div class="row clearfix">
+                        <div class="col-md-3">
+                            <div class="text-muted">Title</div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="text-muted">URL</div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="text-muted">User</div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="text-muted">Password</div>
+                        </div>
                     </div>
+                    <br />
 
-                    <div class="col-md-2">
-                        <div class="text-muted">User</div>
-                    </div>
+                    <div class="row clearfix slide-50" ng-repeat="(key, item) in object.items">
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" ng-model="item.title" placeholder="Title">
+                        </div>
 
-                    <div class="col-md-3">
-                        <div class="text-muted">Password</div>
-                    </div>
-                </div>
-                <br />
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" ng-model="item.url" ng-focus="highlight($event)" placeholder="URL">
+                        </div>
 
-                <div class="row clearfix slide-50" ng-repeat="(key, item) in object.items">
-                    <div class="col-md-3">
-                        <input type="text" class="form-control" ng-model="item.title" placeholder="Title">
-                    </div>
+                        <div class="col-md-2">
+                            <input type="text" class="form-control" ng-model="item.user" ng-focus="highlight($event)" placeholder="User">
+                        </div>
 
-                    <div class="col-md-3">
-                        <input type="text" class="form-control" ng-model="item.url" ng-focus="highlight($event)" placeholder="URL">
-                    </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <input type="password" class="form-control" placeholder="Password" ng-model="item.pass" ng-focus="highlight($event)" ng-blur="set_type($event, 'password')">
 
-                    <div class="col-md-2">
-                        <input type="text" class="form-control" ng-model="item.user" ng-focus="highlight($event)" placeholder="User">
-                    </div>
+                                <div class="input-group-addon pointer">
+                                    <span class="glyphicon glyphicon-refresh text-warning" ng-click="generate_password(key)"></span>
+                                </div>
+                            </div>
+                        </div>
 
-                    <div class="col-md-3">
-                        <div class="input-group">
-                            <input type="password" class="form-control" placeholder="Password" ng-model="item.pass" ng-focus="highlight($event)" ng-blur="set_type($event, 'password')">
-
-                            <div class="input-group-addon pointer">
-                                <span class="glyphicon glyphicon-refresh text-warning" ng-click="generate_password(key)"></span>
+                        <div class="col-md-1">
+                            <div class="input-group-addon pointer" ng-click="remove_item(key)">
+                                <span class="glyphicon glyphicon-fire text-danger"></span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-md-1">
-                        <div class="input-group-addon pointer" ng-click="remove_item(key)">
-                            <span class="glyphicon glyphicon-fire text-danger"></span>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <br />
+                            <div class="btn btn-link text-success" ng-click="add_item()"><span class="glyphicon glyphicon-plus"></span> Add</div>
                         </div>
                     </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-sm-12">
-                        <br />
-                        <div class="btn btn-link text-success" ng-click="add_item()"><span class="glyphicon glyphicon-plus"></span> Add</div>
-                    </div>
-                </div>
+                    <hr />
 
-                <hr />
-
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">Note</div>
-                            <div class="panel-body">
-                                <textarea class="form-control" rows="3" ng-model="object.note" placeholder="Type text here..."></textarea>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">Note</div>
+                                <div class="panel-body">
+                                    <textarea class="form-control" rows="3" ng-model="object.note" placeholder="Type text here..."></textarea>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <hr />
+                    <hr />
 
-                <div class="row" ng-if="object.name.length">
-                    <div class="col-md-3 col-md-offset-9 col-sm-12 text-right">
-                        <button class="btn btn-danger btn-lg" data-toggle="modal" data-target="#confirm-delete">Delete</button>
-                        <button class="btn btn-info btn-lg" ng-click="save_object()">Save</button>
+                    <div class="row" ng-if="object.name.length">
+                        <div class="col-md-3 col-md-offset-9 col-sm-12 text-right">
+                            <button class="btn btn-danger btn-lg" data-toggle="modal" data-target="#confirm-delete">Delete</button>
+                            <button class="btn btn-info btn-lg" ng-click="save_object()">Save</button>
+                        </div>
                     </div>
                 </div>
 

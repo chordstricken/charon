@@ -31,8 +31,14 @@ $(document).on('mouseover', '[data-toggle=popover]', function() {
 Charon.controller('Home', function($scope, $http, $location) {
 
     // display messages
+    $scope.loader  = true;
     $scope.success = '';
     $scope.error   = '';
+
+    /**
+     * Timeouts
+     */
+    $scope.timeouts = {};
 
     // search query
     $scope.query = '';
@@ -124,6 +130,7 @@ Charon.controller('Home', function($scope, $http, $location) {
      * Saves the object
      */
     $scope.save_object = function() {
+        $scope.toggle_loader(true);
         $scope.clear_messages();
 
         // encrypt the object before sending it
@@ -141,6 +148,7 @@ Charon.controller('Home', function($scope, $http, $location) {
             $scope.success = 'Successfully saved the object';
 
             $scope.index[$scope.object.id] = $scope.object.name;
+            $scope.toggle_loader(false);
 
         }).error(function(data, code) {
             if (code == 401) {
@@ -149,6 +157,7 @@ Charon.controller('Home', function($scope, $http, $location) {
             }
 
             $scope.error = data;
+            $scope.toggle_loader(false);
 
         });
     };
@@ -157,7 +166,7 @@ Charon.controller('Home', function($scope, $http, $location) {
      * Deletes the object
      */
     $scope.delete_object = function() {
-
+        $scope.toggle_loader(true);
         $scope.clear_messages();
 
         // send or pull the object
@@ -165,6 +174,7 @@ Charon.controller('Home', function($scope, $http, $location) {
             $scope.success = data;
             $scope.reset_object();
             $scope.load_index();
+            $scope.toggle_loader(false);
 
         }).error(function(data, code) {
             if (code == 401) {
@@ -173,6 +183,7 @@ Charon.controller('Home', function($scope, $http, $location) {
             }
 
             $scope.error = data;
+            $scope.toggle_loader(false);
 
         });
 
@@ -182,12 +193,14 @@ Charon.controller('Home', function($scope, $http, $location) {
      * Loads an object
      */
     $scope.load_object = function() {
-        var path = get_path();
-
+        $scope.toggle_loader(true);
         $scope.clear_messages();
+
+        var path = get_path();
 
         // if we're adding a new group, just
         if (path == '/') {
+            $scope.toggle_loader(false);
             $scope.reset_object();
             return;
         }
@@ -195,6 +208,7 @@ Charon.controller('Home', function($scope, $http, $location) {
         // send or pull the object
         $http.get(path).success(function(data) {
             $scope.object = decrypt(data, localStorage.pass);
+            $scope.toggle_loader(false);
 
         }).error(function(data, code) {
             if (code == 401) {
@@ -202,10 +216,20 @@ Charon.controller('Home', function($scope, $http, $location) {
                 return;
             }
             $scope.error = data;
+            $scope.toggle_loader(false);
             $scope.reset_object();
 
         });
 
+    };
+
+    /**
+     * Turns the loader on after a slight delay
+     * Or turns it off and clears the timeout
+     * @param bool toggle
+     */
+    $scope.toggle_loader = function(toggle) {
+        $scope.loader = toggle;
     };
 
     $scope.logout = function() {
@@ -233,8 +257,6 @@ Charon.controller('Home', function($scope, $http, $location) {
 
 
     /* Execute controller functions */
-
-
     $scope.load_index(); // pull the index
     $scope.load_object();
 
