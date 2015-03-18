@@ -136,3 +136,7 @@ a, a:hover {
 .pointer {
     cursor: pointer;
 }
+
+[sv-handle] {
+    cursor: move;
+}

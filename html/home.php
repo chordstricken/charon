@@ -98,34 +98,44 @@
                     </div>
                     <br />
 
-                    <div class="row clearfix slide-50" ng-repeat="(key, item) in object.items">
-                        <div class="col-md-3">
-                            <input type="text" class="form-control" ng-model="item.title" placeholder="Title">
-                        </div>
+                    <div sv-root sv-part="object.items">
 
-                        <div class="col-md-3">
-                            <input type="text" class="form-control" ng-model="item.url" ng-focus="highlight($event)" placeholder="URL">
-                        </div>
+                        <div class="row clearfix slide-50" ng-repeat="(key, item) in object.items" sv-element>
 
-                        <div class="col-md-2">
-                            <input type="text" class="form-control" ng-model="item.user" ng-focus="highlight($event)" placeholder="User">
-                        </div>
+                            <div class="col-md-3">
+                                <div class="input-group">
+                                    <div class="input-group-addon" sv-handle>
+                                        <span class="glyphicon glyphicon-option-vertical"></span>
+                                    </div>
+                                    <input type="text" class="form-control" ng-model="item.title" placeholder="Title">
+                                </div>
+                            </div>
 
-                        <div class="col-md-3">
-                            <div class="input-group">
-                                <input type="password" class="form-control" placeholder="Password" ng-model="item.pass" ng-focus="highlight($event)" ng-blur="set_type($event, 'password')">
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" ng-model="item.url" ng-focus="highlight($event)" placeholder="URL">
+                            </div>
 
-                                <div class="input-group-addon pointer">
-                                    <span class="glyphicon glyphicon-refresh text-warning" ng-click="generate_password(key)"></span>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" ng-model="item.user" ng-focus="highlight($event)" placeholder="User">
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="input-group">
+                                    <input type="password" class="form-control" placeholder="Password" ng-model="item.pass" ng-focus="highlight($event)" ng-blur="set_type($event, 'password')">
+
+                                    <div class="input-group-addon pointer">
+                                        <span class="glyphicon glyphicon-refresh text-warning" ng-click="generate_password(key)"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-1">
+                                <div class="input-group-addon pointer" ng-click="remove_item(key)">
+                                    <span class="glyphicon glyphicon-fire text-danger"></span>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="col-md-1">
-                            <div class="input-group-addon pointer" ng-click="remove_item(key)">
-                                <span class="glyphicon glyphicon-fire text-danger"></span>
-                            </div>
-                        </div>
                     </div>
 
                     <div class="row">

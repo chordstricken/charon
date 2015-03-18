@@ -6,7 +6,7 @@
  * @copyright 2015 Jason Wright
  */
 
-define('CHARON_VERSION', '1.0');
+define('CHARON_VERSION', '1.1');
 
 // check php version
 if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50400) {

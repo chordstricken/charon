@@ -10,4 +10,5 @@ include(__DIR__ . '/sha256.js');
 include(__DIR__ . '/jquery.min.js');
 include(__DIR__ . '/bootstrap.min.js');
 include(__DIR__ . '/angular.min.js');
+include(__DIR__ . '/angular-sortable-view.min.js');
 include(__DIR__ . '/functions.js');

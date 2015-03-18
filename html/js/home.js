@@ -1,7 +1,7 @@
 /**
  * Create angular App
  */
-var Charon = angular.module('Charon', []);
+var Charon = angular.module('Charon', ['angular-sortable-view']);
 
 function get_path() {
     return location.hash.replace(/^[\#\!]{1,2}/, ''); // get the hash location
@@ -28,10 +28,10 @@ $(document).on('mouseover', '[data-toggle=popover]', function() {
 /**
  * Main content controller
  */
-Charon.controller('Home', function($scope, $http, $location) {
+Charon.controller('Home', function($scope, $http, $location, $timeout) {
 
     // display messages
-    $scope.loader  = true;
+    $scope.loader  = false;
     $scope.success = '';
     $scope.error   = '';
 
@@ -123,6 +123,15 @@ Charon.controller('Home', function($scope, $http, $location) {
         $http.get('/_index').success(function(data) {
             var dec = decrypt(data, localStorage.pass);
             $scope.index = dec;
+
+        }).error(function(data, code) {
+            if (code == 401) {
+                location.reload();
+                return;
+            }
+
+            $scope.error = data;
+
         });
     };
 
@@ -229,7 +238,15 @@ Charon.controller('Home', function($scope, $http, $location) {
      * @param bool toggle
      */
     $scope.toggle_loader = function(toggle) {
-        $scope.loader = toggle;
+        if (toggle) {
+            $scope.timeouts.loader = $timeout(function() {
+                $scope.loader = true;
+            }, 200);
+
+        } else {
+            $scope.loader = false;
+            $timeout.cancel($scope.timeouts.loader);
+        }
     };
 
     $scope.logout = function() {
@@ -255,12 +272,20 @@ Charon.controller('Home', function($scope, $http, $location) {
         $scope.object.items[index].pass = pass;
     };
 
+    /**
+     * Load all page-load items. Used for timeout function
+     */
+    $scope.load_timeout = function() {
+        $scope.load_index();
+        // 5 minutes
+        $scope.timeouts.index = $timeout($scope.load_timeout, 3600000);
+    };
 
     /* Execute controller functions */
-    $scope.load_index(); // pull the index
-    $scope.load_object();
+    $scope.load_timeout();
 
     // bind hash changes to object loading
+    // This is called on page load
     $scope.$on('$locationChangeSuccess', function() {
         $scope.load_object();
     });
