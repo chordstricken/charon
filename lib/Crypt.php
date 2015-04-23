@@ -11,7 +11,7 @@ class Crypt {
     /**
      * Default Encryption key
      */
-    const KEY = 'There Chairon stands, who rules the dreary coast - | A sordid god: down from his hairy chin | A length of beard descends, uncombed, unclean; | His eyes, like hollow furnaces on fire; | A girdle, foul with grease, binds his obscene attire.';
+    const KEY = 'I don’t understand what greed should want for itself in old age; for can anything be sillier than to acquire more provisions (viaticum) as less of the journey remains?';
 
     /**
      * Default Encryption Mode
