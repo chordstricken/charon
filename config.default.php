@@ -6,7 +6,11 @@
  * @copyright 2015 Jason Wright
  */
 
-define('CHARON_VERSION', '1.1');
+// verson of charon
+define('CHARON_VERSION', '1.2');
+
+// cache key used for encrypting data on disk
+define('CACHE_KEY', 'There Chairon stands, who rules the dreary coast - | A sordid god: down from his hairy chin | A length of beard descends, uncombed, unclean; | His eyes, like hollow furnaces on fire; | A girdle, foul with grease, binds his obscene attire.');
 
 // check php version
 if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50400) {

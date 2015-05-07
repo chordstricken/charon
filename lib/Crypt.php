@@ -11,7 +11,7 @@ class Crypt {
     /**
      * Default Encryption key
      */
-    const KEY = 'There Chairon stands, who rules the dreary coast - | A sordid god: down from his hairy chin | A length of beard descends, uncombed, unclean; | His eyes, like hollow furnaces on fire; | A girdle, foul with grease, binds his obscene attire.';
+//    const KEY = 'There Chairon stands, who rules the dreary coast - | A sordid god: down from his hairy chin | A length of beard descends, uncombed, unclean; | His eyes, like hollow furnaces on fire; | A girdle, foul with grease, binds his obscene attire.';
 
     /**
      * Default Encryption Mode
@@ -28,7 +28,7 @@ class Crypt {
      * @param string $key
      * @return string (json)
      */
-    public static function enc($encrypt, $key = self::KEY) {
+    public static function enc($encrypt, $key = CACHE_KEY) {
 
         // set the params
         $key     = self::_key($key);
@@ -49,7 +49,7 @@ class Crypt {
      * @param string $key
      * @return string (decrypted)
      */
-    public static function dec($obj, $key = self::KEY) {
+    public static function dec($obj, $key = CACHE_KEY) {
 
         // Verify item is a json object
         if (is_string($obj) && !$obj = json_decode($obj))
