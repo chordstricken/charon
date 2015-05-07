@@ -61,7 +61,9 @@
                     </li>
                 </ul>
 
-                <div class="text-center hidden-sm hidden-md hidden-lg" data-toggle="collapse" data-target="#navbar, #sidebar">Close</div>
+                <div class="text-center hidden-sm hidden-md hidden-lg">
+                    <div class="btn btn-link" data-toggle="collapse" data-target="#navbar, #sidebar">Close</div>
+                </div>
                 <hr class="hidden-sm hidden-md hidden-lg" />
             </div>
 
