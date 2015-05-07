@@ -28,7 +28,7 @@ class Crypt {
      * @param string $key
      * @return string (json)
      */
-    public static function enc($encrypt, $key = CACHE_KEY) {
+    public static function enc($encrypt, $key = CRYPT_KEY) {
 
         // set the params
         $key     = self::_key($key);
@@ -48,8 +48,9 @@ class Crypt {
      * @param $json (json)
      * @param string $key
      * @return string (decrypted)
+     * @throws Exception
      */
-    public static function dec($obj, $key = CACHE_KEY) {
+    public static function dec($obj, $key = CRYPT_KEY) {
 
         // Verify item is a json object
         if (is_string($obj) && !$obj = json_decode($obj))
