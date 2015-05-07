@@ -17,11 +17,11 @@ $(document).on('mouseover', '[data-toggle=popover]', function() {
     if (!$(this).data('bs.popover')) {
         $(this).popover({
             placement: 'top',
-            delay: '200',
+            delay: {show: 700, hide: 100},
             trigger: 'hover' ,
-            container: 'body',
+            //container: 'body',
         });
-        $(this).popover('show');
+        $(this).trigger('mouseover');
     }
 });
 

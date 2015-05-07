@@ -20,7 +20,7 @@
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container-fluid">
             <div class="navbar-header">
-                <a class="navbar-brand" href="#/">Charon</a>
+                <a class="navbar-brand" href="#/" tabindex="-1">Charon</a>
 
                 <div class="navbar-form navbar-right">
                     <input id="search" type="search" class="form-control" placeholder="Search" ng-model="query">
@@ -30,7 +30,7 @@
 
             <div class="navbar-collapse">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a class="btn btn-link" ng-click="logout()">Logout</a></li>
+                    <li><a class="btn btn-link" ng-click="logout()" tabindex="-1">Logout</a></li>
                 </ul>
             </div>
 
@@ -43,7 +43,7 @@
             <div class="col-sm-3 col-md-2 sidebar">
                 <ul class="nav nav-sidebar">
                     <li ng-class="{active: !object.id}">
-                        <a href="#/"><span class="glyphicon glyphicon-plus"></span> Add New Group</a>
+                        <a href="#/" tabindex="-1"><span class="glyphicon glyphicon-plus"></span> Add New Group</a>
                     </li>
                 </ul>
 
@@ -51,7 +51,7 @@
 
                 <ul class="nav nav-sidebar">
                     <li ng-repeat="(id, name) in index" ng-class="{active: id == object.id}" ng-if="query.length === 0 || name.indexOf(query) > -1">
-                        <a ng-href="{{'#/' + id}}"><span class="glyphicon glyphicon-book"></span> {{name}}</a>
+                        <a ng-href="{{'#/' + id}}" tabindex="-1"><span class="glyphicon glyphicon-book"></span> {{name}}</a>
                     </li>
                 </ul>
             </div>
@@ -112,7 +112,13 @@
                             </div>
 
                             <div class="col-md-3">
-                                <input type="text" class="form-control" ng-model="item.url" ng-focus="highlight($event)" placeholder="URL">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" ng-model="item.url" ng-focus="highlight($event)" placeholder="URL">
+
+                                    <div class="input-group-addon pointer" ng-if="item.url.length">
+                                        <a class="glyphicon glyphicon-link btn-link" ng-href="{{(item.url.search('//') !== -1 ? item.url : 'http://' + item.url)}}" target="_new" tabindex="-1"></a>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="col-md-2">
@@ -123,15 +129,15 @@
                                 <div class="input-group">
                                     <input type="password" class="form-control" placeholder="Password" ng-model="item.pass" ng-focus="highlight($event)" ng-blur="set_type($event, 'password')">
 
-                                    <div class="input-group-addon pointer">
-                                        <span class="glyphicon glyphicon-refresh text-warning" ng-click="generate_password(key)"></span>
+                                    <div class="input-group-addon pointer" data-toggle="popover" data-content="Generates a new 16-character password">
+                                        <span class="glyphicon glyphicon-refresh text-warning" ng-click="generate_password(key)" tabindex="-1"></span>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="col-md-1">
-                                <div class="input-group-addon pointer" ng-click="remove_item(key)">
-                                    <span class="glyphicon glyphicon-fire text-danger"></span>
+                                <div class="input-group-addon pointer" ng-click="remove_item(key)" data-toggle="popover" data-content="Deletes the corresponding item entry">
+                                    <span class="glyphicon glyphicon-trash text-danger" tabindex="-1"></span>
                                 </div>
                             </div>
                         </div>
@@ -141,7 +147,7 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <br />
-                            <div class="btn btn-link text-success" ng-click="add_item()"><span class="glyphicon glyphicon-plus"></span> Add</div>
+                            <div class="btn btn-link text-success" ng-click="add_item()" data-toggle="popover" data-content="Adds a new key entry"><span class="glyphicon glyphicon-plus"></span> Add</div>
                         </div>
                     </div>
 
@@ -152,7 +158,7 @@
                             <div class="panel panel-default">
                                 <div class="panel-heading">Note</div>
                                 <div class="panel-body">
-                                    <textarea class="form-control" rows="3" ng-model="object.note" placeholder="Type text here..."></textarea>
+                                    <textarea class="form-control" rows="5" ng-model="object.note" placeholder="Type text here..." tabindex="-1"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -162,8 +168,12 @@
 
                     <div class="row" ng-if="object.name.length">
                         <div class="col-md-3 col-md-offset-9 col-sm-12 text-right">
-                            <button class="btn btn-danger btn-lg" data-toggle="modal" data-target="#confirm-delete">Delete</button>
-                            <button class="btn btn-info btn-lg" ng-click="save_object()">Save</button>
+                            <span data-toggle="popover" data-content="Deletes the Group permanently. You will be prompted for confirmation.">
+                                <button class="btn btn-danger btn-lg" data-toggle="modal" data-target="#confirm-delete" tabindex="-1">Delete</button>
+                            </span>
+                            <span data-toggle="popover" data-content="Saves the Group">
+                                <button class="btn btn-info btn-lg" ng-click="save_object()">Save</button>
+                            </span>
                         </div>
                     </div>
                 </div>
