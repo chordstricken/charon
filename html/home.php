@@ -146,15 +146,11 @@
                                 </div>
                             </div>
 
-                            <br class="hidden-sm hidden-md hidden-lg" />
-
-                            <div class="col-sm-1 hidden-xs">
+                            <div class="col-sm-1 col-xs-12">
                                 <div class="input-group-addon pointer" ng-click="remove_item(key)" data-toggle="popover" data-content="Deletes the corresponding item entry">
-                                    <span class="glyphicon glyphicon-trash text-danger" tabindex="-1"></span>
+                                    <span class="glyphicon glyphicon-trash text-danger pull-right" tabindex="-1"></span>
                                 </div>
                             </div>
-
-                            <hr class="hidden-sm hidden-md hidden-lg" />
 
                         </div>
 
