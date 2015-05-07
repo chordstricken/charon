@@ -20,18 +20,22 @@
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container-fluid">
             <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar, #sidebar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
                 <a class="navbar-brand" href="#/" tabindex="-1">Charon</a>
-
-                <div class="navbar-form navbar-right">
-                    <input id="search" type="search" class="form-control" placeholder="Search" ng-model="query">
-                </div>
-
             </div>
 
-            <div class="navbar-collapse">
-                <ul class="nav navbar-nav navbar-right">
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right hidden-xs">
                     <li><a class="btn btn-link" ng-click="logout()" tabindex="-1">Logout</a></li>
                 </ul>
+                <div class="navbar-form navbar-left">
+                    <input id="search" type="search" class="form-control" placeholder="Search" ng-model="query">
+                </div>
             </div>
 
         </div>
@@ -40,7 +44,9 @@
     <div class="container-fluid">
         <div class="row">
 
-            <div class="col-sm-3 col-md-2 sidebar">
+            <div id="sidebar" class="col-xs-12 col-md-2 sidebar">
+                <div class="hidden-sm hidden-md hidden-lg" style="height: 120px;"></div>
+
                 <ul class="nav nav-sidebar">
                     <li ng-class="{active: !object.id}">
                         <a href="#/" tabindex="-1"><span class="glyphicon glyphicon-plus"></span> Add New Group</a>
@@ -54,9 +60,12 @@
                         <a ng-href="{{'#/' + id}}" tabindex="-1"><span class="glyphicon glyphicon-book"></span> {{name}}</a>
                     </li>
                 </ul>
+
+                <div class="text-center hidden-sm hidden-md hidden-lg" data-toggle="collapse" data-target="#navbar, #sidebar">Close</div>
+                <hr class="hidden-sm hidden-md hidden-lg" />
             </div>
 
-            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <div class="col-xs-12 col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
                 <div class="text-center" ng-show="loader">
                     <img src="/css/loader.svg" width="100%">
@@ -79,20 +88,20 @@
 
                     <br />
 
-                    <div class="row clearfix">
-                        <div class="col-md-3">
+                    <div class="row clearfix hidden-xs">
+                        <div class="col-sm-3">
                             <div class="text-muted">Title</div>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-sm-3">
                             <div class="text-muted">URL</div>
                         </div>
 
-                        <div class="col-md-2">
+                        <div class="col-sm-2">
                             <div class="text-muted">User</div>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-sm-3">
                             <div class="text-muted">Password</div>
                         </div>
                     </div>
@@ -102,16 +111,16 @@
 
                         <div class="row clearfix slide-50" ng-repeat="(key, item) in object.items" sv-element>
 
-                            <div class="col-md-3">
+                            <div class="col-sm-3 col-xs-5">
                                 <div class="input-group">
-                                    <div class="input-group-addon" sv-handle>
+                                    <div class="input-group-addon hidden-xs" sv-handle>
                                         <span class="glyphicon glyphicon-option-vertical"></span>
                                     </div>
                                     <input type="text" class="form-control" ng-model="item.title" placeholder="Title">
                                 </div>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col-sm-3 col-xs-7">
                                 <div class="input-group">
                                     <input type="text" class="form-control" ng-model="item.url" ng-focus="highlight($event)" placeholder="URL">
 
@@ -121,11 +130,11 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-2">
+                            <div class="col-sm-2 col-xs-5">
                                 <input type="text" class="form-control" ng-model="item.user" ng-focus="highlight($event)" placeholder="User">
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col-sm-3 col-xs-7">
                                 <div class="input-group">
                                     <input type="password" class="form-control" placeholder="Password" ng-model="item.pass" ng-focus="highlight($event)" ng-blur="set_type($event, 'password')">
 
@@ -135,17 +144,22 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-1">
+                            <br class="hidden-sm hidden-md hidden-lg" />
+
+                            <div class="col-sm-1 hidden-xs">
                                 <div class="input-group-addon pointer" ng-click="remove_item(key)" data-toggle="popover" data-content="Deletes the corresponding item entry">
                                     <span class="glyphicon glyphicon-trash text-danger" tabindex="-1"></span>
                                 </div>
                             </div>
+
+                            <hr class="hidden-sm hidden-md hidden-lg" />
+
                         </div>
 
                     </div>
 
                     <div class="row">
-                        <div class="col-sm-12">
+                        <div class="col-xs-12">
                             <br />
                             <div class="btn btn-link text-success" ng-click="add_item()" data-toggle="popover" data-content="Adds a new key entry"><span class="glyphicon glyphicon-plus"></span> Add</div>
                         </div>
@@ -204,6 +218,7 @@
         
         <div class="row">
             <div class="col-md-12 text-right">
+                <a class="btn btn-link" ng-click="logout()" tabindex="-1">Logout</a>
                 <small>&copy <?=date('Y')?> Charon v<?=CHARON_VERSION?></small>
             </div>
         </div>
