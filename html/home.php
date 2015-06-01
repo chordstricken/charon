@@ -56,7 +56,7 @@
                 <hr />
 
                 <ul class="nav nav-sidebar">
-                    <li ng-repeat="(id, name) in index" ng-class="{active: id == object.id}" ng-if="query.length === 0 || name.indexOf(query) > -1">
+                    <li ng-repeat="(id, name) in index" ng-class="{active: id == object.id}" ng-if="query.length === 0 || search(name)">
                         <a ng-href="{{'#/' + id}}" tabindex="-1"><span class="glyphicon glyphicon-book"></span> {{name}}</a>
                     </li>
                 </ul>
@@ -170,7 +170,7 @@
                             <div class="panel panel-default">
                                 <div class="panel-heading">Note</div>
                                 <div class="panel-body">
-                                    <textarea class="form-control" rows="5" ng-model="object.note" placeholder="Type text here..." tabindex="-1"></textarea>
+                                    <textarea class="form-control" rows="10" ng-model="object.note" placeholder="Type text here..." tabindex="-1"></textarea>
                                 </div>
                             </div>
                         </div>

@@ -273,6 +273,16 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
     };
 
     /**
+     * Filters the index set according to the query
+     * @param String name
+     * @return Boolean
+     */
+    $scope.search = function(name) {
+        var regexp = new RegExp($scope.query.replace(' ', '.*'), 'i');
+        return name.match(regexp) !== null;
+    };
+
+    /**
      * Load all page-load items. Used for timeout function
      */
     $scope.load_timeout = function() {
