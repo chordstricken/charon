@@ -38,7 +38,25 @@ class Data {
 
         File::write($object->id, $object);
 
-        Index::add($object->id, $object->name);
+        $meta = array();
+
+        // iterate over the items and build an array of meta values for searching.
+        // We'll use title, url, and user
+        foreach ($object->items as $item) {
+
+            if (isset($item->title) && trim($item->title))
+                $meta[$item->title] = 1;
+
+            if (isset($item->url) && trim($item->url))
+                $meta[$item->url] = 1;
+
+            if (isset($item->user) && trim($item->user))
+                $meta[$item->user] = 1;
+
+        }
+
+        // add the item to the new index
+        Index::add($object->id, $object->name, array_keys($meta));
 
         return $object;
     }

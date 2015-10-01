@@ -31,9 +31,11 @@ $(document).on('mouseover', '[data-toggle=popover]', function() {
 Charon.controller('Home', function($scope, $http, $location, $timeout) {
 
     // display messages
-    $scope.loader  = false;
-    $scope.success = '';
-    $scope.error   = '';
+    $scope.loader       = false;
+    $scope.success      = '';
+    $scope.error        = '';
+    $scope.has_changed  = false;
+    $scope.object_hash  = false;
 
     /**
      * Timeouts
@@ -60,6 +62,8 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
             items: [],
         };
         $scope.add_item();
+        $scope.has_changed = false;
+        $scope.object_hash = md5(JSON.stringify($scope.object));
     };
 
     /**
@@ -115,8 +119,7 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
      */
     $scope.load_index = function() {
         $http.get('/_index').success(function(data) {
-            var dec = decrypt(data, localStorage.pass);
-            $scope.index = dec;
+            $scope.index = decrypt(data, localStorage.pass);
 
         }).error(function(data, code) {
             if (code == 401) {
@@ -137,10 +140,7 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
         $scope.clear_messages();
 
         // encrypt the object before sending it
-        enc_obj = encrypt($scope.object, localStorage.pass);
-        enc_obj.items.map(function(item) {
-            delete item['$$hashKey'];
-        });
+        var enc_obj = encrypt($scope.object, localStorage.pass);
 
         // send or pull the object
         $http.post('/' + $scope.object.id, enc_obj).success(function(data) {
@@ -150,14 +150,13 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
             // set the hash id
             location.hash  = '#/' + $scope.object.id;
 
+            $scope.load_index();
+            $scope.toggle_loader(false);
+            $scope.has_changed = false;
+            $scope.object_hash = md5(JSON.stringify($scope.object));
+
             // set success message
             $scope.success = 'Successfully saved the object';
-
-            $scope.index[$scope.object.id] = {
-                name: $scope.object.name,
-                meta: [],
-            }
-            $scope.toggle_loader(false);
 
         }).error(function(data, code) {
             if (code == 401) {
@@ -221,13 +220,14 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
             // make sure each object has a unique ID before setting
             dec_obj.items.map(function(item) {
                 if (item._id === undefined) {
-                    delete item['$$hashKey'];
+                    delete item.$$hashKey;
                     item._id = unique_id();
                 }
             });
 
-            $scope.object = dec_obj;
-
+            $scope.object      = dec_obj;
+            $scope.object_hash = md5(JSON.stringify($scope.object));
+            $scope.has_changed = false;
             $scope.toggle_loader(false);
 
         }).error(function(data, code) {
@@ -290,6 +290,12 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
      * @return Boolean
      */
     $scope.search = function(id) {
+
+        // only search if scope query is more than 3
+        if ($scope.query.length < 3) {
+            return true;
+        }
+
         var regexp = new RegExp($scope.query.replace(' ', '.*'), 'i');
 
         // first check the group name for a match
@@ -326,6 +332,14 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
     $scope.$on('$locationChangeSuccess', function() {
         $scope.load_object();
     });
+
+    // When the object changes, display the notification
+    $scope.$watch('object', function() {
+        if ($scope.object_hash) {
+            var hash = md5(JSON.stringify($scope.object));
+            $scope.has_changed = $scope.object_hash !== hash;
+        }
+    }, true);
 
     // make sure session is intact
     if (!get_cookie('PHPSESSID')) {

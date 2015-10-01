@@ -33,6 +33,9 @@
                 <ul class="nav navbar-nav navbar-right hidden-xs">
                     <li><a class="btn btn-link" ng-click="logout()" tabindex="-1">Logout</a></li>
                 </ul>
+                <div class="navbar-text navbar-right hidden-xs" style="margin-right:100px;" ng-if="has_changed">
+                    <span class="text-warning">You have changes waiting to be saved!</span>
+                </div>
                 <div class="navbar-form navbar-left">
                     <input id="search" type="search" class="form-control" placeholder="Search" ng-model="query" autofocus>
                 </div>
@@ -78,9 +81,6 @@
                     <div class="alert alert-success" ng-if="success.length">
                         <button type="button" class="close" ng-click="clear_messages()">&times;</button>
                         {{success}}
-                    </div>
-                    <div class="alert alert-warning" ng-if="has_changed">
-                        There are currently unsaved changes waiting to be saved.
                     </div>
                     <div class="alert alert-danger" ng-if="error.length">
                         <button type="button" class="close" ng-click="clear_messages()">&times;</button>
