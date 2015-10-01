@@ -54,9 +54,12 @@ class Index {
      * @param $id
      * @param $name
      */
-    public static function add($id, $name) {
+    public static function add($id, $name, array $meta) {
         self::read();
-        self::$_index->{$id} = $name;
+        self::$_index->{$id} = [
+            'name' => $name,
+            'meta' => $meta,
+        ];
         self::write();
     }
 
@@ -68,6 +71,14 @@ class Index {
         self::read();
         unset(self::$_index->{$id});
         self::write();
+    }
+
+    /**
+     * @param string $query
+     * @return stdClass index
+     */
+    public static function search($query) {
+        return stdClass();
     }
 
 }

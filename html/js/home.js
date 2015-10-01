@@ -57,16 +57,9 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
             id: '',
             name: '',
             note: '',
-            items: [
-                {
-                    title: '',
-                    url: '',
-                    user: '',
-                    pass: '',
-                    note: '',
-                }
-            ],
+            items: [],
         };
+        $scope.add_item();
     };
 
     /**
@@ -81,6 +74,7 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
      */
     $scope.add_item = function() {
         $scope.object.items.push({
+            _id: unique_id(), // unique id to prevent sorting collisions
             title: '',
             user: '',
             pass: '',
@@ -143,7 +137,10 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
         $scope.clear_messages();
 
         // encrypt the object before sending it
-        var enc_obj = encrypt($scope.object, localStorage.pass);
+        enc_obj = encrypt($scope.object, localStorage.pass);
+        enc_obj.items.map(function(item) {
+            delete item['$$hashKey'];
+        });
 
         // send or pull the object
         $http.post('/' + $scope.object.id, enc_obj).success(function(data) {
@@ -156,7 +153,10 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
             // set success message
             $scope.success = 'Successfully saved the object';
 
-            $scope.index[$scope.object.id] = $scope.object.name;
+            $scope.index[$scope.object.id] = {
+                name: $scope.object.name,
+                meta: [],
+            }
             $scope.toggle_loader(false);
 
         }).error(function(data, code) {
@@ -216,7 +216,18 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
 
         // send or pull the object
         $http.get(path).success(function(data) {
-            $scope.object = decrypt(data, localStorage.pass);
+            var dec_obj = decrypt(data, localStorage.pass);
+
+            // make sure each object has a unique ID before setting
+            dec_obj.items.map(function(item) {
+                if (item._id === undefined) {
+                    delete item['$$hashKey'];
+                    item._id = unique_id();
+                }
+            });
+
+            $scope.object = dec_obj;
+
             $scope.toggle_loader(false);
 
         }).error(function(data, code) {
@@ -246,6 +257,7 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
         } else {
             $scope.loader = false;
             $timeout.cancel($scope.timeouts.loader);
+            window.scrollTo(0, 0);
         }
     };
 
@@ -274,12 +286,27 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
 
     /**
      * Filters the index set according to the query
-     * @param String name
+     * @param String id
      * @return Boolean
      */
-    $scope.search = function(name) {
+    $scope.search = function(id) {
         var regexp = new RegExp($scope.query.replace(' ', '.*'), 'i');
-        return name.match(regexp) !== null;
+
+        // first check the group name for a match
+        if ($scope.index[id].name.match(regexp) !== null) {
+            return true;
+        }
+
+        // if the group name doesn't match, check all meta values
+        if ($scope.index[id].meta !== undefined) {
+            for (var i in $scope.index[id].meta) {
+                if ($scope.index[id].meta[i].match(regexp) !== null) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     };
 
     /**

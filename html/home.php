@@ -34,7 +34,7 @@
                     <li><a class="btn btn-link" ng-click="logout()" tabindex="-1">Logout</a></li>
                 </ul>
                 <div class="navbar-form navbar-left">
-                    <input id="search" type="search" class="form-control" placeholder="Search" ng-model="query">
+                    <input id="search" type="search" class="form-control" placeholder="Search" ng-model="query" autofocus>
                 </div>
             </div>
 
@@ -56,8 +56,8 @@
                 <hr />
 
                 <ul class="nav nav-sidebar">
-                    <li ng-repeat="(id, name) in index" ng-class="{active: id == object.id}" ng-if="query.length === 0 || search(name)">
-                        <a ng-href="{{'#/' + id}}" tabindex="-1"><span class="glyphicon glyphicon-book"></span> {{name}}</a>
+                    <li ng-repeat="(id, data) in index" ng-class="{active: id == object.id}" ng-if="query.length === 0 || search(id)">
+                        <a ng-href="{{'#/' + id}}" tabindex="-1"><span class="glyphicon glyphicon-book"></span> {{data.name}}</a>
                     </li>
                 </ul>
 
@@ -78,6 +78,9 @@
                     <div class="alert alert-success" ng-if="success.length">
                         <button type="button" class="close" ng-click="clear_messages()">&times;</button>
                         {{success}}
+                    </div>
+                    <div class="alert alert-warning" ng-if="has_changed">
+                        There are currently unsaved changes waiting to be saved.
                     </div>
                     <div class="alert alert-danger" ng-if="error.length">
                         <button type="button" class="close" ng-click="clear_messages()">&times;</button>

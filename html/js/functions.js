@@ -60,3 +60,12 @@ function decrypt(obj, key) {
     // mcrypt pads the decryption with null bytes. Trim them off
     return JSON.parse(dec.replace(/\x00*$/, ''));
 }
+
+/**
+ * Generates a unique id
+ * @returns {number}
+ */
+function unique_id() {
+    return _uid++;
+}
+var _uid = new Date().getTime();

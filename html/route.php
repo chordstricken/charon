@@ -46,9 +46,17 @@ try {
 
                 case Index::ID:
                     $data = Index::read();
-                    $data = get_object_vars($data);
-                    asort($data);
-                    $data = (object)$data;
+                    break;
+
+                case 'search':
+                    $query = trim($path[1]);
+
+                    if (strlen($query) < 3) {
+                        $data = Index::read();
+                        break;
+                    }
+
+                    $data = Index::search($path[1]);
                     break;
 
                 default:
