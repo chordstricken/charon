@@ -306,7 +306,7 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
         // if the group name doesn't match, check all meta values
         if ($scope.index[id].meta !== undefined) {
             for (var i in $scope.index[id].meta) {
-                if ($scope.index[id].meta[i].match(regexp) !== null) {
+                if ($scope.index[id].meta[i].match && $scope.index[id].meta[i].match(regexp) !== null) {
                     return true;
                 }
             }
