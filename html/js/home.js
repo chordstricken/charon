@@ -238,14 +238,13 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
         $http.get(path).success(function(data) {
             var dec_obj = decrypt(data, localStorage.pass);
 
-            console.log(dec_obj);
             // make sure each object has a unique ID before setting
             dec_obj.items.map(function(item) {
                 if (item._id === undefined) {
                     delete item.$$hashKey;
                     item._id  = unique_id();
-                    item.icon = item.icon && item.icon.length ? item.icon : 'fa-key';
                 }
+                item.icon = item.icon && item.icon.length ? item.icon : 'fa-key';
             });
 
             $scope.object      = dec_obj;
