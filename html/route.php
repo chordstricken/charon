@@ -45,7 +45,14 @@ try {
                     break;
 
                 case Index::ID:
-                    $data = Index::read();
+                    $index = Index::read();
+                    $data  = [];
+                    foreach ($index as $key => $value) {
+                        $value->id = $key;
+                        $data[$value->name] = $value;
+                    }
+                    ksort($data);
+                    $data = array_values($data);
                     break;
 
                 case 'search':

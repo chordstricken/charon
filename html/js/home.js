@@ -37,6 +37,25 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
     $scope.has_changed  = false;
     $scope.object_hash  = false;
 
+    $scope.icons = [
+        'fa-terminal',
+        'fa-database',
+        'fa-wordpress',
+        'fa-key',
+        'fa-lock',
+        'fa-linux',
+        'fa-apple',
+        'fa-amazon',
+        'fa-windows',
+        'fa-rocket',
+        'fa-truck',
+        'fa-instagram',
+        'fa-dropbox',
+        'fa-google-plus-square',
+        'fa-facebook-square',
+        'fa-twitter',
+    ];
+
     /**
      * Timeouts
      */
@@ -79,6 +98,7 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
     $scope.add_item = function() {
         $scope.object.items.push({
             _id: unique_id(), // unique id to prevent sorting collisions
+            icon: 'fa-key',
             title: '',
             user: '',
             pass: '',
@@ -101,7 +121,7 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
         if ($event.target.type == 'password') {
             $event.target.type = 'text';
         }
-        $event.target.select();
+        $event.target.setSelectionRange(0, $event.target.value.length);
     };
 
     /**
@@ -221,7 +241,8 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
             dec_obj.items.map(function(item) {
                 if (item._id === undefined) {
                     delete item.$$hashKey;
-                    item._id = unique_id();
+                    item._id  = unique_id();
+                    item.icon = item.icon ? item.icon : 'fa-key';
                 }
             });
 
@@ -315,6 +336,28 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
         return false;
     };
 
+    $scope.navigate = function($event, key) {
+        if (key === false) {
+            if (($event.keyCode === 38 || $event.keyCode === 40) && $scope.index[0] !== undefined) {
+                location.hash = '/' + $scope.index[0].id;
+            }
+
+        } else {
+            if ($event.keyCode === 38) {
+                // up arrow: deincrement key. If index item does not exist, move to end of array
+                key = $scope.index[key - 1] !== undefined ? key-- : $scope.index.length - 1;
+                $location.hash = '/' + $scope.index[key].id;
+
+            } else if ($event.keyCode === 40) {
+                // down arrow: increment key. If index item does not exist, move to beginning of array
+                key = $scope.index[key + 1] !== undefined ? key++ : 0;
+                $location.hash = '/' + $scope.index[key].id;
+
+            }
+        }
+        return false;
+    };
+
     /**
      * Load all page-load items. Used for timeout function
      */
@@ -346,5 +389,22 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
         $scope.logout();
     }
 
+
+});
+
+/**
+ * jQuery based keymap
+ */
+$(document).on('keyup', function(e) {
+    if (e.target.value) {
+        return;
+    }
+
+    switch (e.keyCode) {
+
+        case 191: // "/"
+            $('#search').focus();
+
+    }
 
 });

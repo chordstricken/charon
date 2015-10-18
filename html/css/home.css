@@ -140,3 +140,16 @@ a, a:hover {
 [sv-handle] {
     cursor: move;
 }
+
+.icon-menu {
+    width:200px;
+}
+.icon-menu .icon {
+    display:inline-block;
+    float:left;
+    padding:15px;
+    width:15px;
+}
+.icon-menu .icon:hover {
+    color:#18bc9c
+}

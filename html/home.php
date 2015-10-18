@@ -37,7 +37,7 @@
                     <span class="text-warning">You have changes waiting to be saved!</span>
                 </div>
                 <div class="navbar-form navbar-left">
-                    <input id="search" type="search" class="form-control" placeholder="Search" ng-model="query" autofocus>
+                    <input id="search" type="search" class="form-control" placeholder="Search" ng-model="query" ng-submit="console.log('submitted')" autofocus>
                 </div>
             </div>
 
@@ -52,15 +52,15 @@
 
                 <ul class="nav nav-sidebar">
                     <li ng-class="{active: !object.id}">
-                        <a href="#/" tabindex="-1"><span class="glyphicon glyphicon-plus"></span> Add New Group</a>
+                        <a href="#/" tabindex="-1"><span class="fa fa-plus"></span> Add New Group</a>
                     </li>
                 </ul>
 
                 <hr />
 
                 <ul class="nav nav-sidebar">
-                    <li ng-repeat="(id, data) in index" ng-class="{active: id == object.id}" ng-if="query.length === 0 || search(id)">
-                        <a ng-href="{{'#/' + id}}" tabindex="-1"><span class="glyphicon glyphicon-book"></span> {{data.name}}</a>
+                    <li ng-repeat="(key, index_item) in index" ng-class="{active: index_item.id == object.id}" ng-if="query.length === 0 || search(key)"">
+                        <a ng-href="{{'#/' + index_item.id}}" tabindex="-1""><span class="fa fa-book"></span> {{index_item.name}}</a>
                     </li>
                 </ul>
 
@@ -119,8 +119,16 @@
                             <div class="col-sm-3 col-xs-5">
                                 <div class="input-group">
                                     <div class="input-group-addon hidden-xs" sv-handle>
-                                        <span class="glyphicon glyphicon-option-vertical"></span>
+                                        <span class="fa fa-ellipsis-v"></span>
                                     </div>
+
+                                    <div class="input-group-addon pointer dropdown">
+                                        <i class="fa text-primary dropdown-toggle" ng-class="item.icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="width:15px;"></i>
+                                        <div class="dropdown-menu icon-menu">
+                                            <div class="fa icon" ng-repeat="icon in icons" ng-click="item.icon = icon" ng-class="icon + (item.icon != icon ? ' text-primary' : ' text-success')"></div>
+                                        </div>
+                                    </div>
+
                                     <input type="text" class="form-control" ng-model="item.title" placeholder="Title">
                                 </div>
                             </div>
@@ -130,7 +138,7 @@
                                     <input type="text" class="form-control" ng-model="item.url" ng-focus="highlight($event)" placeholder="URL">
 
                                     <div class="input-group-addon pointer" ng-if="item.url.length">
-                                        <a class="glyphicon glyphicon-link btn-link" ng-href="{{(item.url.search('//') !== -1 ? item.url : 'http://' + item.url)}}" target="_new" tabindex="-1"></a>
+                                        <a class="fa fa-link btn-link" ng-href="{{(item.url.search('//') !== -1 ? item.url : 'http://' + item.url)}}" target="_new" tabindex="-1"></a>
                                     </div>
                                 </div>
                             </div>
@@ -144,14 +152,14 @@
                                     <input type="password" class="form-control" placeholder="Password" ng-model="item.pass" ng-focus="highlight($event)" ng-blur="set_type($event, 'password')">
 
                                     <div class="input-group-addon pointer" data-toggle="popover" data-content="Generates a new 16-character password">
-                                        <span class="glyphicon glyphicon-refresh text-warning" ng-click="generate_password(key)" tabindex="-1"></span>
+                                        <span class="fa fa-refresh text-warning" ng-click="generate_password(key)" tabindex="-1"></span>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="col-sm-1 col-xs-12">
                                 <div class="input-group-addon pointer" ng-click="remove_item(key)" data-toggle="popover" data-content="Deletes the corresponding item entry">
-                                    <span class="glyphicon glyphicon-trash text-danger pull-right" tabindex="-1"></span>
+                                    <span class="fa fa-trash text-danger pull-right" tabindex="-1"></span>
                                 </div>
                             </div>
 
@@ -162,7 +170,7 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <br />
-                            <div class="btn btn-link text-success" ng-click="add_item()" data-toggle="popover" data-content="Adds a new key entry"><span class="glyphicon glyphicon-plus"></span> Add</div>
+                            <div class="btn btn-link text-success" ng-click="add_item()" data-toggle="popover" data-content="Adds a new key entry"><span class="fa fa-plus"></span> Add</div>
                         </div>
                     </div>
 
