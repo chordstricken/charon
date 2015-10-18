@@ -37,6 +37,7 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
     $scope.has_changed  = false;
     $scope.object_hash  = false;
 
+    // icon options
     $scope.icons = [
         'fa-terminal',
         'fa-database',
@@ -242,7 +243,8 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
                 if (item._id === undefined) {
                     delete item.$$hashKey;
                     item._id  = unique_id();
-                    item.icon = item.icon ? item.icon : 'fa-key';
+                    item.icon = item.icon && item.icon.length ? item.icon : 'fa-key';
+                    console.log(item);
                 }
             });
 
