@@ -122,7 +122,10 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
         if ($event.target.type == 'password') {
             $event.target.type = 'text';
         }
-        $event.target.setSelectionRange(0, $event.target.value.length);
+        // use setTimeout to circumvent safari bug
+        setTimeout(function() {
+            $($event.target).select();
+        }, 10);
     };
 
     /**
