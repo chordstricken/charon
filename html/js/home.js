@@ -39,22 +39,32 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
 
     // icon options
     $scope.icons = [
+        'fa-key',
         'fa-terminal',
         'fa-database',
-        'fa-wordpress',
-        'fa-key',
         'fa-lock',
-        'fa-linux',
-        'fa-apple',
-        'fa-amazon',
-        'fa-windows',
         'fa-rocket',
         'fa-truck',
+
+        'fa-book',
+        'fa-heartbeat',
+        'fa-certificate',
+        'fa-expeditedssl',
+        'fa-slack',
+        'fa-wordpress',
+
+        'fa-linux',
+        'fa-apple',
+        'fa-android',
+        'fa-amazon',
+        'fa-windows',
         'fa-instagram',
+
         'fa-dropbox',
         'fa-google-plus-square',
         'fa-facebook-square',
         'fa-twitter',
+        'fa-yelp',
     ];
 
     /**
@@ -119,9 +129,6 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
      * Function for highlighting an element
      */
     $scope.highlight = function($event) {
-        if ($event.target.type == 'password') {
-            $event.target.type = 'text';
-        }
         // use setTimeout to circumvent safari bug
         setTimeout(function() {
             $($event.target).select();
@@ -131,10 +138,7 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
     /**
      * Sets the type on an input
      */
-    $scope.set_type = function($event, type) {
-        if (!$event.target.type) {
-            return;
-        }
+    $scope.set_mask = function($event, mask) {
         $event.target.type = type;
     };
 
@@ -411,4 +415,13 @@ $(document).on('keyup', function(e) {
 
     }
 
+});
+
+/**
+ * Search keypress event
+ */
+$(document).on('keyup', '#search', function(e) {
+    if (e.keyCode === 13) {
+        $('.nav-sidebar a[href]').eq(1).trigger('click');
+    }
 });

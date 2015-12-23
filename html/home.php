@@ -149,7 +149,12 @@
 
                             <div class="col-sm-3 col-xs-7">
                                 <div class="input-group">
-                                    <input type="password" class="form-control" placeholder="Password" ng-model="item.pass" ng-focus="highlight($event)" ng-blur="set_type($event, 'password')">
+                                    <input type="text" class="form-control" placeholder="Password"
+                                           ng-model="item.pass"
+                                           ng-focus="highlight($event); pw_style={};"
+                                           ng-blur="pw_style={'text-security':'disc'}"
+                                           ng-init="pw_style={'text-security':'disc'}"
+                                           ng-style="pw_style">
 
                                     <div class="input-group-addon pointer" data-toggle="popover" data-content="Generates a new 16-character password">
                                         <span class="fa fa-refresh text-warning" ng-click="generate_password(key)" tabindex="-1"></span>
