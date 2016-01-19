@@ -129,13 +129,13 @@
                                         </div>
                                     </div>
 
-                                    <input type="text" class="form-control" ng-model="item.title" placeholder="Title">
+                                    <input type="text" class="form-control" ng-model="item.title" placeholder="Title" autocomplete="off">
                                 </div>
                             </div>
 
                             <div class="col-sm-3 col-xs-7">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" ng-model="item.url" ng-focus="highlight($event)" placeholder="URL">
+                                    <input type="text" class="form-control" ng-model="item.url" ng-focus="highlight($event)" placeholder="URL" autocomplete="off">
 
                                     <div class="input-group-addon pointer" ng-if="item.url.length">
                                         <a class="fa fa-link btn-link" ng-href="{{(item.url.search('//') !== -1 ? item.url : 'http://' + item.url)}}" target="_new" tabindex="-1"></a>
@@ -144,12 +144,12 @@
                             </div>
 
                             <div class="col-sm-2 col-xs-5">
-                                <input type="text" class="form-control" ng-model="item.user" ng-focus="highlight($event)" placeholder="User">
+                                <input type="text" class="form-control" ng-model="item.user" ng-focus="highlight($event)" placeholder="User" autocomplete="off">
                             </div>
 
                             <div class="col-sm-3 col-xs-7">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Password"
+                                    <input type="text" class="form-control" placeholder="Password" autocomplete="off"
                                            ng-model="item.pass"
                                            ng-focus="highlight($event); pw_style={};"
                                            ng-blur="pw_style={'text-security':'disc'}"
