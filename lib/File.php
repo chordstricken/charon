@@ -75,7 +75,7 @@ class File {
     public static function create($name) {
         $path = self::_get_path($name);
         touch($path);
-        chmod($path, 0600);
+        chmod($path, 0644);
     }
 
     /**
