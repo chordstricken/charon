@@ -440,6 +440,14 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
 
 });
 
+$(document).on('focus', '.password-mask', function() {
+    $(this).attr('type', 'text');
+});
+
+$(document).on('blur', '.password-mask', function() {
+    $(this).attr('type', 'password');
+});
+
 /**
  * jQuery based keymap
  */

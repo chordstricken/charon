@@ -17,6 +17,10 @@
 
 <div ng-controller="Home">
 
+    <!-- Fixes the strange chrome/firefox autocomplete spaz bug -->
+    <input type="text" name="user" value="" style="display:none;" />
+    <input type="password" name="password" value="" style="display:none;" />
+
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -150,12 +154,7 @@
 
                             <div class="col-sm-3 col-xs-7">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Password" autocomplete="off"
-                                           ng-model="item.pass"
-                                           ng-focus="highlight($event); pw_style={};"
-                                           ng-blur="pw_style={'text-security':'disc'}"
-                                           ng-init="pw_style={'text-security':'disc'}"
-                                           ng-style="pw_style">
+                                    <input type="password" class="form-control password-mask" placeholder="Password" autocomplete="off" ng-model="item.pass" ng-focus="highlight($event)">
 
                                     <div class="input-group-addon pointer" data-toggle="popover" data-content="Generates a new 16-character password">
                                         <span class="fa fa-refresh text-warning" ng-click="generate_password(key)" tabindex="-1"></span>
