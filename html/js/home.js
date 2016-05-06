@@ -46,25 +46,28 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
         'fa-rocket',
         'fa-truck',
 
+        'fa-envelope-square',
         'fa-book',
         'fa-heartbeat',
         'fa-certificate',
         'fa-expeditedssl',
         'fa-slack',
-        'fa-wordpress',
 
+        'fa-wordpress',
         'fa-linux',
         'fa-apple',
         'fa-android',
         'fa-amazon',
         'fa-windows',
-        'fa-instagram',
 
+        'fa-instagram',
         'fa-dropbox',
         'fa-google-plus-square',
         'fa-facebook-square',
         'fa-twitter',
         'fa-yelp',
+
+        'fa-ban',
     ];
 
     /**
@@ -344,6 +347,19 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
         return false;
     };
 
+    /**
+     * Returns
+     * @param value
+     * @returns {Array|{index: number, input: string}}
+     */
+    $scope.field_match = function(value) {
+        if (!$scope.query.length)
+            return false;
+
+        var regexp = new RegExp($scope.query.replace(' ', '.*'), 'i');
+        return value.match(regexp) !== null;
+    };
+
     $scope.navigate = function($event, key) {
         if (key === false) {
             if (($event.keyCode === 38 || $event.keyCode === 40) && $scope.index[0] !== undefined) {
@@ -379,6 +395,18 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
     $scope.load_timeout();
 
     // bind hash changes to object loading
+    $scope.$on('$locationChangeStart', function(e) {
+        if ($scope.has_changed) {
+            if (!window.confirm('It looks like you have been editing something. Would you like to leave anyway?')) {
+                e.preventDefault();
+
+                // blur the element
+                if ("activeElement" in document)
+                    document.activeElement.blur();
+            }
+        }
+    });
+
     // This is called on page load
     $scope.$on('$locationChangeSuccess', function() {
         $scope.load_object();
@@ -397,6 +425,18 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
         $scope.logout();
     }
 
+    /**
+     * When the user tries to leave the page with unsaved changes, prompt them.
+     */
+    window.addEventListener('beforeunload', function (e) {
+        if ($scope.has_changed) {
+            var confirmationMessage = 'It looks like you have been editing something. If you leave before saving, your changes will be lost.';
+
+            (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+            return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+        }
+    });
+
 
 });
 
@@ -410,8 +450,14 @@ $(document).on('keyup', function(e) {
 
     switch (e.keyCode) {
 
+        case 27: // "escape"
+            if (document.activeElement)
+                document.activeElement.blur();
+            break;
+
         case 191: // "/"
             $('#search').focus();
+            break;
 
     }
 

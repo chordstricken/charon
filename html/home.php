@@ -33,11 +33,12 @@
                 <ul class="nav navbar-nav navbar-right hidden-xs">
                     <li><a class="btn btn-link" ng-click="logout()" tabindex="-1">Logout</a></li>
                 </ul>
-                <div class="navbar-text navbar-right hidden-xs" style="margin-right:100px;" ng-if="has_changed">
-                    <span class="text-warning">You have changes waiting to be saved!</span>
+                <div class="navbar-form navbar-right hidden-xs" style="margin-right:100px;" ng-if="has_changed">
+                    <span class="btn btn-success" ng-click="save_object()">Save Pending Changes</span>
                 </div>
-                <div class="navbar-form navbar-left">
-                    <input id="search" type="search" class="form-control" placeholder="Search" ng-model="query" ng-submit="console.log('submitted')" autofocus>
+                <div class="navbar-form navbar-left" style="position:relative;">
+                    <input id="search" type="search" class="form-control" placeholder="Search" ng-model="query" ng-submit="console.log('submitted')" autofocus style="padding-right:2em;">
+                    <span class="search-clear" ng-click="query = ''" ng-show="query.length !== 0"><i class="fa fa-times-circle"></i></span>
                 </div>
             </div>
 
@@ -129,13 +130,13 @@
                                         </div>
                                     </div>
 
-                                    <input type="text" class="form-control" ng-model="item.title" placeholder="Title" autocomplete="off">
+                                    <input type="text" class="form-control" ng-class="{'alert-info':field_match(item.title)}" ng-model="item.title" placeholder="Title" autocomplete="off">
                                 </div>
                             </div>
 
                             <div class="col-sm-3 col-xs-7">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" ng-model="item.url" ng-focus="highlight($event)" placeholder="URL" autocomplete="off">
+                                    <input type="text" class="form-control" ng-class="{'alert-info':field_match(item.url)}" ng-model="item.url" ng-focus="highlight($event)" placeholder="URL" autocomplete="off">
 
                                     <div class="input-group-addon pointer" ng-if="item.url.length">
                                         <a class="fa fa-link btn-link" ng-href="{{(item.url.search('//') !== -1 ? item.url : 'http://' + item.url)}}" target="_new" tabindex="-1"></a>
@@ -144,7 +145,7 @@
                             </div>
 
                             <div class="col-sm-2 col-xs-5">
-                                <input type="text" class="form-control" ng-model="item.user" ng-focus="highlight($event)" placeholder="User" autocomplete="off">
+                                <input type="text" class="form-control" ng-class="{'alert-info':field_match(item.user)}" ng-model="item.user" ng-focus="highlight($event)" placeholder="User" autocomplete="off">
                             </div>
 
                             <div class="col-sm-3 col-xs-7">
@@ -183,7 +184,7 @@
 
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="panel panel-default">
+                            <div class="panel panel-default" ng-class="{'panel-info':field_match(object.note)}">
                                 <div class="panel-heading">Note</div>
                                 <div class="panel-body">
                                     <textarea class="form-control" rows="10" ng-model="object.note" placeholder="Type text here..." tabindex="-1"></textarea>
@@ -200,7 +201,7 @@
                                 <button class="btn btn-danger btn-lg" data-toggle="modal" data-target="#confirm-delete" tabindex="-1">Delete</button>
                             </span>
                             <span data-toggle="popover" data-content="Saves the Group">
-                                <button class="btn btn-info btn-lg" ng-click="save_object()">Save</button>
+                                <button class="btn btn-success btn-lg" ng-click="save_object()">Save</button>
                             </span>
                         </div>
                     </div>

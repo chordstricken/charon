@@ -153,3 +153,10 @@ a, a:hover {
 .icon-menu .icon:hover {
     color:#18bc9c
 }
+
+.search-clear {
+    cursor: pointer;
+    position: absolute;
+    top: 1rem;
+    right: 2em;
+}

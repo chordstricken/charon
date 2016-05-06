@@ -48,6 +48,9 @@ try {
 
         }
 
+        if (isset($data->note) && trim($data->note))
+            $meta[$data->note] = 1;
+
         // add the item to the new index
         Index::add($data->id, $data->name, array_keys($meta));
 

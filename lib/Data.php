@@ -55,6 +55,9 @@ class Data {
 
         }
 
+        if (isset($object->note) && trim($object->note))
+            $meta[$object->note] = 1;
+
         // add the item to the new index
         Index::add($object->id, $object->name, array_keys($meta));
 
