@@ -11,39 +11,39 @@ module.exports = function(grunt) {
                 }
             }
         },
+        concat: {
+            options: {
+                separator: "\n",
+            },
+            css: {
+                src: [
+                    'html/css/bootstrap-flatly.min.css',
+                    'html/css/home.css',
+                ],
+                dest: 'html/css/charon.css',
+            },
+            js: {
+                src: [
+                    'html/js/mcrypt.js',
+                    'html/js/rijndael.js',
+                    'html/js/md5.js',
+                    'html/js/sha256.js',
+                    'html/js/functions.js',
+                ],
+                dest: 'html/js/charon.js',
+            },
+        },
         uglify: {
             options: {
                 mangle: false
             },
             dist: {
                 files: {
-                    'html/js/app.min.js': [
-                        'html/js/mcrypt.js',
-                        'html/js/rijndael.js',
-                        'html/js/md5.js',
-                        'html/js/sha256.js',
-                        'html/js/jquery.min.js',
-                        'html/js/bootstrap.min.js',
-                        'html/js/angular.min.js',
-                        'html/js/angular-sortable-view.min.js',
-                        'html/js/functions.js',
-                        'html/js/home.js'
-                    ]
+                    'html/js/charon.min.js': 'html/js/charon.js',
+                    'html/js/home.min.js': 'html/js/home.js',
+                    'html/js/login.min.js': 'html/js/login.js',
                 }
             }
-        },
-        concat: {
-            options: {
-                separator: "\n",
-            },
-            dist: {
-                src: [
-                    'html/css/bootstrap-flatly.min.css',
-                    'html/css/font-awesome.min.css',
-                    'html/css/home.css',
-                ],
-                dest: 'html/css/app.min.css',
-            },
         },
         watch: {
             files: ['<%= jshint.files %>', '<%= sass.dist.files %>'],

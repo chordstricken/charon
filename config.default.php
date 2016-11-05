@@ -55,7 +55,7 @@ error_reporting(E_ALL);
  */
 function charon_error_handler($no, $str, $file, $line, $context) {
     $context = json_encode($context, JSON_PRETTY_PRINT);
-    echo "Error $no: $str in $file:$line\n";
+    error_log("Error $no: $str in $file:$line\n", 3, __DIR__ . '/error.log');
     http_response_code(500);
 }
 set_error_handler('charon_error_handler');

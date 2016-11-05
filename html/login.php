@@ -7,10 +7,14 @@
 
     <title>Charon - Login</title>
 
-    <link href="/css/rollup.css.php" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link href="/css/charon.css" rel="stylesheet">
     <link href="/css/login.css" rel="stylesheet">
-    <script type="text/javascript" src="/js/rollup.js.php"></script>
-    <script type="text/javascript" src="/js/login.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+    <script type="text/javascript" src="/js/charon.js"></script>
+    <script type="text/javascript" src="/js/login.min.js"></script>
 </head>
 
 <body ng-app="Charon">
@@ -24,7 +28,7 @@
 
         <input type="text" class="form-control" placeholder="John Smith" ng-model="name" tabindex="1" required autofocus>
         <br />
-        
+
         <input type="password" class="form-control" placeholder="somepass123" ng-model="pass" required>
 
         <br />
@@ -39,4 +43,3 @@
 
 </body>
 </html>
-
