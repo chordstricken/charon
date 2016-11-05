@@ -1,6 +1,7 @@
 <?php
 /**
  * Charon Configuration
+ * Copy this file and rename it as "config.php", then configure as you see fit.
  * @author Jason Wright <jason.dee.wright@gmail.com>
  * @since Feb 18, 2015
  * @copyright 2015 Jason Wright

@@ -9,7 +9,7 @@
 
     <link href="/css/rollup.css.php" rel="stylesheet">
     <link href="/css/home.css" rel="stylesheet">
-    <script type="text/javascript" src="/js/rollup.js.php"></script>
+    <script type="text/javascript" src="/js/app.min.js"></script>
     <script type="text/javascript" src="/js/home.js"></script>
 </head>
 
