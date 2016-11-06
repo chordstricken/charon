@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Charon - Login</title>
+    <title><?=APP_NAME?> - Login</title>
 
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <link href="/css/charon.css" rel="stylesheet">
@@ -36,7 +36,7 @@
     </form>
 
     <div class="text-right">
-        <small>&copy <?=date('Y')?> Charon v<?=CHARON_VERSION?></small>
+        <small>&copy <?=date('Y')?> <?=APP_NAME?></small>
     </div>
 
 </div> <!-- /container -->

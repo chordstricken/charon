@@ -7,7 +7,7 @@
  */
 
 // load the config file
-require_once(__DIR__ . '/../config.php');
+require_once(__DIR__ . '/../core.php');
 
 // ajax layer
 try {
@@ -120,7 +120,7 @@ try {
     }
 
 } catch (Exception $e) {
-    
+
     http_response_code($e->getCode());
 
     switch ($e->getCode()) {

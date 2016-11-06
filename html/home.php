@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Charon - Dashboard</title>
+    <title><?=APP_NAME?> - Dashboard</title>
 
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <link href="/css/charon.css" rel="stylesheet">
@@ -34,7 +34,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#/" tabindex="-1">Charon</a>
+                <a class="navbar-brand" href="#/" tabindex="-1"><?=APP_NAME?></a>
             </div>
 
             <div id="navbar" class="navbar-collapse collapse">
@@ -234,12 +234,6 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-12 text-right">
-                <a class="btn btn-link" ng-click="logout()" tabindex="-1">Logout</a>
-                <small>&copy <?=date('Y')?> Charon v<?=CHARON_VERSION?></small>
-            </div>
-        </div>
     </div>
 
 </div>

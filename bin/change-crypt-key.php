@@ -1,18 +1,18 @@
 #!/usr/bin/php
 <?php
 /**
- * Changes the crypt password and updates config.php
+ * Changes the crypt password and updates core.php
  * @author Jason Wright <jason@invexi.com>
  * @since 5/6/2015
  * @package charon
  */
 
 // check the config file, and load it
-if (!file_exists(__DIR__.'/../config.php')) {
-    echo "Could not find config.php\n";
+if (!file_exists(__DIR__.'/../core.php')) {
+    echo "Could not find core.php\n";
     die(0);
 }
-require_once(__DIR__.'/../config.php');
+require_once(__DIR__.'/../core.php');
 
 // prompt the user for a new keyphrase
 $new_key = trim(readline('Enter the new key: '));
@@ -70,13 +70,13 @@ echo "Writing new config file\n";
 // escape the crypt key so it can be inserted into the new config file
 $crypt_key_escaped = str_replace("'", "\\'", $new_key);
 // load the old config file as a string
-$old_config = file_get_contents(__DIR__.'/../config.php');
+$old_config = file_get_contents(__DIR__.'/../core.php');
 // replace the define() call with the new key
-$new_config = preg_replace("/^define\('CRYPT_KEY'.*$/m", "define('CRYPT_KEY', '$crypt_key_escaped');", $old_config);
+$new_config = preg_replace("/^CRYPT_KEY *=.*$/m", "CRYPT_KEY = '$crypt_key_escaped';", $old_config);
 // save the file
-if (!file_put_contents(ROOT.'/config.php', $new_config)) {
+if (!file_put_contents(ROOT.'/core.php', $new_config)) {
     echo "Failed to write config file. Restoring old configuration file\n";
-    file_put_contents(ROOT.'/config.php', $old_config);
+    file_put_contents(ROOT.'/core.php', $old_config);
     if (isset($backup_file)) {
         echo "Restoring old data\n";
         echo `tar -xzf $backup_file`;

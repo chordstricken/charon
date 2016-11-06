@@ -7,7 +7,7 @@
  * @package charon
  */
 
-require_once(__DIR__.'/../config.php');
+require_once(__DIR__.'/../core.php');
 
 // first, take a backup of the current index
 echo "Backing up index as _old_index\n";

@@ -52,6 +52,10 @@ class Request {
         die();
     }
 
+    /**
+     * Obtains the request payload. This is often a JSON string that has not been parsed into a global.
+     * @return mixed
+     */
     public static function get() {
         return json_decode(file_get_contents('php://input'));
     }
