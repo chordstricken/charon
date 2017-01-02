@@ -2,7 +2,7 @@
 <?php
 /**
  * Removes a User
- * @author Jason Wright <jason@invexi.com>
+ * @author Jason Wright <jason.dee.wright@gmail.com>
  * @since 3/8/2015
  * @package charon
  */

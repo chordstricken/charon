@@ -2,7 +2,7 @@
 <?php
 /**
  * Reads a file
- * @author Jason Wright <jason@invexi.com>
+ * @author Jason Wright <jason.dee.wright@gmail.com>
  * @since 2/27/15
  * @package charon
  */

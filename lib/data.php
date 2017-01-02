@@ -1,7 +1,7 @@
 <?php
 /**
  * Data class responsible for pulling a /data/json object
- * @author Jason Wright <jason@invexi.com>
+ * @author Jason Wright <jason.dee.wright@gmail.com>
  * @since 2/18/15
  * @package charon
  */

@@ -1,7 +1,7 @@
 <?php
 /**
  * Request class responsible for pulling POST data and sending a response
- * @author Jason Wright <jason@invexi.com>
+ * @author Jason Wright <jason.dee.wright@gmail.com>
  * @since 3/7/15
  * @package charon
  */

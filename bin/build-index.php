@@ -2,7 +2,7 @@
 <?php
 /**
  * Utility script for building and re-writing the _index file
- * @author Jason Wright <jason@invexi.com>
+ * @author Jason Wright <jason.dee.wright@gmail.com>
  * @since 9/30/15
  * @package charon
  */

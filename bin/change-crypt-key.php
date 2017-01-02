@@ -2,7 +2,7 @@
 <?php
 /**
  * Changes the crypt password and updates core.php
- * @author Jason Wright <jason@invexi.com>
+ * @author Jason Wright <jason.dee.wright@gmail.com>
  * @since 5/6/2015
  * @package charon
  */

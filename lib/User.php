@@ -1,7 +1,7 @@
 <?php
 /**
  * Index class responsible storing a list of all items
- * @author Jason Wright <jason@invexi.com>
+ * @author Jason Wright <jason.dee.wright@gmail.com>
  * @since 2/18/15
  * @package charon
  */
