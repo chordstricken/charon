@@ -9,7 +9,7 @@ function get_path() {
 
 // check location and redirect
 if (location.pathname.length > 1 || location.search.length || location.hash.length < 2) {
-    location.href = '/#/';
+    location.href = '/locker/#/';
 }
 
 // jQuery bootstrap initiations
@@ -149,8 +149,8 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
      * Loads the index on to the sidebar
      */
     $scope.load_index = function() {
-        $http.get('/_index').success(function(data) {
-            $scope.index = decrypt(data, localStorage.pass);
+        $http.get('/locker/_index').success(function(data) {
+            $scope.index = decrypt(data, localStorage.getItem('key'));
 
         }).error(function(data, code) {
             if (code == 401) {
@@ -171,12 +171,12 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
         $scope.clear_messages();
 
         // encrypt the object before sending it
-        var enc_obj = encrypt($scope.object, localStorage.pass);
+        var enc_obj = encrypt($scope.object, localStorage.getItem('key'));
 
         // send or pull the object
-        $http.post('/' + $scope.object.id, enc_obj).success(function(data) {
+        $http.post('/locker/' + $scope.object.id, enc_obj).success(function(data) {
             // Set the data into the object
-            $scope.object = decrypt(data, localStorage.pass);
+            $scope.object = decrypt(data, localStorage.getItem('key'));
 
             // set the hash id
             location.hash  = '#/' + $scope.object.id;
@@ -209,7 +209,7 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
         $scope.clear_messages();
 
         // send or pull the object
-        $http.delete('/' + $scope.object.id).success(function(data) {
+        $http.delete('/locker/' + $scope.object.id).success(function(data) {
             $scope.success = data;
             $scope.reset_object();
             $scope.load_index();
@@ -238,15 +238,15 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
         var path = get_path();
 
         // if we're adding a new group, just
-        if (path == '/') {
+        if (!path.length || path == '/') {
             $scope.toggle_loader(false);
             $scope.reset_object();
             return;
         }
 
         // send or pull the object
-        $http.get(path).success(function(data) {
-            var dec_obj = decrypt(data, localStorage.pass);
+        $http.get('/locker' + path).success(function(data) {
+            var dec_obj = decrypt(data, localStorage.getItem('key'));
 
             // make sure each object has a unique ID before setting
             dec_obj.items.map(function(item) {

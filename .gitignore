@@ -4,3 +4,4 @@ data
 config.php
 node_modules
 error.log
+log/*

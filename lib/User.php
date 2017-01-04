@@ -8,24 +8,19 @@
 
 class User {
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public static $name;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public static $pass;
 
-    /**
-     * @var string filename
-     */
+    /** @var string */
+    public static $key;
+
+    /** @var string filename */
     const ID = '_users';
 
-    /**
-     * @var stdClass index
-     */
+    /** @var stdClass index */
     private static $_users;
 
     /**
@@ -33,9 +28,9 @@ class User {
      * @throws Exception 401
      */
     public static function check_auth() {
-        if (isset($_SESSION['name'], $_SESSION['pass'])) {
+        if (isset($_SESSION['name'], $_SESSION['key'])) {
             self::$name = $_SESSION['name'];
-            self::$pass = $_SESSION['pass'];
+            self::$key = $_SESSION['key'];
             return;
         }
 
@@ -53,6 +48,8 @@ class User {
         if (isset($user->iv))
             $user = Crypt::dec($user, session_id());
 
+        \Debug::info($user);
+
         // validate params
         if (empty($user->name))
             throw new Exception('Invalid User', 401);
@@ -60,28 +57,31 @@ class User {
         if (empty($user->pass))
             throw new Exception('Invalid Password', 401);
 
+        if (empty($user->key))
+            throw new Exception('Invalid Key', 401);
+
         self::read();
 
         if (!isset(self::$_users->{$user->name}))
             throw new Exception('Incorrect User', 401);
 
-        if (self::$_users->{$user->name} != $user->pass)
+        $stored_password = self::$_users->{$user->name};
+
+        // check if the password is old and needs rehashing
+        if (password_needs_rehash($stored_password, PASSWORD_DEFAULT)) {
+            $stored_password = password_hash($stored_password, PASSWORD_DEFAULT);
+            self::$_users->{$user->name} = $stored_password;
+            self::write();
+        }
+
+        \Debug::info($user->pass . ' VS ' . $stored_password);
+        if (!password_verify($user->pass, $stored_password))
             throw new Exception('Incorrect Password', 401);
 
         self::$name = $_SESSION['name'] = $user->name;
-        self::$pass = $_SESSION['pass'] = $user->pass;
+        self::$pass = $_SESSION['key']  = $user->key;
 
         Request::send('Success');
-    }
-
-    /**
-     * Destroys the session and throws a 401
-     * @throws Exception 401
-     */
-    public static function logout() {
-        unset($_SESSION);
-        session_destroy();
-        throw new Exception('Suggessfully logged out.', 401);
     }
 
     /**
@@ -122,7 +122,7 @@ class User {
      */
     public static function add($user, $pass) {
         self::read();
-        self::$_users->{$user} = hash('sha256', $pass);
+        self::$_users->{$user} = password_hash($pass, PASSWORD_DEFAULT);
         self::write();
     }
 

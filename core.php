@@ -5,6 +5,8 @@
  * @since Feb 18, 2015
  * @copyright 2015 Jason Wright
  */
+ini_set('error_log', __DIR__ . '/log/error.log');
+error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE & ~E_STRICT);
 
 require_once(__DIR__ . '/config.php');
 

@@ -14,7 +14,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
     <script src="/js/angular-sortable-view.min.js"></script>
     <script type="text/javascript" src="/js/charon.js"></script>
-    <script type="text/javascript" src="/js/home.min.js"></script>
+    <script type="text/javascript" src="/js/home.js"></script>
 </head>
 
 <body ng-app="Charon">
@@ -45,7 +45,7 @@
                     <span class="btn btn-success" ng-click="save_object()">Save Pending Changes</span>
                 </div>
                 <div class="navbar-form navbar-left" style="position:relative;">
-                    <input id="search" type="search" class="form-control" placeholder="Search" ng-model="query" ng-submit="console.log('submitted')" autofocus style="padding-right:2em;">
+                    <input id="search" type="search" class="form-control" placeholder="Search" ng-model="query" autofocus style="padding-right:2em;">
                     <span class="search-clear" ng-click="query = ''" ng-show="query.length !== 0"><i class="fa fa-times-circle"></i></span>
                 </div>
             </div>

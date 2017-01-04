@@ -17,11 +17,12 @@ Charon.controller('Login', function($scope, $http, $location) {
     $scope.login_attempt = function() {
         var data = {
             name: $scope.name,
-            pass: sha256($scope.pass),
+            pass: $scope.pass,
+            key: sha256($scope.pass),
         };
 
         // store the sha256 passphrase for encryption purposes
-        localStorage.pass = data.pass;
+        localStorage.setItem('key', data.key);
 
         $scope.error = '';
 
