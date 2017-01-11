@@ -36,22 +36,22 @@ class SQLite extends SQLite3 {
     }
 
     public function prepare($query) {
-        \Debug::info(__METHOD__ . ": $query");
+        Debug::info(__METHOD__ . ": $query");
         return parent::prepare($query);
     }
 
     public function query($query) {
-        \Debug::info(__METHOD__ . ": $query");
+        Debug::info(__METHOD__ . ": $query");
         return parent::query($query);
     }
 
     public function querySingle($query, $entire_row = false) {
-        \Debug::info(__METHOD__ . ": $query");
+        Debug::info(__METHOD__ . ": $query");
         return parent::querySingle($query, $entire_row);
     }
 
     public function exec($query) {
-        \Debug::info(__METHOD__ . ": $query");
+        Debug::info(__METHOD__ . ": $query");
         return parent::exec($query);
     }
 
