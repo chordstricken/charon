@@ -5,16 +5,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title><?=APP_NAME?> - Dashboard</title>
+    <title><?=APP_NAME?> - Password Locker</title>
 
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-    <link href="/css/charon.css" rel="stylesheet">
+    <link href="/css/charon.min.css" rel="stylesheet">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
     <script src="/js/angular-sortable-view.min.js"></script>
-    <script type="text/javascript" src="/js/charon.js"></script>
-    <script type="text/javascript" src="/js/home.js"></script>
+    <script type="text/javascript" src="/js/charon.min.js"></script>
+    <script type="text/javascript" src="/js/locker.min.js"></script>
 </head>
 
 <body ng-app="Charon">
@@ -61,7 +61,7 @@
 
                 <ul class="nav nav-sidebar">
                     <li ng-class="{active: !object.id}">
-                        <a href="#/" tabindex="-1"><span class="fa fa-plus"></span> Add New Group</a>
+                        <a href="#/" tabindex="-1"><span class="fa fa-plus"></span> Add New Locker</a>
                     </li>
                 </ul>
 

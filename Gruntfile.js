@@ -18,9 +18,9 @@ module.exports = function(grunt) {
             css: {
                 src: [
                     'html/css/bootstrap-flatly.min.css',
-                    'html/css/home.css',
+                    'html/css/charon.css',
                 ],
-                dest: 'html/css/charon.css',
+                dest: 'html/css/charon.min.css',
             },
             js: {
                 src: [
@@ -40,7 +40,7 @@ module.exports = function(grunt) {
             dist: {
                 files: {
                     'html/js/charon.min.js': 'html/js/charon.js',
-                    'html/js/home.min.js': 'html/js/home.js',
+                    'html/js/locker.min.js': 'html/js/locker.js',
                     'html/js/login.min.js': 'html/js/login.js',
                 }
             }

@@ -10,4 +10,4 @@
 require_once(__DIR__ . '/../core.php');
 session_start();
 
-api\Controller::route();
+core\Router::route();

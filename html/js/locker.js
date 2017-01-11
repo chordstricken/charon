@@ -353,33 +353,11 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
      * @returns {Array|{index: number, input: string}}
      */
     $scope.field_match = function(value) {
-        if (!$scope.query.length)
+        if (value === undefined || !$scope.query.length)
             return false;
 
         var regexp = new RegExp($scope.query.replace(' ', '.*'), 'i');
         return value.match(regexp) !== null;
-    };
-
-    $scope.navigate = function($event, key) {
-        if (key === false) {
-            if (($event.keyCode === 38 || $event.keyCode === 40) && $scope.index[0] !== undefined) {
-                location.hash = '/' + $scope.index[0].id;
-            }
-
-        } else {
-            if ($event.keyCode === 38) {
-                // up arrow: deincrement key. If index item does not exist, move to end of array
-                key = $scope.index[key - 1] !== undefined ? key-- : $scope.index.length - 1;
-                $location.hash = '/' + $scope.index[key].id;
-
-            } else if ($event.keyCode === 40) {
-                // down arrow: increment key. If index item does not exist, move to beginning of array
-                key = $scope.index[key + 1] !== undefined ? key++ : 0;
-                $location.hash = '/' + $scope.index[key].id;
-
-            }
-        }
-        return false;
     };
 
     /**

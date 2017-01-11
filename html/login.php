@@ -8,12 +8,12 @@
     <title><?=APP_NAME?> - Login</title>
 
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-    <link href="/css/charon.css" rel="stylesheet">
+    <link href="/css/charon.min.css" rel="stylesheet">
     <link href="/css/login.css" rel="stylesheet">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
-    <script type="text/javascript" src="/js/charon.js"></script>
+    <script type="text/javascript" src="/js/charon.min.js"></script>
     <script type="text/javascript" src="/js/login.min.js"></script>
 </head>
 
@@ -34,10 +34,6 @@
         <br />
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
     </form>
-
-    <div class="text-right">
-        <small>&copy <?=date('Y')?> <?=APP_NAME?></small>
-    </div>
 
 </div> <!-- /container -->
 

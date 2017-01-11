@@ -11,27 +11,8 @@ error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE & ~E_STRICT);
 require_once(__DIR__ . '/config.php');
 
 // check php version
-if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 50400) {
-    echo 'Charon requires PHP Version 5.4 or above.';
-    die();
-}
-
-// function dependencies
-$dependencies = [
-    'mcrypt',
-    'json',
-    'hash',
-];
-
-foreach ($dependencies as $key => $lib) {
-    if (extension_loaded($lib)) {
-        unset($dependencies[$key]);
-    }
-}
-
-if (count($dependencies)) {
-    echo "Charon requires the following dependencies:\n";
-    print_r($dependencies);
+if (!defined('PHP_VERSION_ID') || PHP_VERSION_ID < 70000) {
+    echo 'Charon requires PHP Version 7.0 or above.';
     die();
 }
 
