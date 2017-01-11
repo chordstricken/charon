@@ -23,7 +23,7 @@ try {
     if (!count($path) || $path[0] != 'login')
         User::check_auth();
 
-    // check path for idiots trying to do shit they shouldn't be doing
+    // Check against accessing hidden files or directories
     if (isset($path[0]) && strpos($path[0], '.') !== false)
         throw new Exception('Page not found.', 404);
 

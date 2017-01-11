@@ -1,7 +1,6 @@
 <?php
 namespace Core;
 
-use \Exception;
 /**
  * Log class responsible for logging items in /log
  * @author Jason Wright <jason@invexi.com>
@@ -11,12 +10,14 @@ use \Exception;
 
 class Log {
 
+    private static function _format_message
+
     /**
      * @param mixed $message
      */
-    public static function write($message) {
+    public static function info($message) {
         $message = $message instanceof Exception ? $message->getMessage() : json_encode($message);
-        error_log(date(DATE_ATOM) . " -- $message\n");
+        error_log(date(DATE_FORMAT) . " -- $message\n");
     }
 
 }
