@@ -26,7 +26,7 @@ class SQLite extends SQLite3 {
      * @param null $encryption_key
      */
     public function __construct($filename = null, $flags = null, $encryption_key = null) {
-        parent::__construct(ROOT . '/data/' . ($filename ?? self::FILE), $flags, CRYPT_KEY);
+        parent::__construct(ROOT . '/data/' . basename($filename ?? self::FILE), $flags, CRYPT_KEY);
         $this->enableExceptions(true);
         Debug::info('Calling ' . __METHOD__);
     }
