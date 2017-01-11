@@ -1,7 +1,7 @@
 <?php
 namespace models;
 
-use core\SQLite;
+use core;
 use \Exception;
 
 /**
@@ -25,7 +25,7 @@ class Locker extends Base {
      */
     public function __construct($params) {
         parent::__construct($params);
-        $this->items = is_scalar($this->items) ? json_decode($this->items) : $this->items;
+        $this->items = is_scalar($this->items) ? core\Crypt::dec($this->items) : $this->items;
     }
 
     /**
@@ -41,10 +41,10 @@ class Locker extends Base {
         if (empty($this->name))
             $errors[] = 'Invalid Name';
 
-        if (mb_strlen($this->note) > SQLite::STRING_LENGTH_MAX)
+        if (mb_strlen($this->note) > core\SQLite::STRING_LENGTH_MAX)
             $errors[] = 'Note string is too long.';
 
-        if (mb_strlen(json_encode($this->items)) > SQLite::STRING_LENGTH_MAX)
+        if (mb_strlen(core\Crypt::enc($this->items)) > core\SQLite::STRING_LENGTH_MAX)
             $errors[] = 'Items list is too long. Please shorten or create a new Locker.';
 
         if (count($errors))
@@ -57,9 +57,10 @@ class Locker extends Base {
      * Overrides parent
      */
     public function save(): self {
-        $this->items = json_encode($this->items);
+        $items = $this->items;
+        $this->items = core\Crypt::enc($this->items);
         parent::save();
-        $this->items = json_decode($this->items);
+        $this->items = $items;
         return $this;
     }
 }

@@ -17,7 +17,7 @@ class User extends Base {
     public $passhash;
 
     /** @var User */
-    private static $_me;
+    private static $_me = null;
 
     /**
      * @throws Exception
@@ -30,9 +30,12 @@ class User extends Base {
     }
 
     /**
-     * @return User
+     * @return User|null
      */
-    public static function me(): self {
+    public static function me() {
+        if (!isset($_SESSION['user_id']))
+            return null;
+
         if (!self::$_me instanceof self)
             self::$_me = self::findOne(['id' => $_SESSION['user_id']]);
 

@@ -64,6 +64,7 @@ class Update {
 
         } catch (\Exception $e) {
             echo $e->getMessage() . "\n";
+            echo "Failed completing the update.\n";
         }
 
         // Ensure that all/any completed scripts are logged

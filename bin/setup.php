@@ -51,8 +51,5 @@ if ($pass1 != $pass2) throw new Exception("Passwords do not match");
 $user = models\User::findOne(['name' => 'admin']);
 $user->setPasswordHash($pass1)->save();
 
-
-$db->close();
-
 echo "Done!\n";
 die(0);

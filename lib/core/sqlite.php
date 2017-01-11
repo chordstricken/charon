@@ -16,6 +16,9 @@ class SQLite extends SQLite3 {
     /** Byte length max is 1,000,000,000 */
     const STRING_LENGTH_MAX = 500000000;
 
+    private static $_dbRead;
+    private static $_dbWrite;
+
     /**
      * SQLite constructor.
      * @param null $filename
@@ -23,16 +26,24 @@ class SQLite extends SQLite3 {
      * @param null $encryption_key
      */
     public function __construct($filename = null, $flags = null, $encryption_key = null) {
-        parent::__construct(ROOT . '/data/' . ($filename ?? self::FILE), $flags, $encryption_key ?? CRYPT_KEY);
+        parent::__construct(ROOT . '/data/' . ($filename ?? self::FILE), $flags, CRYPT_KEY);
         $this->enableExceptions(true);
+        Debug::info('Calling ' . __METHOD__);
+    }
+
+    /**
+     * On teardown
+     */
+    public function __destruct() {
+        $this->close();
     }
 
     public static function initRead($filename = null) {
-        return new self($filename, SQLITE3_OPEN_READONLY);
+        return self::$_dbRead ?? self::$_dbRead = new self($filename, SQLITE3_OPEN_READONLY);
     }
 
     public static function initWrite($filename = null) {
-        return new self($filename, SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
+        return self::$_dbWrite ?? self::$_dbWrite = new self($filename, SQLITE3_OPEN_READWRITE | SQLITE3_OPEN_CREATE);
     }
 
     public function prepare($query) {
