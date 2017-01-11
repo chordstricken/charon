@@ -1,10 +1,20 @@
 <?php
-/**
- * PHPUnit test for Data class
- */
-require_once(__DIR__ . '/../../core.php');
+namespace test\models;
 
-class Data_test extends PHPUnit_Framework_TestCase {
+/**
+ *
+ * @author Jason Wright <jason.dee.wright@gmail.com>
+ * @since 1/5/17
+ * @package charon
+ */
+require_once(__DIR__ . '/../../../core.php');
+
+
+use models\Locker;
+use \Exception;
+use \PHPUnit_Framework_TestCase;
+
+class LockerTest extends PHPUnit_Framework_TestCase {
 
     /** @var array */
     private static $_data = [];
@@ -45,34 +55,46 @@ class Data_test extends PHPUnit_Framework_TestCase {
     /**
      * Standard encrypt/decrypt test
      */
-    public function test_write() {
-        foreach (self::$_data as $obj) {
-            Data::write($obj);
+    public function testWrite() {
+        foreach (self::$_data as &$obj) {
+            $obj = Locker::new(get_object_vars($obj))->save();
             $this->assertNotNull($obj->id, "Failed to auto-assign ID hash");
         }
     }
 
     /**
      * Tests reading auto-generated test objects
-     * @depends test_write
+     * @depends testWrite
      */
-    public function test_read() {
+    public function testFindOne() {
         foreach (self::$_data as $obj) {
-            $db_obj = Data::read($obj->id);
-            $this->assertEquals($obj->name, $db_obj->name, "DB object does not match the one in memory");
+            $dbObj = Locker::findOne(['id' => $obj->id]);
+            $this->assertEquals($obj->name, $dbObj->name, "DB object does not match the one in memory\n" . print_r([$obj, $dbObj], true));
         }
     }
 
     /**
      * Tests reading auto-generated test objects
-     * @depends test_read
+     * @depends testWrite
      */
-    public function test_delete() {
+    public function testFind() {
+        $dbObjects = Locker::findMulti(['name' => ['LIKE' => 'PHPUNIT-%']]);
+        $this->assertCount(count(self::$_data), $dbObjects, 'Did not find correct number of objects with PHPUNIT-% name');
+
+        foreach (self::$_data as $obj)
+            $this->assertArrayHasKey($obj->id, $dbObjects, 'Failed to pull multiple objects from database');
+    }
+
+    /**
+     * Tests reading auto-generated test objects
+     * @depends testFindOne
+     */
+    public function testDelete() {
         foreach (self::$_data as $obj) {
-            Data::delete($obj->id);
+            $obj->delete();
             try {
-                $db_obj = Data::read($obj->id);
-                $this->fail("Found object '$db_obj->id' after deletion");
+                $dbObj = Locker::findOne(['id' => $obj->id]);
+                $this->fail("Found object '$dbObj->id' after deletion");
 
             } catch (Exception $e) {
                 continue;
@@ -80,4 +102,10 @@ class Data_test extends PHPUnit_Framework_TestCase {
         }
     }
 
+    /**
+     * Clean up database
+     */
+    public static function tearDownAfterClass() {
+        \core\SQLite::initWrite()->exec('DELETE FROM locker WHERE name LIKE "PHPUNIT-%"');
+    }
 }
