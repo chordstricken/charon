@@ -32,7 +32,7 @@ class User extends Base {
     /**
      * @return User
      */
-    public static function me() {
+    public static function me(): self {
         if (!self::$_me instanceof self)
             self::$_me = self::findOne(['id' => $_SESSION['user_id']]);
 
@@ -45,5 +45,15 @@ class User extends Base {
      */
     public static function getKey() {
         return $_SESSION['user_key'];
+    }
+
+    /**
+     * Hashes the password and sets it into the object
+     * @param $password
+     * @return self
+     */
+    public function setPasswordHash($password): self {
+        $this->passhash = password_hash($password, PASSWORD_DEFAULT);
+        return $this;
     }
 }

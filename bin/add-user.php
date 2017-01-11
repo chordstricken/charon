@@ -25,6 +25,8 @@ if ($pass1 != $pass2) {
     die();
 }
 
-User::add($user, $pass1);
+$user = models\User::findOne(['name' => $user]);
+$user->setPasswordHash($pass1);
+$user->save();
 
 echo "Success!\n";

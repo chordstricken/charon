@@ -8,6 +8,7 @@ require_once(__DIR__ . '/../core.php');
 
 $db = core\SQLite::initWrite();
 
+// database instantiation
 $queries = [
 
     'CREATE TABLE users (
@@ -32,4 +33,26 @@ $queries = [
 foreach ($queries as $sql)
     if (!$db->exec($sql)) throw new Exception($db->lastErrorMsg());
 
+echo "Creating admin user\n";
+echo "Please enter the admin password\n";
+
+// set Admin user
+// use hidden password functionality in read library
+$pass1 = trim(`/bin/bash -c "read -s -p 'Pass: ' password && echo \\\$password"`);
+echo "\n";
+
+// use hidden password functionality in read library
+$pass2 = trim(`/bin/bash -c "read -s -p 'Re-enter Pass: ' password && echo \\\$password"`);
+echo "\n";
+
+// check passwords
+if ($pass1 != $pass2) throw new Exception("Passwords do not match");
+
+$user = models\User::findOne(['name' => 'admin']);
+$user->setPasswordHash($pass1)->save();
+
+
 $db->close();
+
+echo "Done!\n";
+die(0);
