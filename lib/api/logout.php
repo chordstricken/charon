@@ -1,6 +1,5 @@
 <?php
 namespace api;
-use \User;
 
 /**
  * Logout request route
@@ -8,12 +7,12 @@ use \User;
  * @since 1/3/17
  * @package charon
  */
-class Logout {
+class Logout extends Base {
 
     public function get() {
         unset($_SESSION);
         session_destroy();
-        throw new \Exception('Suggessfully logged out.', 401);
+        $this->send('Suggessfully logged out.', 401);
     }
 
 }

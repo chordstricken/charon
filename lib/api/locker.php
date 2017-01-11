@@ -1,11 +1,8 @@
 <?php
 namespace api;
 
-use \Crypt;
-use \Data;
-use \Index;
-use \Request;
-use \User;
+use core;
+use models;
 use \Exception;
 use \stdClass;
 
@@ -22,31 +19,22 @@ class Locker extends Base {
      * /locker/:index_id
      */
     public function get() {
-        $index_id = $this->path[0];
+        $index_id = $this->path[0] ?? false;
         if (!$index_id) {
-            \Debug::info('Loading home.php');
-            require(HTML . '/home.php');
+            require(HTML . '/locker.php');
             die();
 
-        } elseif ($index_id === Index::ID) {
-            \Debug::info('Loading _index');
+        } elseif ($index_id === '_index') {
             // calling /locker/_index pulls a sorted index array
-            $index = Index::read();
-            $data  = [];
-            foreach ($index as $key => $value) {
-                $value->id          = $key;
-                $data[$value->name] = $value;
-            }
-            ksort($data); // sort alphabetically
-            $data = array_values($data); // convert from associative array
+            $data = $this->_get_index();
 
         } else {
             // load the locker data object
-            $data = Data::read($index_id);
+            $data = models\Locker::findOne(['id' => $index_id]);
         }
 
-        $data = Crypt::enc($data, User::$key);
-        Request::send($data);
+        $data = core\Crypt::enc($data, models\User::getKey());
+        $this->send($data);
     }
 
     /**
@@ -55,20 +43,19 @@ class Locker extends Base {
      */
     public function post() {
         if (!$this->data instanceof stdClass)
-            throw new Exception('Invalid object', 400);
+            throw new Exception('Invalid Request Object', 400);
 
         // decrypt the request
-        if (!$this->data = Crypt::dec($this->data, User::$key))
-            Request::send('Failed to decrypt request.', 500);
+        if (!$this->data = core\Crypt::dec($this->data, models\User::getKey()))
+            throw new Exception('Failed to decrypt request.', 500);
 
-        // write the data
-        Data::write($this->data);
+        $locker = models\Locker::new($this->data)->validate()->save();
 
         // re-encrypt the result before sending it to the user
-        $this->data = Crypt::enc($this->data, User::$key);
+        $this->data = core\Crypt::enc($locker, models\User::getKey());
 
         // send the response
-        Request::send($this->data);
+        $this->send($this->data);
     }
 
     /**
@@ -76,9 +63,39 @@ class Locker extends Base {
      */
     public function delete() {
         if (isset($this->path[0]))
-            Data::delete($this->path[0]);
+            models\Locker::new(['id' => $this->path[0]])->delete();
 
-        Request::send('Successfully deleted group.');
+        $this->send('Successfully deleted Locker.');
     }
 
+    /**
+     * @return array
+     */
+    private function _get_index(): array {
+        $index = [];
+
+        // @todo: create more memory-friendly implementation
+        $lockers = models\Locker::findMulti([]);
+        foreach ($lockers as $locker) {
+            $meta = [];
+
+            foreach ($locker->items as $item) {
+                if (isset($item->title) && $item->title = trim($item->title)) $meta[$item->title] = 1;
+                if (isset($item->url) && $item->url = trim($item->url))       $meta[$item->url]   = 1;
+                if (isset($item->user) && $item->user = trim($item->user))    $meta[$item->user]  = 1;
+            }
+
+            if ($locker->note = trim($locker->note))
+                $meta[$locker->note] = 1;
+
+            $index[$locker->name] = [
+                'id'   => $locker->id,
+                'name' => $locker->name,
+                'meta' => array_keys($meta),
+            ];
+        }
+
+        ksort($index);
+        return array_values($index);
+    }
 }
