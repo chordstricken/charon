@@ -17,7 +17,6 @@ class SQLiteTest extends \PHPUnit_Framework_TestCase {
      * Tests instantiating a read connection
      */
     public function testReadConnection() {
-        echo __METHOD__ . PHP_EOL;
        $db = core\SQLite::initRead();
        $this->assertInstanceOf('core\\SQLite', $db);
     }
@@ -26,7 +25,6 @@ class SQLiteTest extends \PHPUnit_Framework_TestCase {
      * Tests instantiating a write connection
      */
     public function testWriteConnection() {
-        echo __METHOD__ . PHP_EOL;
         $db = core\SQLite::initWrite();
         $this->assertInstanceOf('core\\SQLite', $db);
     }
@@ -35,7 +33,6 @@ class SQLiteTest extends \PHPUnit_Framework_TestCase {
      * Tests instantiating multiple Read instances
      */
     public function testMultiRead() {
-        echo __METHOD__ . PHP_EOL;
         $one = core\SQLite::initRead()->querySingle('SELECT 1');
         $two = core\SQLite::initRead()->querySingle('SELECT 2');
 
@@ -47,8 +44,6 @@ class SQLiteTest extends \PHPUnit_Framework_TestCase {
      * Tests instantiating multiple Write instances and using them
      */
     public function testMultiWrite() {
-        echo __METHOD__ . PHP_EOL;
-
         $one = core\SQLite::initWrite()->querySingle('SELECT 1');
         $two = core\SQLite::initWrite()->querySingle('SELECT 2');
 
@@ -72,7 +67,6 @@ class SQLiteTest extends \PHPUnit_Framework_TestCase {
      * Tests instantiating a Write and a Read object
      */
     public function testDoubleInstance() {
-        echo __METHOD__ . PHP_EOL;
         $one = core\SQLite::initWrite()->querySingle('SELECT 1');
         $two = core\SQLite::initRead()->querySingle('SELECT 2');
 
