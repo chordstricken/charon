@@ -11,22 +11,22 @@ $db = core\SQLite::initWrite();
 // database instantiation
 $queries = [
 
-    'CREATE TABLE users (
+    'CREATE TABLE IF NOT EXISTS users (
         id TEXT PRIMARY KEY NOT NULL,
         name TEXT NOT NULL,
         passhash TEXT NOT NULL
     )',
 
-    'CREATE TABLE locker (
+    'CREATE TABLE IF NOT EXISTS locker (
         id TEXT NOT NULL,
         name TEXT NOT NULL,
         items TEXT,
         note TEXT
     )',
 
-    'CREATE UNIQUE INDEX user_id ON users (id)',
-    'CREATE UNIQUE INDEX user_name ON users (name)',
-    'CREATE UNIQUE INDEX locker_id ON locker (id)',
+    'CREATE UNIQUE INDEX IF NOT EXISTS user_id ON users (id)',
+    'CREATE UNIQUE INDEX IF NOT EXISTS user_name ON users (name)',
+    'CREATE UNIQUE INDEX IF NOT EXISTS locker_id ON locker (id)',
 
 ];
 
@@ -48,7 +48,7 @@ echo "\n";
 // check passwords
 if ($pass1 != $pass2) throw new Exception("Passwords do not match");
 
-$user = models\User::findOne(['name' => 'admin']);
+$user = models\User::findOne(['name' => 'admin']) ?? models\User::new(['name' => 'admin']);
 $user->setPasswordHash($pass1)->save();
 
 echo "Done!\n";
