@@ -3,13 +3,13 @@
  */
 var Charon = angular.module('Charon', ['angular-sortable-view']);
 
-function get_path() {
-    return location.hash.replace(/^[\#\!]{1,2}/, ''); // get the hash location
+function getLockerId() {
+    return location.hash.replace(/^[\#\!\/]*/g, '');
 }
 
-// check location and redirect
-if (location.pathname.length > 1 || location.search.length || location.hash.length < 2) {
-    location.href = '/locker/#/';
+// // check location and redirect
+if (location.pathname != '/locker/') {
+    location.pathname = '/locker/';
 }
 
 // jQuery bootstrap initiations
@@ -96,7 +96,7 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
         };
         $scope.add_item();
         $scope.has_changed = false;
-        $scope.object_hash = md5(JSON.stringify($scope.object));
+        $scope.object_hash = md5(json_encode($scope.object));
     };
 
     /**
@@ -149,10 +149,11 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
      * Loads the index on to the sidebar
      */
     $scope.load_index = function() {
-        $http.get('/locker/_index').success(function(data) {
-            $scope.index = decrypt(data, localStorage.getItem('key'));
+        $http.get('/locker/_index').then(function successCallback(result) {
+            var resultDecrypted = AES.decrypt(result.data);
+            $scope.index = json_decode(AES.decrypt(result.data));
 
-        }).error(function(data, code) {
+        }, function errorCallback(data, code) {
             if (code == 401) {
                 location.reload();
                 return;
@@ -171,25 +172,26 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
         $scope.clear_messages();
 
         // encrypt the object before sending it
-        var enc_obj = encrypt($scope.object, localStorage.getItem('key'));
+        var enc_obj = AES.encrypt(json_encode($scope.object));
 
         // send or pull the object
-        $http.post('/locker/' + $scope.object.id, enc_obj).success(function(data) {
+        $http.post('/locker/' + $scope.object.id, enc_obj).then(function successCallback(result) {
             // Set the data into the object
-            $scope.object = decrypt(data, localStorage.getItem('key'));
+            $scope.object = json_decode(AES.decrypt(result.data));
+            console.log('Saved object', $scope.object);
 
             // set the hash id
-            location.hash  = '#/' + $scope.object.id;
+            // location.hash  = '#/' + $scope.object.id;
 
             $scope.load_index();
             $scope.toggle_loader(false);
             $scope.has_changed = false;
-            $scope.object_hash = md5(JSON.stringify($scope.object));
+            $scope.object_hash = md5(json_encode($scope.object));
 
             // set success message
             $scope.success = 'Successfully saved the object';
 
-        }).error(function(data, code) {
+        }, function errorCallback(data, code) {
             if (code == 401) {
                 location.reload();
                 return;
@@ -209,13 +211,13 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
         $scope.clear_messages();
 
         // send or pull the object
-        $http.delete('/locker/' + $scope.object.id).success(function(data) {
-            $scope.success = data;
+        $http.delete('/locker/' + $scope.object.id).then(function successCallback(result) {
+            $scope.success = result.data;
             $scope.reset_object();
             $scope.load_index();
             $scope.toggle_loader(false);
 
-        }).error(function(data, code) {
+        }, function errorCallback(data, code) {
             if (code == 401) {
                 location.reload();
                 return;
@@ -235,34 +237,36 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
         $scope.toggle_loader(true);
         $scope.clear_messages();
 
-        var path = get_path();
+        var lockerId = getLockerId();
 
         // if we're adding a new group, just
-        if (!path.length || path == '/') {
+        if (!lockerId.length || lockerId == '/') {
             $scope.toggle_loader(false);
             $scope.reset_object();
             return;
         }
 
         // send or pull the object
-        $http.get('/locker' + path).success(function(data) {
-            var dec_obj = decrypt(data, localStorage.getItem('key'));
+        $http.get('/locker/' + lockerId).then(function successCallback(data) {
+            var dec_obj = json_decode(AES.decrypt(data));
 
             // make sure each object has a unique ID before setting
-            dec_obj.items.map(function(item) {
-                if (item._id === undefined) {
-                    delete item.$$hashKey;
-                    item._id  = unique_id();
-                }
-                item.icon = item.icon && item.icon.length ? item.icon : 'fa-key';
-            });
+            if (dec_obj.items && dec_obj.items.map) {
+                dec_obj.items.map(function(item) {
+                    if (item._id === undefined) {
+                        delete item.$$hashKey;
+                        item._id = unique_id();
+                    }
+                    item.icon = item.icon && item.icon.length ? item.icon : 'fa-key';
+                });
+            }
 
             $scope.object      = dec_obj;
-            $scope.object_hash = md5(JSON.stringify($scope.object));
+            $scope.object_hash = md5(json_encode($scope.object));
             $scope.has_changed = false;
             $scope.toggle_loader(false);
 
-        }).error(function(data, code) {
+        }, function errorCallback(data, code) {
             if (code == 401) {
                 location.reload();
                 return;
@@ -294,9 +298,9 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
     };
 
     $scope.logout = function() {
-        $http.get('/logout').success(function() {
+        $http.get('/logout').then(function() {
             location.reload();
-        }).error(function() {
+        }, function() {
             location.reload();
         });
     };
@@ -393,7 +397,7 @@ Charon.controller('Home', function($scope, $http, $location, $timeout) {
     // When the object changes, display the notification
     $scope.$watch('object', function() {
         if ($scope.object_hash) {
-            var hash = md5(JSON.stringify($scope.object));
+            var hash = md5(json_encode($scope.object));
             $scope.has_changed = $scope.object_hash !== hash;
         }
     }, true);

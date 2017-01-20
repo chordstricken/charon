@@ -12,29 +12,35 @@
     <link href="/css/login.css" rel="stylesheet">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
-    <script type="text/javascript" src="/js/charon.min.js"></script>
-    <script type="text/javascript" src="/js/login.min.js"></script>
+<!--    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.min.js"></script>
+    <script>localStorage.setItem('server.publicKey', '<?=base64_encode(core\openssl\RSA::getServerKeyPair()->public)?>');</script>
+    <script src="/js/charon.min.js"></script>
+    <script src="/js/login.min.js"></script>
 </head>
 
 <body ng-app="Charon">
 
 <div class="container" ng-controller="Login">
+    <script id="LoginForm" type="text/x-template">
+        <form class="form-signin" ng-submit="login_attempt()">
+            <div class="alert alert-danger" ng-if="error.length">{{error}}</div>
 
-    <form class="form-signin" ng-submit="login_attempt()">
-        <div class="alert alert-danger" ng-if="error.length">{{error}}</div>
+            <h2 class="form-signin-heading">Please sign in</h2>
 
-        <h2 class="form-signin-heading">Please sign in</h2>
+            <input type="text" class="form-control" placeholder="John Smith" ng-model="name" tabindex="1" required autofocus>
+            <br />
 
-        <input type="text" class="form-control" placeholder="John Smith" ng-model="name" tabindex="1" required autofocus>
-        <br />
+            <input type="password" class="form-control" placeholder="somepass123" ng-model="pass" required>
 
-        <input type="password" class="form-control" placeholder="somepass123" ng-model="pass" required>
+            <br />
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        </form>
+    </script>
 
-        <br />
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-    </form>
+    <LoginForm />
 
+    <noscript><h1>Javascript is required to use this application.</noscript>
 </div> <!-- /container -->
 
 </body>

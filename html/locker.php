@@ -11,10 +11,10 @@
     <link href="/css/charon.min.css" rel="stylesheet">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
     <script src="/js/angular-sortable-view.min.js"></script>
-    <script type="text/javascript" src="/js/charon.min.js"></script>
-    <script type="text/javascript" src="/js/locker.min.js"></script>
+    <script type="text/javascript" src="/js/charon.js"></script>
+    <script type="text/javascript" src="/js/locker.js"></script>
 </head>
 
 <body ng-app="Charon">
@@ -82,7 +82,7 @@
             <div class="col-xs-12 col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
                 <div class="text-center" ng-show="loader">
-                    <img src="/css/loader.svg" width="100%">
+                    <img src="/img/loader.svg" width="100%">
                 </div>
 
                 <div ng-show="!loader">

@@ -12,28 +12,32 @@ Charon.controller('Login', function($scope, $http, $location) {
     $scope.pass = '';
 
     /**
-     * Login Attepmt
+     * Login Attempt
      */
     $scope.login_attempt = function() {
-        var data = {
-            name: $scope.name,
-            pass: $scope.pass,
-            key: sha256($scope.pass),
-        };
 
-        // store the sha256 passphrase for encryption purposes
-        localStorage.setItem('key', data.key);
+        // exchange keys prior to login attempt
+        AES.handshake(function() {
 
-        $scope.error = '';
+            var data = {
+                name: $scope.name,
+                pass: $scope.pass,
+            };
 
-        // for login, encrypt using session id
-        var enc_data = encrypt(data, get_cookie('PHPSESSID'));
+            $scope.error = '';
 
-        $http.post('/login', enc_data).success(function(data) {
-            location.reload();
+            // for login, encrypt using session id
+            data = JSON.stringify(data);
+            data = AES.encrypt(data);
 
-        }).error(function(result, code) {
-            $scope.error = result;
+            $http.post('/login', data).then(function successCallback(result) {
+                // console.log(data);
+                location.reload();
+
+            }, function errorCallback(result, code) {
+                $scope.error = result;
+            });
+
         });
     };
 
