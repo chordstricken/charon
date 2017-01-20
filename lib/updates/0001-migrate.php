@@ -24,7 +24,7 @@ function read_encrypted_datafile($filename) {
         throw new Exception(__METHOD__ . ' Failed to uncompress data', 500);
 
     // decrypt
-    if (!$output = core\Crypt::dec($output))
+    if (!$output = core\openssl\AES::decrypt($output))
         throw new Exception(__METHOD__ . ' Failed to decrypt data', 500);
 
     // Then decode json

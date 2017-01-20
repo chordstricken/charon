@@ -16,10 +16,11 @@ class Router {
      * @var array
      */
     private static $_routes = [
-        'login'  => 'api\\Login',
-        'logout' => 'api\\Logout',
-        'locker' => 'api\\Locker',
-        'user'   => 'api\\User',
+        'handshake' => 'api\\Handshake',
+        'login'     => 'api\\Login',
+        'logout'    => 'api\\Logout',
+        'locker'    => 'api\\Locker',
+        'user'      => 'api\\User',
     ];
 
     /**

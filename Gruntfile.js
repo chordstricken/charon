@@ -24,10 +24,10 @@ module.exports = function(grunt) {
             },
             js: {
                 src: [
-                    'html/js/mcrypt.js',
-                    'html/js/rijndael.js',
-                    'html/js/md5.js',
-                    'html/js/sha256.js',
+                    'html/js/cryptojs/rollups/aes.js',
+                    'html/js/cryptojs/components/mode-ctr-min.js',
+                    'html/js/cryptojs/rollups/md5.js',
+                    'html/js/jsencrypt.js',
                     'html/js/functions.js',
                 ],
                 dest: 'html/js/charon.js',
@@ -57,6 +57,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
 
     grunt.registerTask('default', ['jshint', 'concat', 'uglify']);
-    grunt.registerTask('watch', ['watch']);
+    grunt.registerTask('watch', 'watch');
 
 };

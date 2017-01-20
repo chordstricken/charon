@@ -14,6 +14,8 @@ use \stdClass;
  */
 class Locker extends Base {
 
+//    protected $is_encrypted = false;
+
     /**
      * Reads a locker object
      * /locker/:index_id
@@ -33,7 +35,6 @@ class Locker extends Base {
             $data = models\Locker::findOne(['id' => $index_id]);
         }
 
-        $data = core\Crypt::enc($data, models\User::getKey());
         $this->send($data);
     }
 
@@ -45,17 +46,10 @@ class Locker extends Base {
         if (!$this->data instanceof stdClass)
             throw new Exception('Invalid Request Object', 400);
 
-        // decrypt the request
-        if (!$this->data = core\Crypt::dec($this->data, models\User::getKey()))
-            throw new Exception('Failed to decrypt request.', 500);
-
         $locker = models\Locker::new($this->data)->validate()->save();
 
-        // re-encrypt the result before sending it to the user
-        $this->data = core\Crypt::enc($locker, models\User::getKey());
-
         // send the response
-        $this->send($this->data);
+        $this->send($locker);
     }
 
     /**

@@ -25,7 +25,7 @@ class Locker extends Base {
      */
     public function __construct($params) {
         parent::__construct($params);
-        $this->items = is_scalar($this->items) ? core\Crypt::dec($this->items) : $this->items;
+        $this->items = is_scalar($this->items) ? core\openssl\AES::decrypt($this->items) : $this->items;
     }
 
     /**
@@ -44,7 +44,7 @@ class Locker extends Base {
         if (mb_strlen($this->note) > core\SQLite::STRING_LENGTH_MAX)
             $errors[] = 'Note string is too long.';
 
-        if (mb_strlen(core\Crypt::enc($this->items)) > core\SQLite::STRING_LENGTH_MAX)
+        if (mb_strlen(core\openssl\AES::encrypt($this->items)) > core\SQLite::STRING_LENGTH_MAX)
             $errors[] = 'Items list is too long. Please shorten or create a new Locker.';
 
         if (count($errors))
@@ -58,7 +58,7 @@ class Locker extends Base {
      */
     public function save(): self {
         $items = $this->items;
-        $this->items = core\Crypt::enc($this->items);
+        $this->items = core\openssl\AES::encrypt($this->items);
         parent::save();
         $this->items = $items;
         return $this;

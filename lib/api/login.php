@@ -20,19 +20,13 @@ class Login extends Base {
      * Authenticates the user
      */
     public function post() {
-        $reqUser = $this->data;
-
-        // decrypt
-        if (isset($reqUser->iv))
-            $reqUser = core\Crypt::dec($reqUser, session_id());
 
         // validate params
-        if (empty($reqUser->name)) throw new Exception('Invalid User', 401);
-        if (empty($reqUser->pass)) throw new Exception('Invalid Password', 401);
-        if (empty($reqUser->key))  throw new Exception('Invalid Key', 401);
+        if (empty($this->data->name)) throw new Exception('Invalid User', 401);
+        if (empty($this->data->pass)) throw new Exception('Invalid Password', 401);
 
         // Pull the user list into memory
-        if (!$dbUser = models\User::findOne(['name' => $reqUser->name]))
+        if (!$dbUser = models\User::findOne(['name' => $this->data->name]))
             throw new Exception('Incorrect User', 401);
 
         // check if the password is old and needs rehashing
@@ -41,12 +35,11 @@ class Login extends Base {
             $dbUser->save();
         }
 
-        if (!password_verify($reqUser->pass, $dbUser->passhash)) throw new Exception('Incorrect Password', 401);
+        if (!password_verify($this->data->pass, $dbUser->passhash)) throw new Exception('Incorrect Password', 401);
 
-        $_SESSION['user_id']   = $dbUser->id;
-        $_SESSION['user_key']  = $reqUser->key; // AES encryption key.
+        $_SESSION['user_id'] = $dbUser->id;
 
-        $this->send('Success');
+        $this->send('Success', 200, true);
 
     }
 

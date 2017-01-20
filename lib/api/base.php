@@ -24,14 +24,21 @@ abstract class Base {
     /** @var bool */
     protected $is_json = true;
 
+    /** @var bool */
+    protected $is_encrypted = true;
+
     /**
      * Base constructor.
      */
     public function __construct($path = null, $data = null) {
         $this->path    = $path;
-        $this->data    = $data ?? json_decode(file_get_contents('php://input'));
+        $this->data    = $data ?? $this->getPayload();
         $this->is_json = strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false;
 
+        $this->decryptPayload();
+        $this->decodePayload();
+
+        // check for auth
         if ($this->require_auth && !models\User::me()) {
 
             if (!$this->is_json) {
@@ -42,6 +49,30 @@ abstract class Base {
 
             core\Response::send('Please log in.', 401);
         }
+
+    }
+
+    /**
+     * @return string
+     */
+    public function getPayload() {
+        return file_get_contents('php://input');
+    }
+
+    /**
+     * decrypts the payload data
+     */
+    private function decryptPayload() {
+        if ($this->is_encrypted && $this->data && isset($_SESSION['AESKey']))
+            $this->data = core\openssl\AES::decrypt($this->data, $_SESSION['AESKey']);
+    }
+
+    /**
+     * decodes the payload data
+     */
+    private function decodePayload() {
+        if ($data = json_decode($this->data))
+            $this->data = $data;
     }
 
     /**
@@ -50,9 +81,15 @@ abstract class Base {
      * @param $code
      */
     protected function send($data, $code = 200) {
+
+        if ($this->is_encrypted && isset($_SESSION['AESKey']))
+            $data = core\openssl\AES::encrypt($data, $_SESSION['AESKey']);
+
         $data = is_scalar($data) ? $data : json_encode($data);
         http_response_code($code);
+
         echo $data;
         die();
     }
+
 }

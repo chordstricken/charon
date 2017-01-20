@@ -22,7 +22,7 @@ class User extends Base {
     /**
      * @throws Exception
      */
-    public function validate(): self {
+    public function validate() {
         if (mb_strlen($this->id) > 1024)        throw new Exception('Invalid id');
         if (mb_strlen($this->name) > 1024)      throw new Exception('Invalid name');
         if (mb_strlen($this->passhash) > 1024)  throw new Exception('Invalid passhash');
@@ -55,7 +55,7 @@ class User extends Base {
      * @param $password
      * @return self
      */
-    public function setPasswordHash($password): self {
+    public function setPasswordHash($password) {
         $this->passhash = password_hash($password, PASSWORD_DEFAULT);
         return $this;
     }
