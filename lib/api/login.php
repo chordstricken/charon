@@ -20,6 +20,12 @@ class Login extends Base {
      * Authenticates the user
      */
     public function post() {
+//        $this->is_encrypted = true;
+//        $this->decryptPayload();
+//        core\Debug::info($this->data);
+
+        if (isset($this->data->iv))
+            $this->data = core\openssl\AES::decrypt($this->data, $_SESSION['AESKey']);
 
         // validate params
         if (empty($this->data->name)) throw new Exception('Invalid User', 401);

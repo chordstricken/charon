@@ -87,7 +87,7 @@ var AES = new function() {
                     console.log(result);
 
                     keyObj = {
-                        key: CryptoJS.enc.Base64.parse(result),
+                        key: result,
                         sessionId: get_cookie('PHPSESSID'),
                     };
 
@@ -109,8 +109,11 @@ var AES = new function() {
      * @param plaintext
      */
     this.encrypt = function(plaintext) {
-        console.log('Encrypting', plaintext);
-        var result = CryptoJS.AES.encrypt(plaintext, keyObj.key, {iv: CryptoJS.lib.WordArray.random(16)});
+        if (typeof(plaintext) == 'object')
+            plaintext = json_encode(plaintext);
+
+        var key    = CryptoJS.enc.Base64.parse(keyObj.key);
+        var result = CryptoJS.AES.encrypt(plaintext, key, {iv: CryptoJS.lib.WordArray.random(16)});
 
         return {
             cipher: result.ciphertext.toString(CryptoJS.enc.Base64),
@@ -131,11 +134,12 @@ var AES = new function() {
         if (!encObj.iv || !encObj.cipher)
             return encObj;
 
+        var key          = CryptoJS.enc.Base64.parse(keyObj.key);
         var cipherParams = CryptoJS.lib.CipherParams.create({ciphertext: CryptoJS.enc.Base64.parse(encObj.cipher)});
         var opts         = {iv: CryptoJS.enc.Base64.parse(encObj.iv)};
 
         try {
-            var result = CryptoJS.AES.decrypt(cipherParams, keyObj.key, opts).toString(CryptoJS.enc.Utf8);
+            var result = CryptoJS.AES.decrypt(cipherParams, key, opts).toString(CryptoJS.enc.Utf8);
 
             // decrypting results in double quote (") padding. Remove them.
             if (result[0] == '"' && result.substr(-1) == '"')

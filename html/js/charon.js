@@ -4524,7 +4524,9 @@ var AES = new function() {
      * @param plaintext
      */
     this.encrypt = function(plaintext) {
-        console.log('Encrypting', plaintext);
+        if (typeof(plaintext) == 'object')
+            plaintext = json_encode(plaintext);
+
         var result = CryptoJS.AES.encrypt(plaintext, keyObj.key, {iv: CryptoJS.lib.WordArray.random(16)});
 
         return {

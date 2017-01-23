@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -10,38 +10,40 @@
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <link href="/css/charon.min.css" rel="stylesheet">
     <link href="/css/login.css" rel="stylesheet">
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-<!--    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.min.js"></script>
-    <script>localStorage.setItem('server.publicKey', '<?=base64_encode(core\openssl\RSA::getServerKeyPair()->public)?>');</script>
-    <script src="/js/charon.min.js"></script>
-    <script src="/js/login.min.js"></script>
 </head>
 
-<body ng-app="Charon">
+<!-- App body -->
+<body>
 
-<div class="container" ng-controller="Login">
-    <script id="LoginForm" type="text/x-template">
-        <form class="form-signin" ng-submit="login_attempt()">
-            <div class="alert alert-danger" ng-if="error.length">{{error}}</div>
+    <div id="page-container" class="container">
 
-            <h2 class="form-signin-heading">Please sign in</h2>
+        <!-- Login Form template -->
+        <script type="text/x-template" id="login-form-template">
+            <form class="form-signin" @submit="loginAttempt">
+                <div class="alert alert-danger" v-if="error.length" v-html="error"></div>
 
-            <input type="text" class="form-control" placeholder="John Smith" ng-model="name" tabindex="1" required autofocus>
-            <br />
+                <h2 class="form-signin-heading">Please sign in</h2>
 
-            <input type="password" class="form-control" placeholder="somepass123" ng-model="pass" required>
+                <input type="text" class="form-control" placeholder="John Smith" v-model="name" tabindex="1" required autofocus>
+                <br />
 
-            <br />
-            <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-        </form>
-    </script>
+                <input type="password" class="form-control" placeholder="somepass123" v-model="pass" required>
+                <br />
 
-    <LoginForm />
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+            </form>
+        </script>
+        <login-form></login-form>
 
-    <noscript><h1>Javascript is required to use this application.</noscript>
-</div> <!-- /container -->
+        <noscript><h1>Javascript is required to use this application.</noscript>
 
+    </div> <!-- /container -->
 </body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.js"></script>
+<script>localStorage.setItem('server.publicKey', '<?=base64_encode(core\openssl\RSA::getServerKeyPair()->public)?>');</script>
+<script src="/js/charon.min.js"></script>
+<script src="/js/login.js"></script>
+
 </html>

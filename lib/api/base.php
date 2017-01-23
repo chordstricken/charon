@@ -62,7 +62,7 @@ abstract class Base {
     /**
      * decrypts the payload data
      */
-    private function decryptPayload() {
+    protected function decryptPayload() {
         if ($this->is_encrypted && $this->data && isset($_SESSION['AESKey']))
             $this->data = core\openssl\AES::decrypt($this->data, $_SESSION['AESKey']);
     }
@@ -70,7 +70,7 @@ abstract class Base {
     /**
      * decodes the payload data
      */
-    private function decodePayload() {
+    protected function decodePayload() {
         if ($data = json_decode($this->data))
             $this->data = $data;
     }
