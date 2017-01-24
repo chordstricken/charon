@@ -1,433 +1,370 @@
-/**
- * Create angular App
- */
-var Charon = angular.module('Charon', ['angular-sortable-view']);
+// check location and redirect
+if (location.pathname != '/locker/') location.pathname = '/locker/';
 
+// returns the locker ID from the location hash
 function getLockerId() {
-    return location.hash.replace(/^[\#\!\/]*/g, '');
+    return location.hash.replace(/^[#!\/]*/g, '');
 }
 
-// // check location and redirect
-if (location.pathname != '/locker/') {
-    location.pathname = '/locker/';
-}
-
-// jQuery bootstrap initiations
-$(document).on('mouseover', '[data-toggle=popover]', function() {
-    if (!$(this).data('bs.popover')) {
-        $(this).popover({
-            placement: 'top',
-            delay: {show: 700, hide: 100},
-            trigger: 'hover' ,
-            //container: 'body',
-        });
-        $(this).trigger('mouseover');
+// default Locker Object schema
+function getBlankLocker() {
+    return {
+        id: '',
+        name: '',
+        note: '',
+        items: [getBlankItem()],
     }
-});
+}
+
+// default Item schema
+function getBlankItem() {
+    return {
+        _id: unique_id(), // unique id to prevent sorting collisions
+        icon: 'fa-key',
+        title: '',
+        url: '',
+        user: '',
+        pass: '',
+        note: '',
+    };
+}
 
 /**
- * Main content controller
+ * Main Vue component
  */
-Charon.controller('Home', function($scope, $http, $location, $timeout) {
+var lockerApp = new Vue({
+    el: '#locker-app',
+    data: {
 
-    // display messages
-    $scope.loader       = false;
-    $scope.success      = '';
-    $scope.error        = '';
-    $scope.has_changed  = false;
-    $scope.object_hash  = false;
+        // display messages
+        loader: true,
+        success: '',
+        error: '',
+        objectHash: false,
+        object: getBlankLocker(),
 
-    // icon options
-    $scope.icons = [
-        'fa-key',
-        'fa-terminal',
-        'fa-database',
-        'fa-lock',
-        'fa-rocket',
-        'fa-truck',
+        // icon options
+        icons: [
+            'fa-key',
+            'fa-terminal',
+            'fa-database',
+            'fa-lock',
+            'fa-rocket',
+            'fa-truck',
 
-        'fa-envelope-square',
-        'fa-book',
-        'fa-heartbeat',
-        'fa-certificate',
-        'fa-expeditedssl',
-        'fa-slack',
+            'fa-envelope-square',
+            'fa-book',
+            'fa-heartbeat',
+            'fa-certificate',
+            'fa-expeditedssl',
+            'fa-slack',
 
-        'fa-wordpress',
-        'fa-linux',
-        'fa-apple',
-        'fa-android',
-        'fa-amazon',
-        'fa-windows',
+            'fa-wordpress',
+            'fa-linux',
+            'fa-apple',
+            'fa-android',
+            'fa-amazon',
+            'fa-windows',
 
-        'fa-instagram',
-        'fa-dropbox',
-        'fa-google-plus-square',
-        'fa-facebook-square',
-        'fa-twitter',
-        'fa-yelp',
+            'fa-instagram',
+            'fa-dropbox',
+            'fa-google-plus-square',
+            'fa-facebook-square',
+            'fa-twitter',
+            'fa-yelp',
 
-        'fa-ban',
-    ];
+            'fa-ban',
+        ],
 
-    /**
-     * Timeouts
-     */
-    $scope.timeouts = {};
+        /**
+         * Timeouts
+         */
+        timeouts: {},
 
-    // search query
-    $scope.query = '';
+        // search query
+        query: '',
 
-    /**
-     * Index
-     * @type {Array}
-     */
-    $scope.index = {};
+        /**
+         * Index
+         * @type {Array}
+         */
+        index: {},
+    },
+    created: function() {
+        var self = this;
+        self.loadIndex();
+        self.loadObject();
 
-    /**
-     * Sets the object as a blank object
-     */
-    $scope.reset_object = function() {
-        $scope.object = {
-            id: '',
-            name: '',
-            note: '',
-            items: [],
-        };
-        $scope.add_item();
-        $scope.has_changed = false;
-        $scope.object_hash = md5(json_encode($scope.object));
-    };
+        self.timeouts.loadIndex = setInterval(self.loadIndex, 3000000); // 5 minutes
 
-    /**
-     * clears the messages
-     */
-    $scope.clear_messages = function() {
-        $scope.error = $scope.success = '';
-    };
+        /**
+         * When the user tries to leave the page with unsaved changes, prompt them.
+         */
+        window.addEventListener('beforeunload', function (e) {
+            if (self.hasChanged) {
+                var confirmationMessage = 'It looks like you have been editing something. If you leave before saving, your changes will be lost.';
 
-    /**
-     * Adds a blank item to the items array
-     */
-    $scope.add_item = function() {
-        $scope.object.items.push({
-            _id: unique_id(), // unique id to prevent sorting collisions
-            icon: 'fa-key',
-            title: '',
-            user: '',
-            pass: '',
-            note: '',
-        });
-    };
-
-    /**
-     * Removes a key row from the group
-     * @param key
-     */
-    $scope.remove_item = function(key) {
-        $scope.object.items.splice(key, 1);
-    };
-
-    /**
-     * Function for highlighting an element
-     */
-    $scope.highlight = function($event) {
-        // use setTimeout to circumvent safari bug
-        setTimeout(function() {
-            $($event.target).select();
-        }, 10);
-    };
-
-    /**
-     * Sets the type on an input
-     */
-    $scope.set_mask = function($event, mask) {
-        $event.target.type = type;
-    };
-
-    /**
-     * Loads the index on to the sidebar
-     */
-    $scope.load_index = function() {
-        $http.get('/locker/_index').then(function successCallback(result) {
-            var resultDecrypted = AES.decrypt(result.data);
-            $scope.index = json_decode(AES.decrypt(result.data));
-
-        }, function errorCallback(data, code) {
-            if (code == 401) {
-                location.reload();
-                return;
+                (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+                return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
             }
-
-            $scope.error = data;
-
         });
-    };
+    },
 
-    /**
-     * Saves the object
-     */
-    $scope.save_object = function() {
-        $scope.toggle_loader(true);
-        $scope.clear_messages();
-
-        // encrypt the object before sending it
-        var enc_obj = AES.encrypt(json_encode($scope.object));
-
-        // send or pull the object
-        $http.post('/locker/' + $scope.object.id, enc_obj).then(function successCallback(result) {
-            // Set the data into the object
-            $scope.object = json_decode(AES.decrypt(result.data));
-            console.log('Saved object', $scope.object);
-
-            // set the hash id
-            // location.hash  = '#/' + $scope.object.id;
-
-            $scope.load_index();
-            $scope.toggle_loader(false);
-            $scope.has_changed = false;
-            $scope.object_hash = md5(json_encode($scope.object));
-
-            // set success message
-            $scope.success = 'Successfully saved the object';
-
-        }, function errorCallback(data, code) {
-            if (code == 401) {
-                location.reload();
-                return;
-            }
-
-            $scope.error = data;
-            $scope.toggle_loader(false);
-
-        });
-    };
-
-    /**
-     * Deletes the object
-     */
-    $scope.delete_object = function() {
-        $scope.toggle_loader(true);
-        $scope.clear_messages();
-
-        // send or pull the object
-        $http.delete('/locker/' + $scope.object.id).then(function successCallback(result) {
-            $scope.success = result.data;
-            $scope.reset_object();
-            $scope.load_index();
-            $scope.toggle_loader(false);
-
-        }, function errorCallback(data, code) {
-            if (code == 401) {
-                location.reload();
-                return;
-            }
-
-            $scope.error = data;
-            $scope.toggle_loader(false);
-
-        });
-
-    };
-
-    /**
-     * Loads an object
-     */
-    $scope.load_object = function() {
-        $scope.toggle_loader(true);
-        $scope.clear_messages();
-
-        var lockerId = getLockerId();
-
-        // if we're adding a new group, just
-        if (!lockerId.length || lockerId == '/') {
-            $scope.toggle_loader(false);
-            $scope.reset_object();
-            return;
+    computed: {
+        hasChanged: function() {
+            return this.objectHash !== md5(json_encode(this.object));
         }
+    },
 
-        // send or pull the object
-        $http.get('/locker/' + lockerId).then(function successCallback(data) {
-            var dec_obj = json_decode(AES.decrypt(data));
+    methods: {
 
-            // make sure each object has a unique ID before setting
-            if (dec_obj.items && dec_obj.items.map) {
-                dec_obj.items.map(function(item) {
-                    if (item._id === undefined) {
-                        delete item.$$hashKey;
-                        item._id = unique_id();
+        // clears & resets messages
+        clearMessages: function() {
+            this.error = this.success = '';
+        },
+
+        // Sets the object as a blank object
+        resetObject: function() {
+            this.object      = getBlankLocker();
+            // this.hasChanged = false;
+            this.objectHash  = md5(json_encode(this.object));
+        },
+
+        /// Adds a blank item to the items array
+        addItem: function() {
+            if (!this.object.items) this.object.items = [];
+            this.object.items.push(getBlankItem());
+        },
+
+        // Removes a key row from the group
+        removeItem: function(key) {
+            this.object.items.splice(key, 1);
+        },
+
+        // Function for highlighting an element
+        highlight: function(e) {
+            // use setTimeout to circumvent safari bug
+            setTimeout(function() {
+                $(e.target).select();
+            }, 10);
+        },
+
+        // Loads the index on to the sidebar
+        loadIndex: function() {
+            var self = this;
+            $.get({
+                url: '/locker/_index',
+                success: function(result) {
+                    var decData = AES.decrypt(result);
+                    self.index  = json_decode(decData);
+                },
+                error: function(jqXHR) {
+                    console.log(jqXHR);
+                    self.error = jqXHR.responseText;
+                    if (jqXHR.status === 401)
+                        self.logout();
+                }
+            });
+        },
+
+        // Loads a Locker object from the server
+        loadObject: function() {
+            var self = this;
+            self.toggleLoader(true);
+            self.clearMessages();
+
+            var lockerId = getLockerId();
+
+            // if we're adding a new group, just
+            if (!lockerId.length) {
+                self.toggleLoader(false);
+                self.resetObject();
+                return;
+            }
+
+            // send or pull the object
+            $.ajax({
+                method: 'get',
+                url: '/locker/' + lockerId,
+                success: function(data) {
+                    var decData = AES.decrypt(data);
+                    console.log('lockerData:', decData);
+                    var decObj = json_decode(decData);
+                    console.log('lockerObject:', decObj);
+
+                    // make sure each object has a unique ID before setting
+                    if (decObj.items && decObj.items.map) {
+                        decObj.items.map(function(item) {
+                            if (item._id === undefined) {
+                                delete item.$$hashKey;
+                                item._id = unique_id();
+                            }
+                            item.icon = item.icon && item.icon.length ? item.icon : 'fa-key';
+                        });
                     }
-                    item.icon = item.icon && item.icon.length ? item.icon : 'fa-key';
-                });
+
+                    self.object      = decObj;
+                    self.objectHash  = md5(json_encode(self.object));
+                    // self.hasChanged = false;
+                    self.toggleLoader(false);
+
+                },
+                error: function(jqXHR) {
+                    if (code == 401) {
+                        location.reload();
+                        return;
+                    }
+                    self.error = jqXHR.responseText;
+                    self.toggleLoader(false);
+                    self.resetObject();
+                }
+            });
+
+        },
+
+        // Saves the Locker object
+        saveObject: function() {
+            var self = this;
+            self.toggleLoader(true);
+            self.clearMessages();
+
+            var ajaxData = json_encode(AES.encrypt(self.object));
+
+            $.ajax({
+                method: 'post',
+                url: '/locker/' + self.object.id,
+                data: ajaxData,
+                success: function(result) {
+                    // Set the data into the object
+                    self.object = json_decode(AES.decrypt(result));
+                    console.log(self.object);
+
+                    // set the hash id
+                    location.hash = '#/' + self.object.id;
+
+                    self.loadIndex();
+                    self.toggleLoader(false);
+                    // self.hasChanged = false;
+                    self.objectHash  = md5(json_encode(self.object));
+
+                    // set success message
+                    self.success = 'Successfully saved the object';
+
+                },
+                error: function(jqXHR) {
+                    if (jqXHR.status == 401) {
+                        location.reload();
+                        return;
+                    }
+
+                    self.error = jqXHR.responseText;
+                    self.toggleLoader(false);
+                }
+
+            });
+        },
+
+        // Permanently deletes the entire Locker object
+        deleteObject: function() {
+            var self = this;
+            self.toggleLoader(true);
+            self.clearMessages();
+
+            // send or pull the object
+            $.ajax({
+                method: 'delete',
+                url: '/locker/' + self.object.id,
+                success: function(result) {
+                    self.success = result;
+                    self.resetObject();
+                    self.loadIndex();
+                    self.toggleLoader(false);
+                },
+                error: function(jqXHR) {
+                    if (jqXHR.status == 401) {
+                        location.reload();
+                        return;
+                    }
+
+                    self.error = data;
+                    self.toggleLoader(false);
+                }
+
+            });
+
+        },
+
+        // Turns the loader on after a slight delay Or turns it off and clears the timeout
+        toggleLoader: function(toggle) {
+            var self = this;
+            if (toggle) {
+                self.timeouts.loader = setTimeout(function() {
+                    self.loader = true;
+                }, 200);
+
+            } else {
+                self.loader = false;
+                clearTimeout(self.timeouts.loader);
+                window.scrollTo(0, 0);
             }
+        },
 
-            $scope.object      = dec_obj;
-            $scope.object_hash = md5(json_encode($scope.object));
-            $scope.has_changed = false;
-            $scope.toggle_loader(false);
-
-        }, function errorCallback(data, code) {
-            if (code == 401) {
+        // Logs out
+        logout: function() {
+            $.get('/logout', function() {
+                localStorage.clear();
                 location.reload();
-                return;
+            });
+        },
+
+        // generates a random password for the given item index
+        generatePassword: function(index) {
+            var self = this;
+            if (!self.object.items || !self.object.items[index]) return;
+
+            var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*_-?",
+                pass  = "";
+            for (var i = 0; i < 16; i++) {
+                var key = Math.floor(Math.random() * chars.length);
+                pass += chars[key];
             }
-            $scope.error = data;
-            $scope.toggle_loader(false);
-            $scope.reset_object();
+            self.object.items[index].pass = pass;
+        },
 
-        });
 
-    };
+        // Filters the index set according to the query
+        search: function(id) {
 
-    /**
-     * Turns the loader on after a slight delay
-     * Or turns it off and clears the timeout
-     * @param bool toggle
-     */
-    $scope.toggle_loader = function(toggle) {
-        if (toggle) {
-            $scope.timeouts.loader = $timeout(function() {
-                $scope.loader = true;
-            }, 200);
+            // only search if scope query is more than 3
+            if (this.query.length < 3) return true;
 
-        } else {
-            $scope.loader = false;
-            $timeout.cancel($scope.timeouts.loader);
-            window.scrollTo(0, 0);
-        }
-    };
+            var regexp = new RegExp(this.query.replace(' ', '.*'), 'i');
 
-    $scope.logout = function() {
-        $http.get('/logout').then(function() {
-            location.reload();
-        }, function() {
-            location.reload();
-        });
-    };
+            // first check the group name for a match
+            if (this.index[id].name.match(regexp) !== null) return true;
 
-    /**
-     * Regenerates a password
-     * @param Number index
-     */
-    $scope.generate_password = function(index) {
-        var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*_-?",
-            pass  = "";
-        for (var i = 0; i < 16; i++) {
-            var key = Math.floor(Math.random() * chars.length);
-            pass += chars[key];
-        }
-
-        $scope.object.items[index].pass = pass;
-    };
-
-    /**
-     * Filters the index set according to the query
-     * @param String id
-     * @return Boolean
-     */
-    $scope.search = function(id) {
-
-        // only search if scope query is more than 3
-        if ($scope.query.length < 3) {
-            return true;
-        }
-
-        var regexp = new RegExp($scope.query.replace(' ', '.*'), 'i');
-
-        // first check the group name for a match
-        if ($scope.index[id].name.match(regexp) !== null) {
-            return true;
-        }
-
-        // if the group name doesn't match, check all meta values
-        if ($scope.index[id].meta !== undefined) {
-            for (var i in $scope.index[id].meta) {
-                if ($scope.index[id].meta[i].match && $scope.index[id].meta[i].match(regexp) !== null) {
-                    return true;
+            // if the group name doesn't match, check all meta values
+            if (this.index[id].meta !== undefined) {
+                for (var i in this.index[id].meta) {
+                    if (this.index[id].meta[i].match && this.index[id].meta[i].match(regexp) !== null) {
+                        return true;
+                    }
                 }
             }
-        }
 
-        return false;
-    };
-
-    /**
-     * Returns
-     * @param value
-     * @returns {Array|{index: number, input: string}}
-     */
-    $scope.field_match = function(value) {
-        if (value === undefined || !$scope.query.length)
             return false;
+        },
 
-        var regexp = new RegExp($scope.query.replace(' ', '.*'), 'i');
-        return value.match(regexp) !== null;
-    };
+        // Determines whether the field matches the query string
+        fieldMatch: function(value) {
+            if (value === undefined || !this.query.length)
+                return false;
 
-    /**
-     * Load all page-load items. Used for timeout function
-     */
-    $scope.load_timeout = function() {
-        $scope.load_index();
-        // 5 minutes
-        $scope.timeouts.index = $timeout($scope.load_timeout, 3600000);
-    };
+            var regexp = new RegExp(this.query.replace(' ', '.*'), 'i');
+            return value.match(regexp) !== null;
+        },
 
-    /* Execute controller functions */
-    $scope.load_timeout();
-
-    // bind hash changes to object loading
-    $scope.$on('$locationChangeStart', function(e) {
-        if ($scope.has_changed) {
-            if (!window.confirm('It looks like you have been editing something. Would you like to leave anyway?')) {
-                e.preventDefault();
-
-                // blur the element
-                if ("activeElement" in document)
-                    document.activeElement.blur();
-            }
-        }
-    });
-
-    // This is called on page load
-    $scope.$on('$locationChangeSuccess', function() {
-        $scope.load_object();
-    });
-
-    // When the object changes, display the notification
-    $scope.$watch('object', function() {
-        if ($scope.object_hash) {
-            var hash = md5(json_encode($scope.object));
-            $scope.has_changed = $scope.object_hash !== hash;
-        }
-    }, true);
-
-    // make sure session is intact
-    if (!get_cookie('PHPSESSID')) {
-        $scope.logout();
     }
-
-    /**
-     * When the user tries to leave the page with unsaved changes, prompt them.
-     */
-    window.addEventListener('beforeunload', function (e) {
-        if ($scope.has_changed) {
-            var confirmationMessage = 'It looks like you have been editing something. If you leave before saving, your changes will be lost.';
-
-            (e || window.event).returnValue = confirmationMessage; //Gecko + IE
-            return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
-        }
-    });
-
-
-});
-
-$(document).on('focus', '.password-mask', function() {
-    $(this).attr('type', 'text');
-});
-
-$(document).on('blur', '.password-mask', function() {
-    $(this).attr('type', 'password');
 });
 
 /**
@@ -460,4 +397,11 @@ $(document).on('keyup', '#search', function(e) {
     if (e.keyCode === 13) {
         $('.nav-sidebar a[href]').eq(1).trigger('click');
     }
+});
+
+/**
+ *
+ */
+$(window).on('hashchange', function() {
+    lockerApp.loadObject();
 });

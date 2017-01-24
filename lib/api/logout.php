@@ -9,10 +9,13 @@ namespace api;
  */
 class Logout extends Base {
 
+    protected $require_auth = false;
+    protected $is_encrypted = false;
+
     public function get() {
         unset($_SESSION);
         session_destroy();
-        $this->send('Suggessfully logged out.', 401);
+        $this->send('Suggessfully logged out.');
     }
 
 }

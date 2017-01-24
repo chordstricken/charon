@@ -33,7 +33,7 @@ abstract class Base {
     public function __construct($path = null, $data = null) {
         $this->path    = $path;
         $this->data    = $data ?? $this->getPayload();
-        $this->is_json = strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false;
+        $this->is_json = $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' ?? strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false;
 
         $this->decryptPayload();
         $this->decodePayload();

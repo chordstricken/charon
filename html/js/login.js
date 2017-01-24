@@ -8,9 +8,6 @@ Vue.component('login-form', {
             pass: '',
         }
     },
-    created: function() {
-        console.log('loaded template');
-    },
     methods: {
         loginAttempt: function (e) {
             e.preventDefault();

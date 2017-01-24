@@ -70,38 +70,36 @@ var _uid = new Date().getTime();
  */
 var AES = new function() {
 
-    var keyObj = json_decode(localStorage.getItem('encryptionKeyObj'));
+    var keyRaw = localStorage.getItem('encryptionKey'),
+        keyObj;
+
+    function getKey() {
+        if (keyRaw && !keyObj) keyObj = CryptoJS.enc.Base64.parse(keyRaw);
+        return keyObj;
+    }
 
     /**
      * Uses RSA to exchange private encryption keys with the server
      * @param success
      */
     this.handshake = function(success) {
-        if (keyObj && keyObj.key &&  keyObj.sessionId && keyObj.sessionId == get_cookie('PHPSESSID')) {
-            if (typeof(success) === 'function') success();
+        $.post('/handshake', RSA.encryptForServer(RSA.clientPublicKey), function(result) {
+            try {
+                result = RSA.decryptFromServer(result); // AES key
+                console.log(result);
 
-        } else {
-            $.post('/handshake', RSA.encryptForServer(RSA.clientPublicKey), function(result) {
-                try {
-                    result = RSA.decryptFromServer(result); // AES key
-                    console.log(result);
+                keyRaw = result;
 
-                    keyObj = {
-                        key: result,
-                        sessionId: get_cookie('PHPSESSID'),
-                    };
+                // store the session id along with the key to ensure that it matches with the server
+                localStorage.setItem('encryptionKey', keyRaw);
 
-                    // store the session id along with the key to ensure that it matches with the server
-                    localStorage.setItem('encryptionKeyObj', json_encode(keyObj));
+                if (typeof(success) === 'function') success();
 
-                    if (typeof(success) === 'function') success();
-
-                }
-                catch (e) {
-                    console.log('Error:', e);
-                }
-            });
-        }
+            }
+            catch (e) {
+                console.log('Error:', e);
+            }
+        });
     };
 
     /**
@@ -112,8 +110,7 @@ var AES = new function() {
         if (typeof(plaintext) == 'object')
             plaintext = json_encode(plaintext);
 
-        var key    = CryptoJS.enc.Base64.parse(keyObj.key);
-        var result = CryptoJS.AES.encrypt(plaintext, key, {iv: CryptoJS.lib.WordArray.random(16)});
+        var result = CryptoJS.AES.encrypt(plaintext, getKey(), {iv: CryptoJS.lib.WordArray.random(16)});
 
         return {
             cipher: result.ciphertext.toString(CryptoJS.enc.Base64),
@@ -134,12 +131,11 @@ var AES = new function() {
         if (!encObj.iv || !encObj.cipher)
             return encObj;
 
-        var key          = CryptoJS.enc.Base64.parse(keyObj.key);
         var cipherParams = CryptoJS.lib.CipherParams.create({ciphertext: CryptoJS.enc.Base64.parse(encObj.cipher)});
         var opts         = {iv: CryptoJS.enc.Base64.parse(encObj.iv)};
 
         try {
-            var result = CryptoJS.AES.decrypt(cipherParams, key, opts).toString(CryptoJS.enc.Utf8);
+            var result = CryptoJS.AES.decrypt(cipherParams, getKey(), opts).toString(CryptoJS.enc.Utf8);
 
             // decrypting results in double quote (") padding. Remove them.
             if (result[0] == '"' && result.substr(-1) == '"')
@@ -199,3 +195,30 @@ var RSA = new function() {
     };
 
 };
+
+
+
+//
+// jQuery events go here
+//
+
+// jQuery bootstrap initiations
+$(document).on('mouseover', '[data-toggle=popover]', function() {
+    if (!$(this).data('bs.popover')) {
+        $(this).popover({
+            placement: 'top',
+            delay: {show: 700, hide: 100},
+            trigger: 'hover' ,
+            //container: 'body',
+        });
+        $(this).trigger('mouseover');
+    }
+});
+
+$(document).on('focus', '.password-mask', function() {
+    $(this).attr('type', 'text');
+});
+
+$(document).on('blur', '.password-mask', function() {
+    $(this).attr('type', 'password');
+});

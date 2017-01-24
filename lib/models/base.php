@@ -44,10 +44,10 @@ abstract class Base {
 
         try {
 
-            if (!isset($id_value)) {
+            if (empty($id_value)) {
                 // INSERT
                 // generate a new unique ID
-                while (!isset($this->{static::ID})) {
+                while (empty($this->{static::ID})) {
                     $id_value = static::generateId();
                     // barbaric collision handling
                     if ($db->querySingle("SELECT COUNT(*) FROM $table WHERE $id_field = '" . $db->escapeString($id_value) . "'") == 0)
@@ -87,7 +87,7 @@ abstract class Base {
      * Deletes this object from the database
      * @return self
      */
-    public function delete(): self {
+    public function delete() {
         $db     = core\SQLite::initWrite();
         $table  = static::TABLE;
         $where  = $db->prepare_and_statement([static::ID => $this->{static::ID}]);
