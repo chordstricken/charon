@@ -84,11 +84,11 @@
 
                             <div class="alert alert-success" v-if="success.length">
                                 <button type="button" class="close" @click="clearMessages">&times;</button>
-                                <span v-html="success"></span>
+                                <span v-text="success"></span>
                             </div>
                             <div class="alert alert-danger" v-if="error.length">
                                 <button type="button" class="close" @click="clearMessages">&times;</button>
-                                <span v-html="error"></span>
+                                <span v-text="error"></span>
                             </div>
 
                             <h1 class="page-header">
@@ -238,9 +238,8 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<!--<script src="/js/angular-sortable-view.min.js"></script>-->
-<script type="text/javascript" src="/js/charon.min.js"></script>
-<script type="text/javascript" src="/js/locker.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="/js/charon.min.js"></script>
+<script src="/js/locker.js"></script>
 
 </html>
