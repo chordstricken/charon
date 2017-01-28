@@ -20,9 +20,9 @@ module.exports = function(grunt) {
                     'bower_components/bootstrap/dist/css/bootstrap.css',
                     'bower_components/font-awesome/css/font-awesome.css',
                     'html/css/bootstrap-flatly.min.css',
-                    'html/css/build.css',
+                    'html/css/main.css',
                 ],
-                dest: 'html/css/build.min.css',
+                dest: 'html/css/build.css',
             },
             js: {
                 src: [

@@ -137,7 +137,7 @@ a, a:hover {
     cursor: pointer;
 }
 
-[sv-handle] {
+.sort-handle {
     cursor: move;
 }
 

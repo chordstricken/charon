@@ -8,7 +8,7 @@
 
     <title><?=APP_NAME?> - Password Locker</title>
 
-    <link href="/css/build.min.css" rel="stylesheet">
+    <link href="/css/build.css" rel="stylesheet">
 </head>
 
 <body>
@@ -116,13 +116,13 @@
                             </div>
                             <br />
 
-                            <draggable :list="object.items">
+                            <draggable :list="object.items" :options="{handle:'.sort-handle'}">
 
                                 <div class="row clearfix slide-50" v-if="object.items.length" v-for="(item, key) in object.items">
 
                                     <div class="col-sm-3 col-xs-5">
                                         <div class="input-group">
-                                            <div class="input-group-addon hidden-xs" sv-handle>
+                                            <div class="input-group-addon hidden-xs sort-handle">
                                                 <span class="fa fa-ellipsis-v"></span>
                                             </div>
 

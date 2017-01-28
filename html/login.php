@@ -8,7 +8,7 @@
 
     <title><?=APP_NAME?> - Login</title>
 
-    <link href="/css/build.min.css" rel="stylesheet">
+    <link href="/css/build.css" rel="stylesheet">
     <link href="/css/login.css" rel="stylesheet">
 </head>
 
