@@ -17,20 +17,25 @@ module.exports = function(grunt) {
             },
             css: {
                 src: [
+                    'bower_components/bootstrap/dist/css/bootstrap.css',
+                    'bower_components/font-awesome/css/font-awesome.css',
                     'html/css/bootstrap-flatly.min.css',
-                    'html/css/charon.css',
+                    'html/css/build.css',
                 ],
-                dest: 'html/css/charon.min.css',
+                dest: 'html/css/build.min.css',
             },
             js: {
                 src: [
+                    'bower_components/jquery/dist/jquery.js',
+                    'bower_components/vue/dist/vue.js',
+                    'bower_components/bootstrap/dist/js/bootstrap.js',
                     'html/js/cryptojs/rollups/aes.js',
                     'html/js/cryptojs/components/mode-ctr-min.js',
                     'html/js/cryptojs/rollups/md5.js',
                     'html/js/jsencrypt.js',
                     'html/js/functions.js',
                 ],
-                dest: 'html/js/charon.js',
+                dest: 'html/js/build.js',
             },
         },
         uglify: {
@@ -39,11 +44,18 @@ module.exports = function(grunt) {
             },
             dist: {
                 files: {
-                    'html/js/charon.min.js': 'html/js/charon.js',
+                    'html/js/build.min.js': 'html/js/build.js',
                     'html/js/locker.min.js': 'html/js/locker.js',
                     'html/js/login.min.js': 'html/js/login.js',
                 }
             }
+        },
+        copy: {
+            fonts: {
+                expand: true,
+                src: ['bower_components/font-awesome/fonts/*'],
+                dest: 'html/fonts/',
+            },
         },
         watch: {
             files: ['<%= jshint.files %>', '<%= sass.dist.files %>'],
@@ -56,7 +68,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-concat');
 
-    grunt.registerTask('default', ['jshint', 'concat', 'uglify']);
+    grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'copy']);
     grunt.registerTask('watch', 'watch');
 
 };

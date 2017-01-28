@@ -1,0 +1,22 @@
+{
+  "name": "charon",
+  "description": "Business grade password management tool. Built in PHP 5.4+",
+  "main": "Gruntfile.js",
+  "authors": [
+    "Jason <jason@invexi.com>"
+  ],
+  "license": "ISC",
+  "homepage": "https://github.com/chordstricken/charon",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^3.1.1",
+    "vue": "^2.1.10",
+    "bootstrap": "^3.3.7"
+  }
+}
