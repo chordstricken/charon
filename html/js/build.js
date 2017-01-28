@@ -26896,6 +26896,13 @@ function unique_id() {
 }
 var _uid = new Date().getTime();
 
+// Logs out
+function logout() {
+    $.get('/logout', function() {
+        localStorage.clear();
+        location.reload();
+    });
+}
 
 /**
  * AES class for encrypting and decrypting data.
@@ -27055,4 +27062,18 @@ $(document).on('focus', '.password-mask', function() {
 
 $(document).on('blur', '.password-mask', function() {
     $(this).attr('type', 'password');
+});
+
+Vue.component('nav-bar', {
+    template: '#tmpl-nav-bar',
+    props: {
+
+    },
+    data: function() {
+        return {}
+    },
+    computed: {},
+    methods: {
+        logout: window.logout,
+    }
 });

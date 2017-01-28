@@ -20,33 +20,9 @@
 
         <div id="locker-app">
 
-            <nav class="navbar navbar-default navbar-fixed-top">
-                <div class="container-fluid">
-                    <div class="navbar-header">
-                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar, #sidebar" aria-expanded="false" aria-controls="navbar">
-                            <span class="sr-only">Toggle navigation</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </button>
-                        <a class="navbar-brand" href="#/" tabindex="-1"><?=APP_NAME?></a>
-                    </div>
-
-                    <div id="navbar" class="navbar-collapse collapse">
-                        <ul class="nav navbar-nav navbar-right hidden-xs">
-                            <li><a class="btn btn-link" @click="logout" tabindex="-1">Logout</a></li>
-                        </ul>
-                        <div class="navbar-form navbar-right hidden-xs" style="margin-right:100px;" v-if="hasChanged">
-                            <span class="btn btn-success" @click="saveObject">Save Pending Changes</span>
-                        </div>
-                        <div class="navbar-form navbar-left" style="position:relative;">
-                            <input id="search" type="search" class="form-control" placeholder="Search" v-model="query" autofocus style="padding-right:2em;">
-                            <span class="search-clear" @click="query = ''" v-show="query.length !== 0"><i class="fa fa-times-circle"></i></span>
-                        </div>
-                    </div>
-
-                </div>
-            </nav>
+            <nav-bar>
+                <span class="btn btn-success" v-if="hasChanged" @click="saveObject">Save Pending Changes</span>
+            </nav-bar>
 
             <div class="container-fluid">
                 <div class="row">
@@ -55,14 +31,14 @@
                         <div class="hidden-sm hidden-md hidden-lg" style="height: 120px;"></div>
 
                         <ul class="nav nav-sidebar">
+                            <li>
+                                <input id="search" type="search" class="form-control sidebar-search" placeholder="Search" v-model="query" autofocus style="padding-right:2em;">
+                                <span class="search-clear" @click="query = ''" v-show="query.length !== 0"><i class="fa fa-times-circle"></i></span>
+                            </li>
                             <li :class="{active: !object.id}">
                                 <a href="#/" tabindex="-1"><span class="fa fa-plus"></span> Add New Locker</a>
                             </li>
-                        </ul>
-
-                        <hr />
-
-                        <ul class="nav nav-sidebar">
+                            <hr />
                             <li v-for="(indexItem, key) in index" :class="{active: indexItem.id == object.id}" v-if="query.length === 0 || search(key)">
                                 <a :href="'#/' + indexItem.id" tabindex="-1"><i class="fa fa-book"></i> <span v-text="indexItem.name"></span></a>
                             </li>
@@ -236,6 +212,7 @@
     </div>
 </body>
 
+<script type="text/x-template" id="tmpl-nav-bar"><?php include(ROOT . '/html/templates/nav-bar.html'); ?></script>
 <script src="/js/build.js"></script>
 <script src="/js/locker.js"></script>
 

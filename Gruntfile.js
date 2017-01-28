@@ -33,7 +33,6 @@ module.exports = function(grunt) {
                     'bower_components/vue/dist/vue.js',
                     'bower_components/Sortable/Sortable.js',
                     'bower_components/vue.draggable/dist/vuedraggable.min.js',
-                    // 'bower_components/vue-sortable/vue-sortable.js',
 
                     // bootstrap & addons
                     'bower_components/bootstrap/dist/js/bootstrap.js',
@@ -44,6 +43,7 @@ module.exports = function(grunt) {
                     'html/js/cryptojs/rollups/md5.js',
                     'html/js/jsencrypt.js',
                     'html/js/functions.js',
+                    'html/js/vue-navbar.js',
                 ],
                 dest: 'html/js/build.js',
             },

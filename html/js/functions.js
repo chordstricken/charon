@@ -62,6 +62,13 @@ function unique_id() {
 }
 var _uid = new Date().getTime();
 
+// Logs out
+function logout() {
+    $.get('/logout', function() {
+        localStorage.clear();
+        location.reload();
+    });
+}
 
 /**
  * AES class for encrypting and decrypting data.

@@ -96,18 +96,6 @@ var lockerApp = new Vue({
         self.loadObject();
 
         self.timeouts.loadIndex = setInterval(self.loadIndex, 3000000); // 5 minutes
-
-        /**
-         * When the user tries to leave the page with unsaved changes, prompt them.
-         */
-        window.addEventListener('beforeunload', function (e) {
-            if (self.hasChanged) {
-                var confirmationMessage = 'It looks like you have been editing something. If you leave before saving, your changes will be lost.';
-
-                (e || window.event).returnValue = confirmationMessage; //Gecko + IE
-                return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
-            }
-        });
     },
 
     computed: {
@@ -166,7 +154,7 @@ var lockerApp = new Vue({
                     console.log(jqXHR);
                     self.error = jqXHR.responseText;
                     if (jqXHR.status === 401)
-                        self.logout();
+                        window.logout();
                 }
             });
         },
@@ -308,14 +296,6 @@ var lockerApp = new Vue({
                 clearTimeout(self.timeouts.loader);
                 window.scrollTo(0, 0);
             }
-        },
-
-        // Logs out
-        logout: function() {
-            $.get('/logout', function() {
-                localStorage.clear();
-                location.reload();
-            });
         },
 
         // generates a random password for the given item index

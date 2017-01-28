@@ -9168,6 +9168,10 @@ body {
     color: #fff;
     background-color: #428bca;
 }
+.nav-sidebar .sidebar-search {
+    border: 0;
+    border-radius: 0;
+}
 
 
 /*
