@@ -23,7 +23,7 @@ class Locker extends Base {
      * Locker constructor.
      * @param array $params
      */
-    public function __construct($params) {
+    public function __construct($params = []) {
         parent::__construct($params);
         $this->items = is_scalar($this->items) ? core\openssl\AES::decrypt($this->items) : $this->items;
     }
