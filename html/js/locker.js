@@ -141,6 +141,10 @@ var lockerApp = new Vue({
             this.object.items.splice(key, 1);
         },
 
+        sortItemUpdate: function(event) {
+            this.object.items.splice(event.newIndex, 0, this.object.items.splice(event.oldIndex, 1)[0])
+        },
+
         // Function for highlighting an element
         highlight: function(e) {
             // use setTimeout to circumvent safari bug
@@ -188,9 +192,7 @@ var lockerApp = new Vue({
                 url: '/locker/' + lockerId,
                 success: function(data) {
                     var decData = AES.decrypt(data);
-                    console.log('lockerData:', decData);
                     var decObj = json_decode(decData);
-                    console.log('lockerObject:', decObj);
 
                     // make sure each object has a unique ID before setting
                     if (decObj.items && decObj.items.map) {
@@ -237,7 +239,6 @@ var lockerApp = new Vue({
                 success: function(result) {
                     // Set the data into the object
                     self.object = json_decode(AES.decrypt(result));
-                    console.log(self.object);
 
                     // set the hash id
                     location.hash = '#/' + self.object.id;

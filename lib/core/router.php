@@ -6,7 +6,7 @@ use \Exception;
 
 /**
  * Base router class
- * @author Jason Wright <jason.dee.wright@gmail.com>
+ * @author Jason Wright <jason@silvermast.io>
  * @since 1/2/17
  * @package charon
  */

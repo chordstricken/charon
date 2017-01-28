@@ -5,7 +5,7 @@ use \Exception;
 
 /**
  *
- * @author Jason Wright <jason.dee.wright@gmail.com>
+ * @author Jason Wright <jason@silvermast.io>
  * @since 1/4/17
  * @package charon
  */

@@ -116,7 +116,7 @@
                             </div>
                             <br />
 
-                            <div sv-root sv-part="object.items">
+                            <draggable :list="object.items">
 
                                 <div class="row clearfix slide-50" v-if="object.items.length" v-for="(item, key) in object.items">
 
@@ -169,7 +169,7 @@
 
                                 </div>
 
-                            </div>
+                            </draggable>
 
                             <div class="row">
                                 <div class="col-xs-12">
@@ -236,7 +236,7 @@
     </div>
 </body>
 
-<script src="/js/build.min.js"></script>
+<script src="/js/build.js"></script>
 <script src="/js/locker.js"></script>
 
 </html>

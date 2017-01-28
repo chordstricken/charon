@@ -3,7 +3,7 @@ namespace core;
 
 /**
  * Request class responsible for pulling POST data and sending a response
- * @author Jason Wright <jason.dee.wright@gmail.com>
+ * @author Jason Wright <jason@silvermast.io>
  * @since 3/7/15
  * @package charon
  */

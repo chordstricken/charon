@@ -8,7 +8,7 @@ use core\openssl\AES;
 
 /**
  * Handles a RSA-encrypted AES key exchange
- * @author Jason Wright <jason.dee.wright@gmail.com>
+ * @author Jason Wright <jason@silvermast.io>
  * @since 1/2/17
  * @package charon
  */

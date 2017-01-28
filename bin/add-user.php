@@ -2,7 +2,7 @@
 <?php
 /**
  * Creates a User
- * @author Jason Wright <jason.dee.wright@gmail.com>
+ * @author Jason Wright <jason@silvermast.io>
  * @since 2/27/15
  * @package charon
  */

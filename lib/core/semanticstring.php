@@ -3,7 +3,7 @@ namespace core;
 
 /**
  * Generates semantic strings based on the 1st chapter of the book 1984
- * @author Jason Wright <jason.dee.wright@gmail.com>
+ * @author Jason Wright <jason@silvermast.io>
  * @since 1/28/17
  * @package charon
  */

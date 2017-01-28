@@ -1,7 +1,7 @@
 <?php
 /**
  * Charon Core Include
- * @author Jason Wright <jason.dee.wright@gmail.com>
+ * @author Jason Wright <jason@silvermast.io>
  * @since Feb 18, 2015
  * @copyright 2015 Jason Wright
  */

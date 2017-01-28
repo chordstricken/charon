@@ -1,7 +1,7 @@
 <?php
 namespace test\core\openssl;
 /**
- * @author Jason Wright <jason.dee.wright@gmail.com>
+ * @author Jason Wright <jason@silvermast.io>
  * @since 1/11/17
  * @package charon
  */

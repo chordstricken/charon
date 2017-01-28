@@ -2,7 +2,7 @@
 namespace core;
 /**
  * Debug class responsible for logging items in /log
- * @author Jason Wright <jason.dee.wright@gmail.com>
+ * @author Jason Wright <jason@silvermast.io>
  * @since 2/18/15
  * @package charon
  */

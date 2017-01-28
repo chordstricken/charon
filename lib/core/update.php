@@ -5,7 +5,7 @@ use \Exception;
 
 /**
  * Rudimentary app version controller
- * @author Jason Wright <jason.dee.wright@gmail.com>
+ * @author Jason Wright <jason@silvermast.io>
  * @since 1/9/17
  * @package charon
  */

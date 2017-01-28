@@ -5,7 +5,7 @@ use \Exception;
 
 /**
  * Index class responsible storing a list of all items
- * @author Jason Wright <jason.dee.wright@gmail.com>
+ * @author Jason Wright <jason@silvermast.io>
  * @since 2/18/15
  * @package charon
  */

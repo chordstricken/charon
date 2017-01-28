@@ -8,7 +8,7 @@ use \stdClass;
 
 /**
  *
- * @author Jason Wright <jason.dee.wright@gmail.com>
+ * @author Jason Wright <jason@silvermast.io>
  * @since 1/3/17
  * @package charon
  */

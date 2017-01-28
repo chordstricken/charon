@@ -2,7 +2,7 @@
 <?php
 /**
  * Removes a User
- * @author Jason Wright <jason.dee.wright@gmail.com>
+ * @author Jason Wright <jason@silvermast.io>
  * @since 3/8/2015
  * @package charon
  */

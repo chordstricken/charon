@@ -26,9 +26,19 @@ module.exports = function(grunt) {
             },
             js: {
                 src: [
+                    // jquery & addons
                     'bower_components/jquery/dist/jquery.js',
+
+                    // vuejs & addons
                     'bower_components/vue/dist/vue.js',
+                    'bower_components/Sortable/Sortable.js',
+                    'bower_components/vue.draggable/dist/vuedraggable.min.js',
+                    // 'bower_components/vue-sortable/vue-sortable.js',
+
+                    // bootstrap & addons
                     'bower_components/bootstrap/dist/js/bootstrap.js',
+
+                    // encryption & utils
                     'html/js/cryptojs/rollups/aes.js',
                     'html/js/cryptojs/components/mode-ctr-min.js',
                     'html/js/cryptojs/rollups/md5.js',

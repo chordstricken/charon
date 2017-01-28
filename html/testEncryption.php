@@ -1,7 +1,7 @@
 <?php
 /**
  * Tests the encryption method in PHP and JS
- * @author Jason Wright <jason.dee.wright@gmail.com>
+ * @author Jason Wright <jason@silvermast.io>
  * @since 1/19/17
  * @package charon
  */
