@@ -33,7 +33,7 @@ abstract class Base {
     public function __construct($path = null, $data = null) {
         $this->path    = $path;
         $this->data    = $data ?? $this->getPayload();
-        $this->is_json = $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' ?? strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false;
+        $this->is_json = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' ?? strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false;
 
         $this->decryptPayload();
         $this->decodePayload();
@@ -71,7 +71,7 @@ abstract class Base {
      * decodes the payload data
      */
     protected function decodePayload() {
-        if ($data = json_decode($this->data))
+        if (is_string($this->data) && $data = json_decode($this->data))
             $this->data = $data;
     }
 
@@ -80,7 +80,7 @@ abstract class Base {
      * @param $response
      * @param $code
      */
-    protected function send($data, $code = 200) {
+    protected function send($data = null, $code = 200) {
 
         if ($this->is_encrypted && isset($_SESSION['AESKey']))
             $data = core\openssl\AES::encrypt($data, $_SESSION['AESKey']);

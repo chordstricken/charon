@@ -36,11 +36,11 @@
                                 <span class="search-clear" @click="query = ''" v-show="query.length !== 0"><i class="fa fa-times-circle"></i></span>
                             </li>
                             <li :class="{active: !object.id}">
-                                <a href="#/" tabindex="-1"><span class="fa fa-plus"></span> Add New Locker</a>
+                                <a class="index-anchor" href="#/" tabindex="-1"><span class="fa fa-plus"></span> Add New Locker</a>
                             </li>
                             <hr />
                             <li v-for="(indexItem, key) in index" :class="{active: indexItem.id == object.id}" v-if="query.length === 0 || search(key)">
-                                <a :href="'#/' + indexItem.id" tabindex="-1"><i class="fa fa-book"></i> <span v-text="indexItem.name"></span></a>
+                                <a class="index-anchor" :href="'#/' + indexItem.id" tabindex="-1"><i class="fa fa-book"></i> <span v-text="indexItem.name"></span></a>
                             </li>
                         </ul>
 
@@ -68,7 +68,7 @@
                             </div>
 
                             <h1 class="page-header">
-                                <input type="text" class="form-control input-lg" v-model="object.name" placeholder="Add New Locker" autofocus>
+                                <input type="text" class="form-control input-lg borderless" v-model="object.name" placeholder="Add New Locker" autofocus>
                             </h1>
 
                             <br />
@@ -109,13 +109,13 @@
                                                 </div>
                                             </div>
 
-                                            <input type="text" class="form-control" :class="{'alert-info':fieldMatch(item.title)}" v-model="item.title" placeholder="Title" autocomplete="off">
+                                            <input type="text" class="form-control borderless" :class="{'alert-info':fieldMatch(item.title)}" v-model="item.title" placeholder="Title" autocomplete="off">
                                         </div>
                                     </div>
 
                                     <div class="col-sm-3 col-xs-7">
                                         <div class="input-group">
-                                            <input type="text" class="form-control" :class="{'alert-info':fieldMatch(item.url)}" v-model="item.url" :focus="highlight" placeholder="URL" autocomplete="off">
+                                            <input type="text" class="form-control borderless" :class="{'alert-info':fieldMatch(item.url)}" v-model="item.url" :focus="highlight" placeholder="URL" autocomplete="off">
 
                                             <div class="input-group-addon pointer" ng-if="item.url.length">
                                                 <a class="fa fa-link btn-link" :href="(item.url.indexOf('//') !== -1 ? item.url : 'http://' + item.url)" target="_new" tabindex="-1"></a>
@@ -124,12 +124,12 @@
                                     </div>
 
                                     <div class="col-sm-2 col-xs-5">
-                                        <input type="text" class="form-control" :class="{'alert-info':fieldMatch(item.user)}" v-model="item.user" @focus="highlight" placeholder="User" autocomplete="off">
+                                        <input type="text" class="form-control borderless" :class="{'alert-info':fieldMatch(item.user)}" v-model="item.user" @focus="highlight" placeholder="User" autocomplete="off">
                                     </div>
 
                                     <div class="col-sm-3 col-xs-7">
                                         <div class="input-group">
-                                            <input type="password" class="form-control password-mask" placeholder="Password" autocomplete="off" v-model="item.pass" @focus="highlight">
+                                            <input type="password" class="form-control borderless password-mask" placeholder="Password" autocomplete="off" v-model="item.pass" @focus="highlight">
 
                                             <div class="input-group-addon pointer" data-toggle="popover" data-content="Generates a new 16-character password">
                                                 <span class="fa fa-refresh text-warning" @click="generatePassword(key)" tabindex="-1"></span>

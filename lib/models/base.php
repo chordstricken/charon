@@ -20,9 +20,19 @@ abstract class Base {
      * @param array $vars
      */
     public function __construct($vars = []) {
+        $this->setVars($vars);
+    }
+
+    /**
+     * @param array $vars
+     * @return $this
+     */
+    public function setVars($vars = []) {
         if (is_object($vars)) $vars = get_object_vars($vars);
         foreach ($vars as $key => $val)
             if (property_exists($this, $key)) $this->$key = $val;
+
+        return $this;
     }
 
     /**

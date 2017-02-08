@@ -14,18 +14,24 @@ class User extends Base {
 
     public $id;
     public $name;
+    public $email;
     public $passhash;
 
     /** @var User */
     private static $_me = null;
 
     /**
+     * @return $this
      * @throws Exception
      */
     public function validate() {
-        if (mb_strlen($this->id) > 1024)        throw new Exception('Invalid id');
-        if (mb_strlen($this->name) > 1024)      throw new Exception('Invalid name');
-        if (mb_strlen($this->passhash) > 1024)  throw new Exception('Invalid passhash');
+        if (mb_strlen($this->id) > 1024) throw new Exception('Invalid id');
+        if (mb_strlen($this->name) > 1024) throw new Exception('Invalid name');
+        if (mb_strlen($this->email) > 1024) throw new Exception('Invalid email');
+
+        $hash_info = password_get_info($this->passhash);
+        if (!$hash_info['algo']) throw new Exception('Invalid passhash');
+
         return $this;
     }
 

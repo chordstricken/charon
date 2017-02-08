@@ -27037,7 +27037,13 @@ var RSA = new function() {
 
 };
 
-
+// /**
+//  * All ajax communication uses JSON. Must tell server that until API is set up.
+//  */
+// $.ajaxSetup({
+//     contentType: 'application/json',
+//     dataType: 'json',
+// });
 
 //
 // jQuery events go here
@@ -27070,7 +27076,9 @@ Vue.component('nav-bar', {
 
     },
     data: function() {
-        return {}
+        return {
+            pagename: location.pathname
+        }
     },
     computed: {},
     methods: {

@@ -4,7 +4,9 @@ Vue.component('nav-bar', {
 
     },
     data: function() {
-        return {}
+        return {
+            pagename: location.pathname
+        }
     },
     computed: {},
     methods: {

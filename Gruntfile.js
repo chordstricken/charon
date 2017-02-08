@@ -43,7 +43,7 @@ module.exports = function(grunt) {
                     'html/js/cryptojs/rollups/md5.js',
                     'html/js/jsencrypt.js',
                     'html/js/functions.js',
-                    'html/js/vue-navbar.js',
+                    'html/js/vue-nav-bar.js',
                 ],
                 dest: 'html/js/build.js',
             },
@@ -66,6 +66,11 @@ module.exports = function(grunt) {
                 src: ['bower_components/font-awesome/fonts/*'],
                 dest: 'html/fonts/',
             },
+            css: {
+                expand: false,
+                src: ['bower_components/bootstrap/dist/css/bootstrap.css.map'],
+                dest: 'html/css/bootstrap.css.map',
+            }
         },
         watch: {
             files: ['<%= jshint.files %>', '<%= sass.dist.files %>'],

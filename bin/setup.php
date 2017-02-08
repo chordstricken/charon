@@ -20,6 +20,7 @@ $queries = [
     'CREATE TABLE IF NOT EXISTS locker (
         id TEXT NOT NULL,
         name TEXT NOT NULL,
+        email TEXT NOT NULL,
         items TEXT,
         note TEXT
     )',

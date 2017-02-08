@@ -12,7 +12,17 @@
 
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right hidden-xs">
-                <li><a class="btn btn-link" @click="logout" tabindex="-1">Logout</a></li>
+                <li class="dropdown">
+                    <a class="btn btn-link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-gear"></i></a>
+
+                    <ul class="dropdown-menu" aria-labelledby="dLabel">
+                        <li><a href="/locker/"><i class="fa fa-lock"></i> Password Locker</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="/profile/"><i class="fa fa-user"></i> My Profile</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a class="pointer" @click="logout" tabindex="-1"><i class="fa fa-sign-out"></i> Logout</a></li>
+                    </ul>
+                </li>
             </ul>
             <div class="navbar-form navbar-right hidden-xs" style="margin-right:100px;">
                 <slot></slot>

@@ -33,12 +33,18 @@ class Router {
         }
 
         $path = explode('/', $path);
-        $head = array_shift($path);
+        $head = array_shift($path); // class name / url path
 
-        if (!isset(self::$_routes[$head]))
+        if (isset(self::$_routes[$head])) {
+            $router = new self::$_routes[$head]($path);
+
+        } elseif (class_exists($class = 'api\\' . ucwords(strtolower($head)))) {
+            $router = new $class($path);
+
+        } else {
             Response::send('Page not found.', 404);
+        }
 
-        $router = new self::$_routes[$head]($path);
         $method = strtolower($_SERVER['REQUEST_METHOD']);
 
         if (!method_exists($router, $method))
@@ -49,7 +55,8 @@ class Router {
         } catch (Exception $e) {
             Response::send($e->getMessage(), $e->getCode());
         }
-        die();
+
+        Response::send('An error occurred while we were routing your request.', 500);
     }
 
 }

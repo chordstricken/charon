@@ -19,6 +19,7 @@
     "vue": "^2.1.10",
     "bootstrap": "^3.3.7",
     "Sortable": "sortablejs#^1.4.2",
-    "vue.draggable": "^2.4.0"
+    "vue.draggable": "^2.4.0",
+    "font-awesome": "^4.7.0"
   }
 }

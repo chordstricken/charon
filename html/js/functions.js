@@ -203,8 +203,6 @@ var RSA = new function() {
 
 };
 
-
-
 //
 // jQuery events go here
 //

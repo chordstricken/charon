@@ -9110,6 +9110,10 @@ body {
     padding-top: 50px;
 }
 
+a {
+    cursor: pointer;
+}
+
 
 /*
  * Global add-ons
@@ -9211,7 +9215,7 @@ body {
     border-radius: 50%;
 }
 
-input[type=text], input[type=password] {
+.form-control.borderless {
     border-top: 0px;
     border-left: 0px;
     border-right: 0px;
