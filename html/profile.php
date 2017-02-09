@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="/img/favicon.png" />
 
-    <title><?=APP_NAME?> - Profile</title>
+    <title>Charon - Profile</title>
 
     <link href="/css/build.css" rel="stylesheet">
     <script type="text/x-template" id="tmpl-nav-bar"><?php include(ROOT . '/html/templates/nav-bar.html'); ?></script>

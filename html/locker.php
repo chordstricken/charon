@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="/img/favicon.png" />
 
-    <title><?=APP_NAME?> - Password Locker</title>
+    <title>Charon - Password Locker</title>
 
     <link href="/css/build.css" rel="stylesheet">
 </head>

@@ -43,7 +43,8 @@ class Profile extends Base {
 
         unset($this->data->id); // avoid spoofing user id
 
-        $user = models\User::me()->setVars($this->data);
+        $user = models\User::me();
+        $user->setVars($this->data);
 
         if (!empty($this->data->changePass1)) {
             if ($this->data->changePass1 !== $this->data->changePass2)

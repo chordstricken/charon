@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="/img/favicon.png" />
 
-    <title><?=APP_NAME?> - Login</title>
+    <title>Charon - Login</title>
 
     <link href="/css/build.css" rel="stylesheet">
     <link href="/css/login.css" rel="stylesheet">
