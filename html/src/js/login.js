@@ -6,7 +6,7 @@ Vue.component('login-form', {
             error: '',
             name: '',
             pass: '',
-        }
+        };
     },
     methods: {
         loginAttempt: function (e) {

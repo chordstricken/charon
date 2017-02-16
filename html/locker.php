@@ -8,7 +8,7 @@
 
     <title>Charon - Password Locker</title>
 
-    <link href="/css/build.css" rel="stylesheet">
+    <link href="/src/css/build.css" rel="stylesheet">
 </head>
 
 <body>
@@ -20,7 +20,7 @@
 
         <div id="locker-app">
 
-            <nav-bar>
+            <nav-bar pageTitle="Password Locker">
                 <span class="btn btn-success" v-if="hasChanged" @click="saveObject">Save Pending Changes</span>
             </nav-bar>
 
@@ -117,7 +117,7 @@
                                         <div class="input-group">
                                             <input type="text" class="form-control borderless" :class="{'alert-info':fieldMatch(item.url)}" v-model="item.url" :focus="highlight" placeholder="URL" autocomplete="off">
 
-                                            <div class="input-group-addon pointer" ng-if="item.url.length">
+                                            <div class="input-group-addon pointer" v-if="item.url.length">
                                                 <a class="fa fa-link btn-link" :href="(item.url.indexOf('//') !== -1 ? item.url : 'http://' + item.url)" target="_new" tabindex="-1"></a>
                                             </div>
                                         </div>
@@ -213,7 +213,7 @@
 </body>
 
 <script type="text/x-template" id="tmpl-nav-bar"><?php include(ROOT . '/html/templates/nav-bar.html'); ?></script>
-<script src="/js/build.js"></script>
-<script src="/js/locker.js"></script>
+<script src="/dist/js/build.js"></script>
+<script src="/dist/js/locker.js"></script>
 
 </html>

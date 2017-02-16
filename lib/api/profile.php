@@ -12,7 +12,7 @@ use \stdClass;
  * @since 1/3/17
  * @package charon
  */
-class Profile extends Base {
+class Profile extends core\APIRoute {
 
     protected $is_encrypted = true;
 

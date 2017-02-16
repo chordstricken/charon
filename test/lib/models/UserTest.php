@@ -58,7 +58,8 @@ class UserTest extends PHPUnit_Framework_TestCase {
      * @depends testWrite
      */
     public function testFind() {
-        $dbObjects = User::findMulti(['name' => ['LIKE' => 'PHPUNIT-%']]);
+        $regex = new \MongoDB\BSON\Regex('^PHPUNIT', 'i');
+        $dbObjects = User::findMulti(['name' => $regex]);
         $this->assertCount(count(self::$_data), $dbObjects, 'Did not find correct number of objects with PHPUNIT-% name');
 
         foreach (self::$_data as $obj)
@@ -86,6 +87,9 @@ class UserTest extends PHPUnit_Framework_TestCase {
      * Clean up database
      */
     public static function tearDownAfterClass() {
-        \core\SQLite::initWrite()->exec('DELETE FROM user WHERE name LIKE "PHPUNIT-%"');
+        $regex = new \MongoDB\BSON\Regex('^PHPUNIT', 'i');
+        $dbObjects = User::findMulti(['name' => $regex]);
+        foreach ($dbObjects as $obj)
+            $obj->delete();
     }
 }

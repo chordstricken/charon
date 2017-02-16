@@ -1,20 +1,29 @@
 <?php
 namespace models;
 
+use core;
 use \Exception;
 
 /**
- *
  * @author Jason Wright <jason@silvermast.io>
  * @since 1/4/17
  * @package charon
  */
-class User extends Base {
+class User extends core\Model {
+
     const TABLE = 'users';
 
+    const PERMLEVELS = [
+        'Owner'  => 1,
+        'Admin'  => 10,
+        'Member' => 20,
+    ];
+
     public $id;
+    public $accountId;
     public $name;
     public $email;
+    public $permLevel = 20;
     public $passhash;
 
     /** @var User */
@@ -36,6 +45,7 @@ class User extends Base {
     }
 
     /**
+     * Returns the authenticated user
      * @return User|null
      */
     public static function me() {
@@ -63,6 +73,7 @@ class User extends Base {
      */
     public function setPasswordHash($password) {
         $this->passhash = password_hash($password, PASSWORD_DEFAULT);
+
         return $this;
     }
 }

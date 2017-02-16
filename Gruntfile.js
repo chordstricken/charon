@@ -3,14 +3,6 @@ module.exports = function(grunt) {
     require('load-grunt-tasks')(grunt); // npm install --save-dev load-grunt-tasks
 
     grunt.initConfig({
-        jshint: {
-            files: ['Gruntfile.js'],
-            options: {
-                globals: {
-                    jQuery: true
-                }
-            }
-        },
         concat: {
             options: {
                 separator: "\n",
@@ -19,10 +11,10 @@ module.exports = function(grunt) {
                 src: [
                     'bower_components/bootstrap/dist/css/bootstrap.css',
                     'bower_components/font-awesome/css/font-awesome.css',
-                    'html/css/bootstrap-flatly.min.css',
-                    'html/css/main.css',
+                    'html/dist/css/bootstrap-flatly.min.css',
+                    'html/dist/css/main.css',
                 ],
-                dest: 'html/css/build.css',
+                dest: 'html/dist/css/build.css',
             },
             js: {
                 src: [
@@ -37,53 +29,68 @@ module.exports = function(grunt) {
                     // bootstrap & addons
                     'bower_components/bootstrap/dist/js/bootstrap.js',
 
-                    // encryption & utils
-                    'html/js/cryptojs/rollups/aes.js',
-                    'html/js/cryptojs/components/mode-ctr-min.js',
-                    'html/js/cryptojs/rollups/md5.js',
-                    'html/js/jsencrypt.js',
-                    'html/js/functions.js',
-                    'html/js/vue-nav-bar.js',
+                    // CryptoJS utilities (AES & HMAC)
+                    'html/lib/js/cryptojs/rollups/aes.js',
+                    'html/lib/js/cryptojs/components/mode-ctr-min.js',
+                    'html/lib/js/cryptojs/rollups/md5.js',
+                    'html/lib/js/cryptojs/rollups/hmac-sha256.js',
+                    'html/lib/js/cryptojs/rollups/pbkdf2.js',
+
+                    // JSEncrypt utilities (RSA)
+                    'html/lib/js/jsencrypt/jsencrypt.js',
+
+                    // finally, all custom-written build files
+                    'html/src/js/build/*.js',
                 ],
-                dest: 'html/js/build.js',
-            },
+                dest: 'html/src/js/build.js',
+            }
         },
         uglify: {
             options: {
                 mangle: false
             },
             dist: {
-                files: {
-                    'html/js/build.min.js': 'html/js/build.js',
-                    'html/js/locker.min.js': 'html/js/locker.js',
-                    'html/js/login.min.js': 'html/js/login.js',
-                }
+                files: [{
+                    expand: true,
+                    cwd: 'html/src/js',
+                    src: '*.js',
+                    dest: 'html/dist/js'
+                }]
             }
         },
         copy: {
             fonts: {
                 expand: true,
                 src: ['bower_components/font-awesome/fonts/*'],
-                dest: 'html/fonts/',
+                dest: 'html/src/fonts/',
             },
             css: {
                 expand: false,
                 src: ['bower_components/bootstrap/dist/css/bootstrap.css.map'],
-                dest: 'html/css/bootstrap.css.map',
+                dest: 'html/dist/css/bootstrap.css.map',
             }
         },
         watch: {
-            files: ['<%= jshint.files %>', '<%= sass.dist.files %>'],
-            tasks: ['jshint', 'sass', 'uglify']
+            scripts: {
+                files: [
+                    'Gruntfile.js',
+                    'html/src/js/*.js',
+                    'html/src/js/build/*.js',
+                    '<%= concat.css.src %>',
+                ],
+                tasks: ['concat', 'uglify'],
+                options: {
+                    spawn: true,
+                }
+            }
         }
     });
 
-    grunt.loadNpmTasks('grunt-contrib-jshint');
+    // grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-concat');
 
-    grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'copy']);
-    grunt.registerTask('watch', 'watch');
+    grunt.registerTask('default', ['concat', 'uglify', 'copy']);
 
 };

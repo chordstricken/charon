@@ -10,11 +10,12 @@ use \Exception;
  * @since 1/5/17
  * @package charon
  */
-class Locker extends Base {
+class Locker extends core\Model {
 
     const TABLE = 'locker';
 
     public $id;
+    public $accountId;
     public $name;
     public $items;
     public $note;
@@ -41,11 +42,12 @@ class Locker extends Base {
         if (empty($this->name))
             $errors[] = 'Invalid Name';
 
-        if (mb_strlen($this->note) > core\SQLite::STRING_LENGTH_MAX)
+        // 4MB max
+        if (mb_strlen($this->note) > (4 * pow(2, 20)))
             $errors[] = 'Note string is too long.';
 
-        if (mb_strlen(core\openssl\AES::encrypt($this->items)) > core\SQLite::STRING_LENGTH_MAX)
-            $errors[] = 'Items list is too long. Please shorten or create a new Locker.';
+        if (count($this->items) > 100)
+            $errors[] = 'A Locker can only contain 100 items. Please create a new one.';
 
         if (count($errors))
             throw new Exception(implode("\n", $errors));

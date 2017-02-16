@@ -57,6 +57,7 @@ class LockerTest extends PHPUnit_Framework_TestCase {
      */
     public function testWrite() {
         foreach (self::$_data as &$obj) {
+            \core\Debug::error(__METHOD__);
             $obj = Locker::new(get_object_vars($obj))->save();
             $this->assertNotNull($obj->id, "Failed to auto-assign ID hash");
         }
@@ -78,8 +79,9 @@ class LockerTest extends PHPUnit_Framework_TestCase {
      * @depends testWrite
      */
     public function testFind() {
-        $dbObjects = Locker::findMulti(['name' => ['LIKE' => 'PHPUNIT-%']]);
-        $this->assertCount(count(self::$_data), $dbObjects, 'Did not find correct number of objects with PHPUNIT-% name');
+        $regex = new \MongoDB\BSON\Regex('^PHPUNIT', 'i');
+        $dbObjects = Locker::findMulti(['name' => $regex]);
+        $this->assertCount(count(self::$_data), $dbObjects, 'Did not find correct number of objects with PHPUNIT-* name');
 
         foreach (self::$_data as $obj)
             $this->assertArrayHasKey($obj->id, $dbObjects, 'Failed to pull multiple objects from database');
@@ -106,6 +108,8 @@ class LockerTest extends PHPUnit_Framework_TestCase {
      * Clean up database
      */
     public static function tearDownAfterClass() {
-        \core\SQLite::initWrite()->exec('DELETE FROM locker WHERE name LIKE "PHPUNIT-%"');
+        $regex = new \MongoDB\BSON\Regex('^PHPUNIT', 'i');
+        foreach (Locker::findMulti($regex) as $obj)
+            $obj->delete();
     }
 }

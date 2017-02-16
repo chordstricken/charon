@@ -1,13 +1,15 @@
 <?php
 namespace api;
 
+use core;
+
 /**
  * Logout request route
  * @author Jason Wright <jason@silvermast.io>
  * @since 1/3/17
  * @package charon
  */
-class Logout extends Base {
+class Logout extends core\APIRoute {
 
     protected $require_auth = false;
     protected $is_encrypted = false;

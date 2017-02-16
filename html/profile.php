@@ -8,7 +8,7 @@
 
     <title>Charon - Profile</title>
 
-    <link href="/css/build.css" rel="stylesheet">
+    <link href="/src/css/build.css" rel="stylesheet">
     <script type="text/x-template" id="tmpl-nav-bar"><?php include(ROOT . '/html/templates/nav-bar.html'); ?></script>
 </head>
 
@@ -21,7 +21,7 @@
 
         <div id="locker-app">
 
-            <nav-bar>
+            <nav-bar pageTitle="Profile">
 <!--                <span class="btn btn-success" v-if="hasChanged" @click="saveObject">Save Pending Changes</span>-->
             </nav-bar>
 
@@ -87,7 +87,7 @@
     </div>
 </body>
 
-<script src="/js/build.js"></script>
-<script src="/js/profile.js"></script>
+<script src="/dist/js/build.js"></script>
+<script src="/dist/js/profile.js"></script>
 
 </html>

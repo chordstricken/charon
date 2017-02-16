@@ -70,6 +70,57 @@ function logout() {
     });
 }
 
+var HMAC = new function() {
+
+    var keyRaw = localStorage.getItem('hmacKey'),
+        keyObj;
+
+    this.getKey = function() {
+        if (keyRaw && !keyObj) keyObj = CryptoJS.enc.Base64.parse(keyRaw);
+        return keyObj;
+    };
+
+    /**
+     * Returns an Hmac tag
+     * @param data (base64 string)
+     * @return tag (base64 string)
+     */
+    this.getTag = function(data) {
+        if (!data || !data.length) {
+            console.log('Cannot get tag for ', data);
+            return false;
+        }
+
+        var dataObj = CryptoJS.enc.Base64.parse(data);
+        return CryptoJS.HmacSHA256(dataObj, this.getKey()).toString(CryptoJS.enc.Base64);
+    };
+
+    /**
+     * Verifies a tag against a data/key pair
+     * @param data
+     * @param tag (base64)
+     * @returns {boolean}
+     */
+    this.verifyTag = function(data, tag) {
+        return this.getTag(data) === tag;
+    };
+
+    /**
+     * Hashes the key
+     * @returns {WordArray}
+     */
+    this.setKey = function(key) {
+        keyB64 = CryptoJS.enc.Base64.parse(key);
+        keyObj = CryptoJS.PBKDF2(keyB64, 'charon.hmac', {
+            iterations: 10,
+            hasher: CryptoJS.algo.SHA256,
+            keySize: 256/32,
+        });
+        keyRaw = keyObj.toString(CryptoJS.enc.Base64);
+        localStorage.setItem('hmacKey', keyRaw);
+    };
+};
+
 /**
  * AES class for encrypting and decrypting data.
  * Keys are generated on the server and stored in the browser
@@ -93,12 +144,12 @@ var AES = new function() {
         $.post('/handshake', RSA.encryptForServer(RSA.clientPublicKey), function(result) {
             try {
                 result = RSA.decryptFromServer(result); // AES key
-                console.log(result);
 
                 keyRaw = result;
 
                 // store the session id along with the key to ensure that it matches with the server
                 localStorage.setItem('encryptionKey', keyRaw);
+                HMAC.setKey(keyRaw);
 
                 if (typeof(success) === 'function') success();
 
@@ -119,11 +170,13 @@ var AES = new function() {
 
         var result = CryptoJS.AES.encrypt(plaintext, getKey(), {iv: CryptoJS.lib.WordArray.random(16)});
 
-        return {
+        var retObj = {
             cipher: result.ciphertext.toString(CryptoJS.enc.Base64),
             iv: result.iv.toString(CryptoJS.enc.Base64)
         };
 
+        retObj.tag = HMAC.getTag(retObj.cipher);
+        return retObj;
     };
 
     /**
@@ -138,10 +191,16 @@ var AES = new function() {
         if (!encObj.iv || !encObj.cipher)
             return encObj;
 
+        if (encObj.tag && !HMAC.verifyTag(encObj.cipher, encObj.tag)) {
+            console.log('Decryption failed.');
+            return '';
+        }
+
         var cipherParams = CryptoJS.lib.CipherParams.create({ciphertext: CryptoJS.enc.Base64.parse(encObj.cipher)});
         var opts         = {iv: CryptoJS.enc.Base64.parse(encObj.iv)};
 
         try {
+
             var result = CryptoJS.AES.decrypt(cipherParams, getKey(), opts).toString(CryptoJS.enc.Utf8);
 
             // decrypting results in double quote (") padding. Remove them.

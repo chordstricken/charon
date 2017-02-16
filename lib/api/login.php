@@ -11,7 +11,7 @@ use core;
  * @since 1/2/17
  * @package charon
  */
-class Login extends Base {
+class Login extends core\APIRoute {
 
     /** @var bool overrides parent */
     protected $require_auth = false;
@@ -20,9 +20,6 @@ class Login extends Base {
      * Authenticates the user
      */
     public function post() {
-//        $this->is_encrypted = true;
-//        $this->decryptPayload();
-//        core\Debug::info($this->data);
 
         if (isset($this->data->iv))
             $this->data = core\openssl\AES::decrypt($this->data, $_SESSION['AESKey']);

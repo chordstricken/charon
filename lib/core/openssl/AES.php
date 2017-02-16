@@ -15,24 +15,25 @@ class AES {
     const METHOD = 'AES-256-CBC';
 
     /**
-     * @param $data
+     * @param $pt
      * @param string $key
      * @return string
      */
-    public static function encrypt($data, $key = CRYPT_KEY) {
+    public static function encrypt($pt, $key = CRYPT_KEY) {
 
         // check if the key is base64
         if ($decoded_key = base64_decode($key, true))
             $key = $decoded_key;
 
         // set the params
-        $data   = json_encode($data);
-        $iv     = self::_iv();
-        $cipher = openssl_encrypt($data, self::METHOD, $key, 0, $iv);
+        $pt = json_encode($pt);
+        $iv = self::_iv();
+        $ct = openssl_encrypt($pt, self::METHOD, $key, 0, $iv);
 
         return json_encode([
             'iv'     => base64_encode($iv),
-            'cipher' => $cipher,
+            'cipher' => $ct,
+            'tag'    => HMAC::getTag($ct, $key),
         ]);
     }
 
@@ -43,6 +44,7 @@ class AES {
      * @throws Exception
      */
     public static function decrypt($obj, $key = CRYPT_KEY) {
+        $success = true; // never return early to help prevent timing attacks
 
         // check if the key is base64
         if ($decoded_key = base64_decode($key, true))
@@ -60,11 +62,18 @@ class AES {
         if (!isset($obj->iv))
             throw new Exception(__METHOD__ . ' Decryption object missing iv param', 500);
 
+        // verify the tag
+        if (isset($obj->tag))
+            $success = HMAC::verifyTag($obj->cipher, $key, $obj->tag);
+
+
         $obj->iv = base64_decode($obj->iv);
 
         // decrypt
-        return json_decode(openssl_decrypt($obj->cipher, self::METHOD, $key, 0, $obj->iv));
+        $result = json_decode(openssl_decrypt($obj->cipher, self::METHOD, $key, 0, $obj->iv));
 
+        // never return early to help prevent timing attacks
+        return $success ? $result : false;
     }
 
     /**

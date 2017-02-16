@@ -1,16 +1,18 @@
 <?php
-namespace models;
+namespace core;
 
-use core;
 use \Exception;
+use MongoDB\Driver\BulkWrite;
+use MongoDB\Driver\Query;
 
 /**
  * @author Jason Wright <jason@silvermast.io>
  * @since 1/4/17
  * @package charon
  */
-abstract class Base {
-    use core\Singleton;
+abstract class Model {
+    use Singleton;
+    use db\Mongo;
 
     const ID    = 'id';
     const TABLE = 'default'; // override
@@ -47,47 +49,34 @@ abstract class Base {
      * @return self
      */
     public function save() {
-        $db       = core\SQLite::initWrite();
-        $table    = static::TABLE;
-        $id_field = static::ID;
-        $id_value = $this->{static::ID};
-
         try {
 
+            // create a new transaction batch
+            $bulkWrite = new BulkWrite();
             if (empty($id_value)) {
                 // INSERT
                 // generate a new unique ID
                 while (empty($this->{static::ID})) {
                     $id_value = static::generateId();
                     // barbaric collision handling
-                    if ($db->querySingle("SELECT COUNT(*) FROM $table WHERE $id_field = '" . $db->escapeString($id_value) . "'") == 0)
+                    if (!self::findOne([static::ID => $this->{static::ID}]))
                         $this->{static::ID} = $id_value;
                 }
 
-                $array  = get_object_vars($this);
-                $fields = '`' . implode('`, `', array_keys($array)) . '`';
-                $values = array_map([$db, 'escapeString'], array_values($array));
-                $values = "'" . implode("', '", $values) . "'";
-                if (!$db->exec("INSERT INTO $table ($fields) VALUES ($values)"))
-                    throw new Exception('Unable to create the object.', 500);
+                $bulkWrite->insert($this);
 
             } else {
                 // UPDATE
-
-                $sql_values = [];
-                foreach ($this as $field => $value)
-                    $sql_values[] = "`$field` = '" . $db->escapeString($value) . "'";
-                $sql_values = implode(', ', $sql_values);
-
-                // try updating
-                if (!$db->exec("UPDATE $table SET $sql_values WHERE $id_field = '$id_value'"))
-                    throw new Exception('Unable to update the object', 500);
+                $bulkWrite->update([static::ID => $this->{static::ID}], $this);
 
             }
 
+            // commit the changes
+            self::_db()->executeBulkWrite(static::getDBNamespace(), $bulkWrite);
+
         } catch (Exception $e) {
-            core\Debug::info($e->getMessage());
-            throw new Exception('Unable to save the item. ' . $db->lastErrorCode() . ': ' . $db->lastErrorMsg(), 500);
+            Debug::error($e->getMessage());
+            throw new Exception('Unable to save the item.', 500);
         }
 
         return $this;
@@ -98,12 +87,15 @@ abstract class Base {
      * @return self
      */
     public function delete() {
-        $db     = core\SQLite::initWrite();
-        $table  = static::TABLE;
-        $where  = $db->prepare_and_statement([static::ID => $this->{static::ID}]);
+        try {
+            $bulkWrite = new BulkWrite();
+            $bulkWrite->delete([static::ID => $this->{static::ID}]);
+            $db = self::_db();
+            $db->executeBulkWrite(static::getDBNamespace(), $bulkWrite);
 
-        $db->exec("DELETE FROM $table WHERE $where");
+        } catch (Exception $e) {
 
+        }
         return $this;
     }
 
@@ -126,11 +118,13 @@ abstract class Base {
      * @return static|null
      */
     public static function findOne($query) {
-        $db    = core\SQLite::initRead();
-        $table = static::TABLE;
-        $where = $db->prepare_and_statement($query);
-        if ($result = $db->querySingle("SELECT * FROM $table WHERE $where LIMIT 1", true)) {
-            return new static($result);
+        try {
+            $dbQuery = new Query($query, ['limit' => 1]);
+            $cursor = self::_db()->executeQuery(static::getDBNamespace(), $dbQuery)->toArray();
+            return current($cursor) ? static::new(current($cursor)) : null;
+
+        } catch (Exception $e) {
+            Debug::error($query);
         }
 
         return null;
@@ -142,14 +136,17 @@ abstract class Base {
      * @return static[]
      */
     public static function findMulti($query) {
-        $db      = core\SQLite::initRead();
-        $table   = static::TABLE;
-        $where   = $db->prepare_and_statement($query);
         $objects = [];
-        if ($result = $db->query("SELECT * FROM $table WHERE $where"))
-            while ($row = $result->fetchArray(SQLITE3_ASSOC))
-                $objects[$row[static::ID]] = new static($row);
+        try {
+            $dbQuery = new Query($query);
+            $result = self::_db()->executeQuery(static::getDBNamespace(), $dbQuery);
 
+            foreach ($result as $row)
+                $objects[$row->{static::ID}] = static::new($row);
+
+        } catch (Exception $e) {
+
+        }
         return $objects;
     }
 

@@ -8,8 +8,8 @@
 
     <title>Charon - Login</title>
 
-    <link href="/css/build.css" rel="stylesheet">
-    <link href="/css/login.css" rel="stylesheet">
+    <link href="/src/css/build.css" rel="stylesheet">
+    <link href="/src/css/login.css" rel="stylesheet">
 </head>
 
 <!-- App body -->
@@ -41,7 +41,7 @@
 </body>
 
 <script>localStorage.setItem('server.publicKey', '<?=base64_encode(core\openssl\RSA::getServerKeyPair()->public)?>');</script>
-<script src="/js/build.min.js"></script>
-<script src="/js/login.js"></script>
+<script src="/dist/js/build.js"></script>
+<script src="/dist/js/login.js"></script>
 
 </html>

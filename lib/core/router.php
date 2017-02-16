@@ -32,31 +32,45 @@ class Router {
             die();
         }
 
-        $path = explode('/', $path);
-        $head = array_shift($path); // class name / url path
+        $apiRoute = self::_getAPIROute($path);
+        $method   = strtolower($_SERVER['REQUEST_METHOD']);
 
-        if (isset(self::$_routes[$head])) {
-            $router = new self::$_routes[$head]($path);
-
-        } elseif (class_exists($class = 'api\\' . ucwords(strtolower($head)))) {
-            $router = new $class($path);
-
-        } else {
-            Response::send('Page not found.', 404);
-        }
-
-        $method = strtolower($_SERVER['REQUEST_METHOD']);
-
-        if (!method_exists($router, $method))
+        if (!method_exists($apiRoute, $method))
             Response::send('Method does not exist.', 405);
 
         try {
-            $router->$method();
+            $apiRoute->$method();
         } catch (Exception $e) {
             Response::send($e->getMessage(), $e->getCode());
         }
 
         Response::send('An error occurred while we were routing your request.', 500);
+    }
+
+    /**
+     * Factory APIRoute method
+     * @param string $path
+     * @return APIRoute
+     */
+    private static function _getAPIRoute(string $path) {
+
+        $path      = explode('/', $path);
+        $classname = array_shift($path); // example: "url.com/classname/foo/bar
+
+        // first check the static route list
+        if (isset(self::$_routes[$classname]))
+            return new self::$_routes[$classname]($path);
+
+        // next, try checking for an API class
+        // example: "/manage-users" -> "ManageUsers"
+        $classname = mb_strtolower($classname);
+        $classname = preg_replace('@[^\w\d]+@', ' ', $classname); // all classnames are alphanumeric
+        $classname = ucwords($classname); // capital case
+        $classname = str_replace(' ', '', $classname); // strip out spaces
+        if (class_exists($apiRoute = "api\\$classname"))
+            return new $apiRoute($path);
+
+        Response::send('Page not found.', 404);
     }
 
 }

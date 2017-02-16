@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 /**
  * Creates a User
@@ -9,14 +9,22 @@
 
 require_once(__DIR__.'/../core.php');
 
-$user = readline('User: ');
+$name        = readline('User Name: ');
+$user        = models\User::findOne(['name' => $name]) ?? models\User::new(['name' => $name]);
+$user->email = readline('User Email: ');
+
+
+if ($user->id && strtolower(readline("User '$user->name' already exists. Overwrite? (y/n): "))[0] != 'y') {
+    echo "Exiting\n";
+    die();
+}
 
 // use hidden password functionality in read library
-$pass1 = trim(`/bin/bash -c "read -s -p 'Pass: ' password && echo \\\$password"`);
+$pass1 = trim(`/bin/bash -c "read -s -p 'Enter Password: ' password && echo \\\$password"`);
 echo "\n";
 
 // use hidden password functionality in read library
-$pass2 = trim(`/bin/bash -c "read -s -p 'Re-enter Pass: ' password && echo \\\$password"`);
+$pass2 = trim(`/bin/bash -c "read -s -p 'Re-enter Password: ' password && echo \\\$password"`);
 echo "\n";
 
 // check passwords
@@ -25,7 +33,6 @@ if ($pass1 != $pass2) {
     die();
 }
 
-$user = models\User::findOne(['name' => $user]);
 $user->setPasswordHash($pass1);
 $user->save();
 

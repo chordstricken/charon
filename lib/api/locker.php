@@ -12,7 +12,7 @@ use \stdClass;
  * @since 1/3/17
  * @package charon
  */
-class Locker extends Base {
+class Locker extends core\APIRoute {
 
 //    protected $is_encrypted = false;
 

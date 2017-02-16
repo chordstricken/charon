@@ -1,7 +1,7 @@
 Vue.component('nav-bar', {
     template: '#tmpl-nav-bar',
     props: {
-
+        pageTitle: String
     },
     data: function() {
         return {
@@ -10,7 +10,7 @@ Vue.component('nav-bar', {
             user: {
                 name: ''
             }
-        }
+        };
     },
     created: function() {
         var scope = this;

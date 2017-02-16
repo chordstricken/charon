@@ -3,6 +3,7 @@ namespace api;
 
 use models;
 use \Exception;
+use core;
 use core\openssl\RSA;
 use core\openssl\AES;
 
@@ -12,7 +13,7 @@ use core\openssl\AES;
  * @since 1/2/17
  * @package charon
  */
-class Handshake extends Base {
+class Handshake extends core\APIRoute {
 
     /** @var bool overrides parent */
     protected $require_auth = false;
