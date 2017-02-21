@@ -4,7 +4,7 @@ namespace core;
 use \Exception;
 use MongoDB\Driver\BulkWrite;
 use MongoDB\Driver\Query;
-use MongoDB\BSON\ObjectID;
+use MongoDB\Driver\Command;
 
 /**
  * @author Jason Wright <jason@silvermast.io>
@@ -17,6 +17,9 @@ abstract class Model {
 
     const ID    = 'id';
     const TABLE = 'default'; // override
+
+    /** @var mixed */
+    protected static $_indexes;
 
     /**
      * Base constructor.
@@ -43,6 +46,20 @@ abstract class Model {
      * @return self
      */
     public abstract function validate();
+
+    /**
+     * @throws Exception
+     * @todo finish
+     */
+    public static function createIndexes() {
+        if (!isset(static::$_indexes) || !is_array(static::$_indexes)) return;
+
+        foreach (static::$_indexes as $index) {
+            $unique = isset($index['$unique']) && $index['$unique'];
+            unset($index['$unique']);
+            $cmd = new Command(['createIndex' => $index]);
+        }
+    }
 
     /**
      * Saves the object
