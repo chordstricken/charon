@@ -20,6 +20,9 @@ class Account extends core\Model {
     public $dateCreated;
     public $dateUpdated;
 
+    /** @var Account */
+    private static $_current;
+
     /**
      * @var array
      * @todo finish
@@ -28,6 +31,14 @@ class Account extends core\Model {
         ['id' => 1, '$unique' => true],
         ['slug' => 1, '$unique' => true],
     ];
+
+    /**
+     * @return Account|false
+     */
+    public static function current() {
+        if (!isset($_SERVER['SERVER_NAME'])) return false;
+        return self::$_current ?? self::$_current = self::findOne(['slug' => explode('.', $_SERVER['SERVER_NAME'])[0]]);
+    }
 
     /**
      * @return $this
