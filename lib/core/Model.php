@@ -4,6 +4,7 @@ namespace core;
 use \Exception;
 use MongoDB\Driver\BulkWrite;
 use MongoDB\Driver\Query;
+use MongoDB\BSON\ObjectID;
 
 /**
  * @author Jason Wright <jason@silvermast.io>
@@ -53,7 +54,7 @@ abstract class Model {
 
             // create a new transaction batch
             $bulkWrite = new BulkWrite();
-            if (empty($id_value)) {
+            if (empty($this->{static::ID})) {
                 // INSERT
                 // generate a new unique ID
                 while (empty($this->{static::ID})) {

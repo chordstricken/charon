@@ -33,7 +33,7 @@ abstract class APIRoute {
         try {
             $this->path    = $path;
             $this->data    = $data ?? $this->getPayload();
-            $this->is_json = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' ?? strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false;
+            $this->is_json = Response::isJson();
 
             $this->decryptPayload();
             $this->decodePayload();
@@ -80,6 +80,18 @@ abstract class APIRoute {
     }
 
     /**
+     * Determines whether the user is allowed to access this page
+     * @param array $allowedUserLevels
+     */
+    protected function checkPermission(array $allowedUserLevels = []) {
+        $allowedUserLevels[] = models\User::PERMLEVELS['Owner']; // always allow Owner access
+
+        $this->is_encrypted = false;
+        if (!in_array(models\User::me()->permLevel, $allowedUserLevels))
+            $this->send('You do not have the necessary permissions', 403);
+    }
+
+    /**
      * Sends an HTTP response, output data, and stops execution.
      * @param $response
      * @param $code
@@ -90,9 +102,9 @@ abstract class APIRoute {
             $data = openssl\AES::encrypt($data, $_SESSION['AESKey']);
 
         $data = is_scalar($data) ? $data : json_encode($data);
-        http_response_code($code);
+        Response::send($data, $code);
 
-        echo $data;
+
         die();
     }
 

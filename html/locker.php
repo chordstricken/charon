@@ -1,17 +1,16 @@
+<?php
+$headerOpts = [
+    'title' => 'Password Locker',
+];
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="/img/favicon.png" />
-
-    <title>Charon - Password Locker</title>
-
-    <link href="/src/css/build.css" rel="stylesheet">
+    <? core\Template::output('header.php', $headerOpts) ?>
 </head>
 
 <body>
+<? core\Template::output('nav-bar.html') ?>
     <!-- Fixes the strange chrome/firefox autocomplete spaz bug -->
     <input type="text" name="user" value="" style="display:none;" />
     <input type="password" name="password" value="" style="display:none;" />

@@ -72,6 +72,7 @@ class User extends core\Model {
      * @return self
      */
     public function setPasswordHash($password) {
+        if (mb_strlen($password) < 12) throw new Exception('Passwords must be at least 12 characters. Type whatever you\'d like, though!');
         $this->passhash = password_hash($password, PASSWORD_DEFAULT);
 
         return $this;

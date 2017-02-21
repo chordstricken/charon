@@ -16,8 +16,21 @@ class Response {
     public static function send($data, $code = 200) {
         $data = is_scalar($data) ? $data : json_encode($data);
         http_response_code($code);
-        echo $data;
+
+        if (!self::isJson() && file_exists(HTML . "/$code.php"))
+            include(HTML . "/$code.php");
+
+        else
+            echo $data;
+
         die();
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isJson() {
+        return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' ?? strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false;
     }
 
 }

@@ -8,7 +8,8 @@ Vue.component('nav-bar', {
             pagename: location.pathname,
             appname: 'Charon',
             user: {
-                name: ''
+                name: '',
+                permLevel: 0,
             }
         };
     },
@@ -20,6 +21,10 @@ Vue.component('nav-bar', {
     },
     computed: {},
     methods: {
+        hasPermission: function(perms) {
+            perms = perms.indexOf ? perms : [perms];
+            return (this.user.permLevel == 1 || perms.indexOf(this.user.permLevel) !== -1);
+        },
         logout: window.logout,
     }
 });

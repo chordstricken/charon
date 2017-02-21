@@ -70,6 +70,55 @@ function logout() {
     });
 }
 
+
+/**
+ * bootstrap modal for confirmation
+ * @param opts
+ */
+function bsConfirm(opts) {
+    // set option defaults
+    opts = $.extend({
+        title: 'Are you sure?',
+        text: 'This action cannot be undone.',
+        confirm: function() {},
+        cancel: function() {},
+    }, opts);
+
+    // select the modal
+    var $modal = $('#bs-confirm-modal');
+    // if it doesn't exist, create it
+    if (!$modal.length) {
+        $('body').append(
+            '<div id="bs-confirm-modal" class="modal fade">' +
+                '<div class="modal-dialog">' +
+                    '<div class="modal-content">' +
+                        '<div class="modal-header">' +
+                            '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+                            '<h4 class="modal-title">' + opts.title + '</h4>' +
+                        '</div>' +
+                        '<div class="modal-body">' +
+                            '<p class="modal-body-text">' + opts.text + '</p>' +
+                        '</div>' +
+                        '<div class="modal-footer">' +
+                            '<button type="button" class="btn btn-default bsConfirm-btn-cancel" data-dismiss="modal">Close</button>' +
+                            '<button type="button" class="btn btn-primary bsConfirm-btn-confirm" data-dismiss="modal">Confirm</button>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>'
+        );
+        // select it again
+        $modal = $('#bs-confirm-modal');
+    }
+
+    // attach the cancel and confirmation actions
+    $modal.find('.bsConfirm-btn-cancel').off().on('click', opts.cancel);
+    $modal.find('.bsConfirm-btn-confirm').off().on('click', opts.confirm);
+
+    $modal.modal('show');
+}
+
+
 var HMAC = new function() {
 
     var keyRaw = localStorage.getItem('hmacKey'),

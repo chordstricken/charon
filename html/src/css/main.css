@@ -7,8 +7,15 @@ body {
     padding-top: 50px;
 }
 
+*, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: 'Roboto Condensed', sans-serif;
+}
+
 a {
     cursor: pointer;
+}
+a:focus {
+    outline: none;
 }
 
 
@@ -117,9 +124,14 @@ a {
     border-left: 0px;
     border-right: 0px;
     border-radius: 0;
+    box-shadow: none;
 }
 textarea.form-control {
     border: 0;
+}
+
+label.under-label {
+    font-size: 0.9em;
 }
 
 a, a:hover {
@@ -167,4 +179,11 @@ a, a:hover {
     position: absolute;
     top: 1rem;
     right: 2em;
+}
+
+.modal-open .modal {
+    z-index: 10000;
+}
+.modal-backdrop {
+    position: fixed;
 }

@@ -42,6 +42,12 @@ var profileApp = new Vue({
     },
 
     methods: {
+
+        // clears & resets messages
+        clearMessages: function() {
+            this.error = this.success = '';
+        },
+
         saveObject: function() {
             var scope = this;
 
@@ -60,6 +66,7 @@ var profileApp = new Vue({
                     result = AES.decrypt(result);
                     result = json_decode(result);
 
+                    scope.success = "Successfully updated your profile!";
                     scope.profile = $.extend(scope.profile, result);
                     scope.toggleLoader(false);
                 }
