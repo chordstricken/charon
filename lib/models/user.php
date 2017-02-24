@@ -37,6 +37,7 @@ class User extends core\Model {
         if (mb_strlen($this->id) > 1024) throw new Exception('Invalid id');
         if (mb_strlen($this->name) > 1024) throw new Exception('Invalid name');
         if (mb_strlen($this->email) > 1024) throw new Exception('Invalid email');
+        if (!is_numeric($this->accountId)) throw new Exception('Invalid Account');
 
         $hash_info = password_get_info($this->passhash);
         if (!$hash_info['algo']) throw new Exception('Invalid passhash');

@@ -36,6 +36,9 @@ class Locker extends core\Model {
     public function validate(): self {
         $errors = [];
 
+        if (!is_numeric($this->accountId))
+            $errors[] = 'Invalid Account';
+
         if (mb_strlen($this->id) > 1024)
             $errors[] = 'Invalid ID';
 

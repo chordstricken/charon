@@ -16,7 +16,6 @@ $headerOpts = [
 <div class="text-center">
     <h1>404</h1>
     <?=(isset($data) ? $data : '')?>
-
 </div>
 
 </body>

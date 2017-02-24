@@ -24,20 +24,11 @@ class Account extends core\Model {
     private static $_current;
 
     /**
-     * @var array
-     * @todo finish
-     */
-    protected static $_indexes = [
-        ['id' => 1, '$unique' => true],
-        ['slug' => 1, '$unique' => true],
-    ];
-
-    /**
      * @return Account|false
      */
     public static function current() {
-        if (!isset($_SERVER['SERVER_NAME'])) return false;
-        return self::$_current ?? self::$_current = self::findOne(['slug' => explode('.', $_SERVER['SERVER_NAME'])[0]]);
+        if (!isset($_SERVER['HTTP_HOST'])) return false;
+        return self::$_current ?? self::$_current = self::findOne(['slug' => explode('.', $_SERVER['HTTP_HOST'])[0]]);
     }
 
     /**

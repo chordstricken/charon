@@ -1,6 +1,7 @@
 <?php
 namespace core;
 
+use models;
 use api;
 use \Exception;
 
@@ -27,6 +28,9 @@ class Router {
      * Routes the request to the corresponding subclass
      */
     public static function route() {
+        if (!models\Account::current())
+            Response::send('We were unable to find an account under the given URL.', 404);
+
         if (!$path = trim($_SERVER['REQUEST_URI'], '/')) {
             header('Location: /locker');
             die();

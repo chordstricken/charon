@@ -1,6 +1,10 @@
-#!/usr/bin/env php
 <?php
 require_once(__DIR__ . '/../core.php');
+require_once(__DIR__ . '/functions.php');
+
+$account = models\Account::findOne(['slug' => mb_strtolower(trim(readline('Account Slug: ')))]);
+if (!$account)
+    finish('Account does not exist.');
 
 function randomString($len) {
     $chars   = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ?><.,][}{!@#$%^&*()-=_+|`~';
@@ -26,10 +30,11 @@ for ($i = 0; $i < 100; $i++) {
 
     for ($j = 0; $j < mt_rand(2, 50); $j++)
         $locker->items[] = [
-            'title' => $semStr->getRandomWord(),
-            'url'   => "https://" . $semStr->getRandomWord() . "." . $semStr->getRandomWord(),
-            'user'  => $semStr->getRandomWord(),
-            'pass'  => randomString(mt_rand(8, 64)),
+            'accountId' => $account->id,
+            'title'     => $semStr->getRandomWord(),
+            'url'       => "https://" . $semStr->getRandomWord() . "." . $semStr->getRandomWord(),
+            'user'      => $semStr->getRandomWord(),
+            'pass'      => randomString(mt_rand(8, 64)),
         ];
 
     $locker->save();

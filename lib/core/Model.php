@@ -48,20 +48,6 @@ abstract class Model {
     public abstract function validate();
 
     /**
-     * @throws Exception
-     * @todo finish
-     */
-    public static function createIndexes() {
-        if (!isset(static::$_indexes) || !is_array(static::$_indexes)) return;
-
-        foreach (static::$_indexes as $index) {
-            $unique = isset($index['$unique']) && $index['$unique'];
-            unset($index['$unique']);
-            $cmd = new Command(['createIndex' => $index]);
-        }
-    }
-
-    /**
      * Saves the object
      * @throws Exception
      * @return self
