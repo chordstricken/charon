@@ -55,14 +55,19 @@ class Users extends core\APIRoute {
             throw new Exception('Unable to find that user.', 404);
         else $user = models\User::new();
 
-        $user->setVars($this->data);
+        // check if email already exists
 
+        // set password
         if (!empty($this->data->changePass1)) {
             if ($this->data->changePass1 !== $this->data->changePass2)
                 throw new Exception('Passwords do not match', 400);
             else
                 $user->setPasswordHash($this->data->changePass1);
         }
+
+        // set other data
+        $user->setVars($this->data);
+        $user->accountId = models\Account::current()->id;
 
         $user->validate()->save();
 

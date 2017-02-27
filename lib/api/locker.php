@@ -32,7 +32,7 @@ class Locker extends core\APIRoute {
 
         } else {
             // load the locker data object
-            $data = models\Locker::findOne(['id' => $index_id]);
+            $data = models\Locker::findOne(['id' => $index_id, 'accountId' => models\Account::current()->id]);
         }
 
         $this->send($data);
@@ -46,6 +46,8 @@ class Locker extends core\APIRoute {
         if (!$this->data instanceof stdClass)
             throw new Exception('Invalid Request Object', 400);
 
+        $this->data->accountId = models\Account::current()->id;
+
         $locker = models\Locker::new($this->data)->validate()->save();
 
         // send the response
@@ -57,7 +59,7 @@ class Locker extends core\APIRoute {
      */
     public function delete() {
         if (isset($this->path[0]))
-            models\Locker::new(['id' => $this->path[0]])->delete();
+            models\Locker::new(['id' => $this->path[0], 'accountId' => models\Account::current()->id])->delete();
 
         $this->send('Successfully deleted Locker.');
     }
@@ -69,7 +71,7 @@ class Locker extends core\APIRoute {
         $index = [];
 
         // @todo: create more memory-friendly implementation
-        $lockers = models\Locker::findMulti([]);
+        $lockers = models\Locker::findMulti(['accountId' => models\Account::current()->id]);
         foreach ($lockers as $locker) {
             $meta = [];
 

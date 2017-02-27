@@ -41,7 +41,7 @@ class Profile extends core\APIRoute {
         if (!$this->data instanceof stdClass)
             throw new Exception('Invalid Request Object', 400);
 
-        unset($this->data->id); // avoid spoofing user id
+        unset($this->data->id, $this->data->accountId, $this->data->permLevel); // avoid spoofing these variables
 
         $user = models\User::me();
         $user->setVars($this->data);

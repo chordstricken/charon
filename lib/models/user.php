@@ -34,13 +34,16 @@ class User extends core\Model {
      * @throws Exception
      */
     public function validate() {
-        if (mb_strlen($this->id) > 1024) throw new Exception('Invalid id');
-        if (mb_strlen($this->name) > 1024) throw new Exception('Invalid name');
-        if (mb_strlen($this->email) > 1024) throw new Exception('Invalid email');
-        if (!is_numeric($this->accountId)) throw new Exception('Invalid Account');
+        if (mb_strlen($this->id) > 1024) throw new Exception('Invalid id', 400);
+        if (mb_strlen($this->name) > 1024) throw new Exception('Invalid name', 400);
+        if (mb_strlen($this->email) > 1024) throw new Exception('Invalid email', 400);
+        if (empty($this->accountId)) throw new Exception('Invalid Account', 400);
 
         $hash_info = password_get_info($this->passhash);
-        if (!$hash_info['algo']) throw new Exception('Invalid passhash');
+        if (!$hash_info['algo']) throw new Exception('Invalid passhash', 400);
+
+        if (self::findOne(['accountId' => $this->accountId, 'email' => $this->email, 'id' => ['$ne' => $this->id]]))
+            throw new Exception('A user with that email already exists.', 400);
 
         return $this;
     }

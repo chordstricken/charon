@@ -7,12 +7,10 @@
 require_once(__DIR__ . '/../core.php');
 require_once(__DIR__ . '/functions.php');
 
-use models\User;
-
 require(__DIR__ . '/add-account.php');
 require(__DIR__ . '/add-user.php');
 
-$user->permLevel = User::PERMLEVELS['Owner'];
+$user->permLevel = models\User::PERMLEVELS['Owner'];
 $user->save();
 
 echo "Success!\n";

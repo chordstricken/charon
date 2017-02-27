@@ -4,7 +4,7 @@ Vue.component('login-form', {
     data: function() {
         return {
             error: '',
-            name: '',
+            email: '',
             pass: '',
         };
     },
@@ -14,7 +14,7 @@ Vue.component('login-form', {
 
             var scope   = this,
                 ajaxData = {
-                    name: scope.name,
+                    email: scope.email,
                     pass: scope.pass,
                 };
 

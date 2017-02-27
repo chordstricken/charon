@@ -57,6 +57,7 @@ var profileApp = new Vue({
                 return;
             }
 
+            scope.clearMessages();
             scope.toggleLoader(true);
 
             $.post({
@@ -68,6 +69,10 @@ var profileApp = new Vue({
 
                     scope.success = "Successfully updated your profile!";
                     scope.profile = $.extend(scope.profile, result);
+                    scope.toggleLoader(false);
+                },
+                error: function(jqXHR) {
+                    scope.error = jqXHR.responseText;
                     scope.toggleLoader(false);
                 }
             });

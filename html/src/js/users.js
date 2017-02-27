@@ -176,6 +176,7 @@ var usersApp = new Vue({
 
                     scope.error = jqXHR.responseText;
                     scope.toggleLoader(false);
+                    console.log(scope.error);
                 }
 
             });

@@ -25,11 +25,16 @@ class Login extends core\APIRoute {
             $this->data = core\openssl\AES::decrypt($this->data, $_SESSION['AESKey']);
 
         // validate params
-        if (empty($this->data->name)) throw new Exception('Invalid User', 401);
+        if (empty($this->data->email)) throw new Exception('Invalid Email', 401);
         if (empty($this->data->pass)) throw new Exception('Invalid Password', 401);
 
+        $query = [
+            'email'     => $this->data->email,
+            'accountId' => models\Account::current()->id,
+        ];
+
         // Pull the user list into memory
-        if (!$dbUser = models\User::findOne(['name' => $this->data->name]))
+        if (!$dbUser = models\User::findOne($query))
             throw new Exception('Incorrect User', 401);
 
         // check if the password is old and needs rehashing
