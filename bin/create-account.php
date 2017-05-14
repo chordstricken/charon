@@ -37,8 +37,6 @@ $pass2 = readline_masked('Re-enter Password: ');
 if ($pass1 != $pass2)
     finish('Passwords do not match.');
 
-echo "\n" . var_export($pass1, true) . "\n";
-
 $user->setPassword($pass1);
 $contentKey = core\openssl\AES::getRandomKey(256);
 $user->setContentKey($pass1, $contentKey);
