@@ -23,9 +23,6 @@ abstract class APIRoute {
     /** @var bool */
     protected $is_json = true;
 
-    /** @var bool */
-    protected $is_encrypted = true;
-
     /**
      * Base constructor.
      */
@@ -35,7 +32,6 @@ abstract class APIRoute {
             $this->data    = $data ?? $this->getPayload();
             $this->is_json = Response::isJson();
 
-            $this->decryptPayload();
             $this->decodePayload();
 
             // check for auth
@@ -61,14 +57,6 @@ abstract class APIRoute {
      */
     public function getPayload() {
         return file_get_contents('php://input');
-    }
-
-    /**
-     * decrypts the payload data
-     */
-    protected function decryptPayload() {
-        if ($this->is_encrypted && $this->data && isset($_SESSION['AESKey']))
-            $this->data = openssl\AES::decrypt($this->data, $_SESSION['AESKey']);
     }
 
     /**
@@ -98,12 +86,8 @@ abstract class APIRoute {
      */
     protected function send($data = null, $code = 200) {
 
-        if ($this->is_encrypted && isset($_SESSION['AESKey']))
-            $data = openssl\AES::encrypt($data, $_SESSION['AESKey']);
-
         $data = is_scalar($data) ? $data : json_encode($data);
         Response::send($data, $code);
-
 
         die();
     }

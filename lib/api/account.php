@@ -14,8 +14,6 @@ use \stdClass;
  */
 class Account extends core\APIRoute {
 
-    protected $is_encrypted = true;
-
     /**
      * GET /account
      * Reads the authenticated user's account

@@ -23,10 +23,7 @@ var profileApp = new Vue({
         $.get({
             url: '/profile',
             success: function(result) {
-                var decData = AES.decrypt(result);
-                var decObj = json_decode(decData);
-
-                scope.profile = $.extend(scope.profile, decObj);
+                scope.profile = $.extend(scope.profile, result);
                 scope.toggleLoader(false);
             }
         });
@@ -60,13 +57,12 @@ var profileApp = new Vue({
             scope.clearMessages();
             scope.toggleLoader(true);
 
+            /** @todo set contentKey */
+
             $.post({
                 url: '/profile',
-                data: json_encode(AES.encrypt(scope.profile)),
+                data: scope.profile,
                 success: function(result) {
-                    result = AES.decrypt(result);
-                    result = json_decode(result);
-
                     scope.success = "Successfully updated your profile!";
                     scope.profile = $.extend(scope.profile, result);
                     scope.toggleLoader(false);

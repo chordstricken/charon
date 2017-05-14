@@ -29,7 +29,7 @@ $headerOpts = [
                     <div id="sidebar" class="col-xs-12 col-md-2 sidebar">
                         <div class="hidden-sm hidden-md hidden-lg" style="height: 120px;"></div>
 
-                        <ul class="nav nav-sidebar">
+                        <ul class="nav nav-sidebar nav-sidebar-sticky">
                             <li>
                                 <input id="search" type="search" class="form-control sidebar-search" placeholder="Search" v-model="query" autofocus style="padding-right:2em;">
                                 <span class="search-clear" @click="query = ''" v-show="query.length !== 0"><i class="fa fa-times-circle"></i></span>
@@ -37,7 +37,8 @@ $headerOpts = [
                             <li :class="{active: !object.id}">
                                 <a class="index-anchor" href="#/" tabindex="-1"><span class="fa fa-plus"></span> Add New Locker</a>
                             </li>
-                            <hr />
+                        </ul>
+                        <ul class="nav nav-sidebar nav-sidebar-content">
                             <li v-for="(indexItem, key) in index" :class="{active: indexItem.id == object.id}" v-if="query.length === 0 || search(key)">
                                 <a class="index-anchor" :href="'#/' + indexItem.id" tabindex="-1"><i class="fa fa-book"></i> <span v-text="indexItem.name"></span></a>
                             </li>
@@ -213,6 +214,6 @@ $headerOpts = [
 
 <script type="text/x-template" id="tmpl-nav-bar"><?php include(ROOT . '/html/templates/nav-bar.html'); ?></script>
 <script src="/dist/js/build.js"></script>
-<script src="/dist/js/locker.js"></script>
+<script src="/src/js/locker.js"></script>
 
 </html>

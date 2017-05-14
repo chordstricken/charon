@@ -21,15 +21,6 @@ class Locker extends core\Model {
     public $note;
 
     /**
-     * Locker constructor.
-     * @param array $params
-     */
-    public function __construct($params = []) {
-        parent::__construct($params);
-        $this->items = is_scalar($this->items) ? core\openssl\AES::decrypt($this->items) : $this->items;
-    }
-
-    /**
      * @throws Exception
      * @return self
      */
@@ -49,7 +40,7 @@ class Locker extends core\Model {
         if (mb_strlen($this->note) > (4 * pow(2, 20)))
             $errors[] = 'Note string is too long.';
 
-        if (count($this->items) > 100)
+        if (is_array($this->items) && count($this->items) > 100)
             $errors[] = 'A Locker can only contain 100 items. Please create a new one.';
 
         if (count($errors))
@@ -58,14 +49,4 @@ class Locker extends core\Model {
         return $this;
     }
 
-    /**
-     * Overrides parent
-     */
-    public function save(): self {
-        $items = $this->items;
-        $this->items = core\openssl\AES::encrypt($this->items);
-        parent::save();
-        $this->items = $items;
-        return $this;
-    }
 }

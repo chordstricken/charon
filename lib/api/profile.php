@@ -50,7 +50,7 @@ class Profile extends core\APIRoute {
             if ($this->data->changePass1 !== $this->data->changePass2)
                 throw new Exception('Passwords do not match', 400);
             else
-                $user->setPasswordHash($this->data->changePass1);
+                $user->setPassword($this->data->changePass1);
         }
 
         $user->validate()->save();

@@ -38,7 +38,6 @@ $headerOpts = [
     </div> <!-- /container -->
 </body>
 
-<script>localStorage.setItem('server.publicKey', '<?=base64_encode(core\openssl\RSA::getServerKeyPair()->public)?>');</script>
 <script src="/dist/js/build.js"></script>
 <script src="/dist/js/login.js"></script>
 

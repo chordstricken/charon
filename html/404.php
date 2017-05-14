@@ -10,6 +10,7 @@ $headerOpts = [
 <html lang="en">
 <head>
     <? core\Template::output('header.php', $headerOpts); ?>
+    <script src="/dist/js/build.js"></script>
 </head>
 <body>
 
@@ -19,4 +20,11 @@ $headerOpts = [
 </div>
 
 </body>
+<script>
+    UserKeychain.setPassword('the sky is falling');
+    console.log('HMACKey', UserKeychain.HMACKey);
+    console.log('PassHash', UserKeychain.PassHash);
+    console.log('ContentKey', UserKeychain.ContentKey);
+    console.log('ContentKeyKey', UserKeychain.ContentKeyKey);
+</script>
 </html>

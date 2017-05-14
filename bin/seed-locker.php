@@ -2,9 +2,14 @@
 require_once(__DIR__ . '/../core.php');
 require_once(__DIR__ . '/functions.php');
 
-$account = models\Account::findOne(['slug' => mb_strtolower(trim(readline('Account Slug: ')))]);
-if (!$account)
+$_SERVER['HTTP_HOST'] = mb_strtolower(trim(readline('Account Slug: '))) . '.cli';
+
+if (!$account = models\Account::current())
     finish('Account does not exist.');
+
+if (!CLIUser::me())
+    finish('Unable to verify user credentials.');
+
 
 function randomString($len) {
     $chars   = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ?><.,][}{!@#$%^&*()-=_+|`~';
@@ -23,19 +28,21 @@ echo "Seeding\n";
 // generate 100 Locker objects
 for ($i = 0; $i < 100; $i++) {
 
-    $locker        = new models\Locker();
-    $locker->name  = $semStr->getSemanticString();
-    $locker->note  = "--SEED--\n" . $semStr->getSemanticString(50);
-    $locker->items = [];
+    $locker            = new models\Locker();
+    $locker->accountId = $account->id;
+    $locker->name      = $semStr->getSemanticString();
+    $locker->note      = "--SEED--\n" . $semStr->getSemanticString(50);
+    $locker->items     = [];
 
     for ($j = 0; $j < mt_rand(2, 50); $j++)
         $locker->items[] = [
-            'accountId' => $account->id,
             'title'     => $semStr->getRandomWord(),
             'url'       => "https://" . $semStr->getRandomWord() . "." . $semStr->getRandomWord(),
             'user'      => $semStr->getRandomWord(),
             'pass'      => randomString(mt_rand(8, 64)),
         ];
+
+    $locker->items = core\openssl\AES::encrypt(json_encode($locker->items), CLIUser::me()->contentKey);
 
     $locker->save();
     echo '.';

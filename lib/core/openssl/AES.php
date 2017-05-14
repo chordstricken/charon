@@ -17,24 +17,19 @@ class AES {
     /**
      * @param $pt
      * @param string $key
-     * @return string
+     * @return array
      */
     public static function encrypt($pt, $key = CRYPT_KEY) {
 
-        // check if the key is base64
-        if ($decoded_key = base64_decode($key, true))
-            $key = $decoded_key;
-
         // set the params
-        $pt = json_encode($pt);
         $iv = self::_iv();
-        $ct = openssl_encrypt($pt, self::METHOD, $key, 0, $iv);
+        $ct = openssl_encrypt($pt, self::METHOD, $key, OPENSSL_RAW_DATA, $iv);
 
-        return json_encode([
-            'iv'     => base64_encode($iv),
-            'cipher' => $ct,
-            'tag'    => HMAC::getTag($ct, $key),
-        ]);
+        return [
+            'iv'     => bin2hex($iv),
+            'cipher' => bin2hex($ct),
+//            'tag'    => HMAC::getTag($ct, $key),
+        ];
     }
 
     /**
@@ -45,10 +40,6 @@ class AES {
      */
     public static function decrypt($obj, $key = CRYPT_KEY) {
         $success = true; // never return early to help prevent timing attacks
-
-        // check if the key is base64
-        if ($decoded_key = base64_decode($key, true))
-            $key = $decoded_key;
 
         // Verify item is a json object
         if (is_string($obj) && !$obj = json_decode($obj))
@@ -66,11 +57,8 @@ class AES {
         if (isset($obj->tag))
             $success = HMAC::verifyTag($obj->cipher, $key, $obj->tag);
 
-
-        $obj->iv = base64_decode($obj->iv);
-
         // decrypt
-        $result = json_decode(openssl_decrypt($obj->cipher, self::METHOD, $key, 0, $obj->iv));
+        $result = openssl_decrypt($obj->cipher, self::METHOD, $key, 0, hex2bin($obj->iv));
 
         // never return early to help prevent timing attacks
         return $success ? $result : false;
@@ -85,9 +73,11 @@ class AES {
 
     /**
      * Generates a random encryption key
+     * @param int $length
+     * @return string hex
      */
-    public static function getRandomKey() {
-        return base64_encode(hash_pbkdf2("sha256", openssl_random_pseudo_bytes(32), uniqid(), 1000, 32, true));
+    public static function getRandomKey($length = 32) {
+        return random_bytes($length);
     }
 
 }

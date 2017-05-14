@@ -154,4 +154,24 @@ abstract class Model {
         return $objects;
     }
 
+    /**
+     * Deletes objects from the table
+     * @param $query
+     * @return $this
+     * @throws Exception
+     */
+    public static function deleteQuery(array $query) {
+        if (!count($query))
+            throw new Exception('Must provide a valid delete query.');
+
+        try {
+            $bulkWrite = new BulkWrite();
+            $bulkWrite->delete($query);
+            self::_db()->executeBulkWrite(static::getDBNamespace(), $bulkWrite);
+
+        } catch (Exception $e) {
+            Debug::error($e->getMessage());
+        }
+    }
+
 }

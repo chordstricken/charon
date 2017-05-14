@@ -30,11 +30,11 @@ class Users extends core\APIRoute {
         } else {
 
             if (isset($this->path[0])) {
-                $this->send(models\User::findOne(['id' => $this->path[0]]));
+                $this->send(models\User::findOne(['id' => $this->path[0], 'accountId' => models\Account::current()->id]));
 
             } else {
                 // load the locker data object
-                $this->send(models\User::findMulti([]));
+                $this->send(models\User::findMulti(['accountId' => models\Account::current()->id]));
             }
 
         }
@@ -62,7 +62,7 @@ class Users extends core\APIRoute {
             if ($this->data->changePass1 !== $this->data->changePass2)
                 throw new Exception('Passwords do not match', 400);
             else
-                $user->setPasswordHash($this->data->changePass1);
+                $user->setPassword($this->data->changePass1);
         }
 
         // set other data
@@ -82,10 +82,11 @@ class Users extends core\APIRoute {
         if (!isset($this->path[0]))
             throw new Exception('Invalid User ID', 400);
 
-        if (!$user = models\User::findOne(['id' => $this->path[0]]))
+        if (!$user = models\User::findOne(['id' => $this->path[0], 'accountId' => models\Account::current()->id]))
             throw new Exception('Unable to find that user.', 404);
 
         $user->delete();
+        $this->send("Successfully deleted $user->name");
     }
 
 }

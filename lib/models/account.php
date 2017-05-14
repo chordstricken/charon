@@ -59,4 +59,14 @@ class Account extends core\Model {
         return parent::save();
     }
 
+    /**
+     * Deletes the account and all associated data
+     */
+    public function delete() {
+        $deleteQuery = ['accountId' => $this->id];
+        Locker::deleteQuery($deleteQuery);
+        User::deleteQuery($deleteQuery);
+        parent::delete();
+    }
+
 }

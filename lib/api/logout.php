@@ -17,7 +17,7 @@ class Logout extends core\APIRoute {
     public function get() {
         unset($_SESSION);
         session_destroy();
-        $this->send('Suggessfully logged out.');
+        $this->send('Successfully logged out.');
     }
 
 }

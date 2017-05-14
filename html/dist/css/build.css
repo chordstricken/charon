@@ -9183,7 +9183,15 @@ a:focus {
     border: 0;
     border-radius: 0;
 }
-
+.nav-sidebar.nav-sidebar-sticky {
+    height: 100px;
+    border-bottom: 1px solid #eeeeee;
+    margin-bottom: 0;
+}
+.nav-sidebar.nav-sidebar-content {
+    height: calc(100% - 120px);
+    overflow-y: auto;
+}
 
 /*
  * Main content

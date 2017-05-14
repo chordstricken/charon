@@ -67,6 +67,28 @@ class UserTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
+     * @depends testWrite
+     */
+    public function testContentKey() {
+        $password   = 'i fear nothing';
+        $contentKey = bin2hex(openssl_random_pseudo_bytes(256));
+
+        $user_data = reset(self::$_data);
+        $user = User::findOne(['id' => $user_data->id]);
+
+        $user->setContentKey($password, $contentKey);
+        $user->save();
+        unset($user);
+
+        $user = User::findOne(['id' => $user_data->id]);
+        $dbContentKey = $user->getContentKey($password);
+        echo "dbContentKey: $dbContentKey\n";
+        echo "contentKey: $contentKey\n";
+
+        $this->assertEquals($dbContentKey, $contentKey, 'Content Keys do not match');
+    }
+
+    /**
      * Tests reading auto-generated test objects
      * @depends testFindOne
      */

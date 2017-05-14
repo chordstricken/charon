@@ -8,105 +8,99 @@
 require_once(__DIR__ . '/../core.php');
 use core\openssl\AES;
 
-$plaintext = 'I fear nothing. I am free.';
+$semanticString      = new core\SemanticString();
+$pt                  = $semanticString->getSemanticString(50);
+$password            = $semanticString->getSemanticString(5);
 
-/**
- * Stackoverflow test
- */
-//$key    = hash_pbkdf2("sha256", AES::getRandomKey(), uniqid(), 1000, 32, true);
-////$key    = AES::getRandomKey();
-//$iv     = openssl_random_pseudo_bytes(openssl_cipher_iv_length("aes-256-cbc"));
-//$cipherText = openssl_encrypt($plaintext, "aes-256-cbc", $key, 0, $iv);
-//$cipher = base64_encode($cipherText . ":" . bin2hex($iv));
-//
-//
-//$key = base64_encode($key);
-
-/**
- * My test
- */
-$key       = AES::getRandomKey();
-$cipher    = AES::encrypt($plaintext, $key);
+$contentKey          = random_bytes(256);
+$contentKeyKey       = hex2bin(hash_pbkdf2('sha256', $password, 'Charon.UserKeychain.ContentKeyKey', 15, false));
+$contentKeyEncrypted = AES::encrypt($contentKey, $contentKeyKey);
+$ptEncrypted         = AES::encrypt($pt, $contentKeyKey);
 
 ?>
 <!doctype html>
 <html>
 <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-    <script src="/js/cryptojs/rollups/aes.js"></script>
-<!--    <script src="/js/cryptojs/components/mode-ctr-min.js"></script>-->
-    <script src="/js/cryptojs/rollups/md5.js"></script>
-<!--    <script src="/js/cryptojs/components/hmac.js"></script>-->
-<!--    <script src="/js/cryptojs/components/sha256.js"></script>-->
-<!--    <script src="/js/cryptojs/components/pbkdf2.js"></script>-->
-    <script src="/js/jsencrypt.js"></script>
-    <script src="/js/functions.js"></script>
+<!--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>-->
+<!--    <script src="/lib/js/cryptojs/rollups/aes.js"></script>-->
+<!--    <script src="/lib/js/cryptojs/rollups/md5.js"></script>-->
+<!--    <script src="/src/js/build/encryption.js"></script>-->
+<!--    <script src="/src/js/build/functions.js"></script>-->
+    <script src="/dist/js/build.js"></script>
     <style>
-        li.label { font-weight: bold; margin-top: 10px; }
+        body {
+            width: 100%;
+            margin: auto;
+            padding: 0 10px;
+        }
+
+        li.label {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .box {
+            width: 45%;
+            float: left;
+            margin: 10px;
+            padding: 10px;
+            display: inline-block;
+            border: 1px solid black;
+            word-wrap: break-word;
+        }
     </style>
 </head>
 <body>
-<div style="width: 1000px; margin:auto;">
 
     <h1>Testing Encryption</h1>
-    <ul>
-        <li class="label">Plaintext:</li>
-        <li><?=var_dump($plaintext)?></li>
 
-        <li class="label">Key (base64):</li>
-        <li><?=var_dump($key)?></li>
+    <div class="box">
+        <h3>PHP</h3>
+        <ul id="php">
+            <li class="label">contentKeyKey:</li>
+            <li><?=json_encode(bin2hex($contentKeyKey))?></li>
 
-        <li class="label">PHP Cipher:</li>
-        <li><?=var_dump($cipher)?></li>
+            <li class="label">contentKeyEncrypted:</li>
+            <li><?=json_encode($contentKeyEncrypted)?></li>
 
-        <li class="label">PHP Decrypted:</li>
-        <li><?=AES::decrypt($cipher, $key)?></li>
+            <li class="label">contentKey:</li>
+            <li><?=json_encode(bin2hex($contentKey))?></li>
 
-    </ul>
+            <li class="label">Plaintext Encrypted:</li>
+            <li><?=json_encode($ptEncrypted)?></li>
 
-</div>
+            <li class="label">Plaintext:</li>
+            <li><?=json_encode($pt)?></li>
+        </ul>
+    </div>
+
+    <div class="box">
+        <h3>JS</h3>
+        <ul id="js"></ul>
+    </div>
+
 </body>
 <script>
-    $(function() {
-// Stackoverflow test
-//        var crypt = <?//=$cipher?>//;
-//
-////        var key256Bits  = CryptoJS.PBKDF2("0000", "secret", { keySize: 256/32, iterations: 1000, hasher: CryptoJS.algo.SHA256 });
-//        var key256Bits = CryptoJS.enc.Base64.parse('<?//=$key?>//');
-//        console.log(key256Bits);
-////        var key256Bits  = '<?////=$key?>////';
-//
-////        var rawData = atob(crypt.cipher);
-////        var rawPieces = rawData.split(":");
-//
-//        var crypttext = crypt.cipher;
-//        var iv = CryptoJS.enc.Base64.parse(crypt.iv);
-//
-//        var cipherParams = CryptoJS.lib.CipherParams.create({ciphertext: CryptoJS.enc.Base64.parse(crypttext)});
-//
-//        var plaintextArray = CryptoJS.AES.decrypt(
-//            cipherParams,
-//            key256Bits,
-//            { iv: iv }
-//        );
-//
-//        var plaintext = plaintextArray.toString(CryptoJS.enc.Utf8);
-//        console.log(plaintext);
-//
-//        $('ul').append('<li class="label">JS Result:</li><li>string (' + plaintext.length + ') "' + plaintext + '"</li>');
 
-// My test
-        AES.setKey('<?=$key?>');
-        var cipher    = '<?=$cipher?>',
-            plaintext = AES.decrypt(cipher);
+    $.fn.appendItem = function(label, value) {
+        value = JSON.stringify(value);
+        $(this).append('<li class="label">' + label + ':</li><li>' + value + '</li>');
+    };
 
-        $('ul').append('<li class="label">JS Decrypted:</li><li>string (' + plaintext.length + ') "' + plaintext + '"</li>');
 
-        var jsCipher = JSON.stringify(AES.encrypt(plaintext));
-        $('ul').append('<li class="label">JS Cipher:</li><li>string (' + jsCipher.length + ') "' + jsCipher + '"</li>');
+    var $ul = $('#js');
 
-        var plaintext2 = AES.decrypt(jsCipher);
-        $('ul').append('<li class="label">JS Decrypted:</li><li>string (' + plaintext2.length + ') "' + plaintext2 + '"</li>');
-    });
+    var password = <?=json_encode($password)?>;
+    var contentKeyEncrypted = <?=json_encode($contentKeyEncrypted)?>;
+    var ptEncrypted = <?=json_encode($ptEncrypted)?>;
+
+    UserKeychain.setPassword(password);
+    UserKeychain.setContentKey(contentKeyEncrypted);
+
+    $ul.appendItem('contentKeyKey', UserKeychain.ContentKeyKey);
+    $ul.appendItem('contentKeyEncrypted', contentKeyEncrypted);
+    $ul.appendItem('contentKey', UserKeychain.ContentKey);
+    $ul.appendItem('Plaintext Encrypted', ptEncrypted);
+    $ul.appendItem('Plaintext', AES.decryptToUtf8(ptEncrypted, UserKeychain.getContentKeyKey()));
+
 </script>
 </html>

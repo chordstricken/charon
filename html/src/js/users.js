@@ -80,7 +80,7 @@ var usersApp = new Vue({
             $.get({
                 url: '/users',
                 success: function(result) {
-                    scope.users = json_decode(AES.decrypt(result));
+                    scope.users = result;
                     scope.toggleLoader(false);
                 }
             });
@@ -113,7 +113,7 @@ var usersApp = new Vue({
                         return;
                     }
 
-                    scope.object = json_decode(AES.decrypt(data));
+                    scope.object = data;
 
                     scope.cancelChangePassword();
                     scope.objectHash  = md5(json_encode(scope.object));
@@ -146,14 +146,14 @@ var usersApp = new Vue({
                 return;
             }
 
-            var ajaxData = json_encode(AES.encrypt(scope.object));
+            /** @todo set contentKey */
 
             $.post({
                 url: '/users/' + scope.object.id,
-                data: ajaxData,
+                data: scope.object,
                 success: function(result) {
                     // Set the data into the object
-                    scope.object = json_decode(AES.decrypt(result));
+                    scope.object = result;
 
                     // set the hash id
                     location.hash = '#/' + scope.object.id;
@@ -183,18 +183,19 @@ var usersApp = new Vue({
         },
 
         // deletes the provided user
-        deleteObject: function(user) {
+        deleteObject: function() {
             var scope = this;
 
             $.ajax({
                 method: 'delete',
-                url: '/users/' + user.id,
-                data: json_encode(AES.encrypt(user)),
+                url: '/users/' + scope.object.id,
                 success: function(result) {
                     // set success message
-                    scope.success = 'Successfully deleted the user';
                     scope.resetObject();
+                    location.hash = '#/';
+                    scope.loadIndex();
 
+                    scope.success = 'Successfully deleted the user';
                 },
                 error: function(jqXHR) {
                     if (jqXHR.status == 401) {

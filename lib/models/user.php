@@ -25,6 +25,7 @@ class User extends core\Model {
     public $email;
     public $permLevel = 20;
     public $passhash;
+    public $contentKeyEncrypted;
 
     /** @var User */
     private static $_me = null;
@@ -63,22 +64,50 @@ class User extends core\Model {
     }
 
     /**
-     * returns encryption key
+     * @param $password
      * @return mixed
      */
-    public static function getKey() {
-        return $_SESSION['user_key'];
+    public static function hashPassword($password) {
+        return hash_pbkdf2('sha256', $password, 'Charon.UserKeychain.PassHash', 20);
     }
 
     /**
      * Hashes the password and sets it into the object
-     * @param $password
+     * @param string $password plaintext
+     * @return self
+     * @throws Exception
+     */
+    public function setPassword($password) {
+        if (mb_strlen($password) < 12) throw new Exception('Passwords must be at least 12 characters. Type whatever you\'d like, though!');
+        $this->passhash = self::hashPassword($password);
+        return $this;
+    }
+
+    /**
+     * Stores the content key
+     * @param string $password plaintext
+     * @param string $contentKey plaintext
      * @return self
      */
-    public function setPasswordHash($password) {
-        if (mb_strlen($password) < 12) throw new Exception('Passwords must be at least 12 characters. Type whatever you\'d like, though!');
-        $this->passhash = password_hash($password, PASSWORD_DEFAULT);
+    public function setContentKey($password, $contentKey) {
+        // this is a secret key expanded directly from the plaintext password. It must not be stored anywhere.
+        $contentKeyKey = hash_pbkdf2('sha256', $password, 'Charon.UserKeychain.ContentKeyKey', 15);
+        $this->contentKeyEncrypted = core\openssl\AES::encrypt($contentKey, $contentKeyKey);
 
         return $this;
     }
+
+    /**
+     * Decrypts the Content Key with a user's password
+     * @param string $password plaintext
+     * @return string
+     */
+    public function getContentKey($password) {
+        // this is a secret key expanded directly from the plaintext password. It must not be stored anywhere.
+        $contentKeyKey = hash_pbkdf2('sha256', $password, 'Charon.UserKeychain.ContentKeyKey', 15);
+
+        // this is a secret key reserved for account locker manipulation. Do not store or share anywhere.
+        return core\openssl\AES::decrypt($this->contentKeyEncrypted, $contentKeyKey);
+    }
+
 }

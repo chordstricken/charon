@@ -12,13 +12,13 @@ use core\openssl\AES;
  * @author Jason Wright <jason@silvermast.io>
  * @since 1/2/17
  * @package charon
+ *
+ * @deprecated
  */
 class Handshake extends core\APIRoute {
 
     /** @var bool overrides parent */
     protected $require_auth = false;
-    /** @var bool */
-    protected $is_encrypted = false;
 
     /**
      * Receives an RSA encrypted

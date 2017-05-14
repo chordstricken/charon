@@ -141,14 +141,39 @@ var lockerApp = new Vue({
             }, 10);
         },
 
+        // decrypts, formats, and sets the Locker object
+        setObject: function(obj) {
+            if (typeof obj === "string")
+                obj = json_decode(obj);
+
+            if (obj.items.iv)
+                obj.items = AES.decryptToUtf8(obj.items);
+
+            if (typeof obj.items === "string")
+                obj.items = json_decode(obj.items);
+
+            // make sure each object has a unique ID before setting
+            if (obj.items && obj.items.map) {
+                obj.items.map(function(item) {
+                    if (item._id === undefined) {
+                        delete item.$$hashKey;
+                        item._id = unique_id();
+                    }
+                    item.icon = item.icon && item.icon.length ? item.icon : 'fa-key';
+                });
+            }
+
+            this.objectHash = md5(json_encode(obj));
+            this.object     = obj;
+        },
+
         // Loads the index on to the sidebar
         loadIndex: function() {
             var self = this;
             $.get({
                 url: '/locker/_index',
                 success: function(result) {
-                    var decData = AES.decrypt(result);
-                    self.index  = json_decode(decData);
+                    self.index = json_decode(result);
                 },
                 error: function(jqXHR) {
                     console.log(jqXHR);
@@ -178,24 +203,8 @@ var lockerApp = new Vue({
             $.ajax({
                 method: 'get',
                 url: '/locker/' + lockerId,
-                success: function(data) {
-                    var decData = AES.decrypt(data);
-                    var decObj = json_decode(decData);
-
-                    // make sure each object has a unique ID before setting
-                    if (decObj.items && decObj.items.map) {
-                        decObj.items.map(function(item) {
-                            if (item._id === undefined) {
-                                delete item.$$hashKey;
-                                item._id = unique_id();
-                            }
-                            item.icon = item.icon && item.icon.length ? item.icon : 'fa-key';
-                        });
-                    }
-
-                    self.object      = decObj;
-                    self.objectHash  = md5(json_encode(self.object));
-                    // self.hasChanged = false;
+                success: function(result) {
+                    self.setObject(result);
                     self.toggleLoader(false);
 
                 },
@@ -218,23 +227,23 @@ var lockerApp = new Vue({
             self.toggleLoader(true);
             self.clearMessages();
 
-            var ajaxData = json_encode(AES.encrypt(self.object));
+            var ajaxData = $.extend(true, self.object, {
+                items: AES.encrypt(json_encode(self.object.items))
+            });
 
             $.ajax({
                 method: 'post',
                 url: '/locker/' + self.object.id,
-                data: ajaxData,
+                data: json_encode(self.object),
                 success: function(result) {
                     // Set the data into the object
-                    self.object = json_decode(AES.decrypt(result));
+                    self.setObject(result);
 
                     // set the hash id
                     location.hash = '#/' + self.object.id;
 
                     self.loadIndex();
                     self.toggleLoader(false);
-                    // self.hasChanged = false;
-                    self.objectHash  = md5(json_encode(self.object));
 
                     // set success message
                     self.success = 'Successfully saved the object';

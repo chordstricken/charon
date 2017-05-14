@@ -37,7 +37,7 @@ module.exports = function(grunt) {
                     'html/lib/js/cryptojs/rollups/pbkdf2.js',
 
                     // JSEncrypt utilities (RSA)
-                    'html/lib/js/jsencrypt/jsencrypt.js',
+                    // 'html/lib/js/jsencrypt/jsencrypt.js',
 
                     // finally, all custom-written build files
                     'html/src/js/build/*.js',
