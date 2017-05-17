@@ -43,16 +43,14 @@ class Profile extends core\APIRoute {
 
         unset($this->data->id, $this->data->accountId, $this->data->permLevel); // avoid spoofing these variables
 
+        if (empty($this->data->passhash))
+            unset($this->data->passhash);
+
+        if (empty($this->data->contentKeyEncrypted))
+            unset($this->data->contentKeyEncrypted);
+
         $user = models\User::me();
         $user->setVars($this->data);
-
-        if (!empty($this->data->changePass1)) {
-            if ($this->data->changePass1 !== $this->data->changePass2)
-                throw new Exception('Passwords do not match', 400);
-            else
-                $user->setPassword($this->data->changePass1);
-        }
-
         $user->validate()->save();
 
         $this->send($user);

@@ -40,8 +40,9 @@ class User extends core\Model {
         if (mb_strlen($this->email) > 1024) throw new Exception('Invalid email', 400);
         if (empty($this->accountId)) throw new Exception('Invalid Account', 400);
 
-        $hash_info = password_get_info($this->passhash);
-        if (!$hash_info['algo']) throw new Exception('Invalid passhash', 400);
+        // sha256 = 64 bytes
+        if (mb_strlen($this->passhash) != 64) throw new Exception('Invalid password hash', 400);
+        if (!isset($this->contentKeyEncrypted->cipher)) throw new Exception('Invalid Content Key', 400);
 
         if (self::findOne(['accountId' => $this->accountId, 'email' => $this->email, 'id' => ['$ne' => $this->id]]))
             throw new Exception('A user with that email already exists.', 400);
@@ -91,7 +92,7 @@ class User extends core\Model {
      */
     public function setContentKey($password, $contentKey) {
         // this is a secret key expanded directly from the plaintext password. It must not be stored anywhere.
-        $contentKeyKey = hash_pbkdf2('sha256', $password, 'Charon.UserKeychain.ContentKeyKey', 15);
+        $contentKeyKey = hex2bin(hash_pbkdf2('sha256', $password, 'Charon.UserKeychain.ContentKeyKey', 15));
         $this->contentKeyEncrypted = core\openssl\AES::encrypt($contentKey, $contentKeyKey);
 
         return $this;
@@ -104,7 +105,7 @@ class User extends core\Model {
      */
     public function getContentKey($password) {
         // this is a secret key expanded directly from the plaintext password. It must not be stored anywhere.
-        $contentKeyKey = hash_pbkdf2('sha256', $password, 'Charon.UserKeychain.ContentKeyKey', 15);
+        $contentKeyKey = hex2bin(hash_pbkdf2('sha256', $password, 'Charon.UserKeychain.ContentKeyKey', 15));
 
         // this is a secret key reserved for account locker manipulation. Do not store or share anywhere.
         return core\openssl\AES::decrypt($this->contentKeyEncrypted, $contentKeyKey);

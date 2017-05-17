@@ -55,12 +55,12 @@
                         </div>
 
                         <div class="form-group" :class="{'has-error': !passwordVerify}">
-                            <input type="password" class="form-control borderless" id="<?=$u?>" placeholder="Change Password" v-model="profile.changePass1">
+                            <input type="password" class="form-control borderless" id="<?=$u?>" placeholder="Change Password" v-model="changePass1">
                             <label class="small text-muted" for="<?=$u=uniqid('label')?>">Change Password</label>
                             <small class="help-block" v-if="!passwordVerify">Password must be at least 12 characters long. Type whatever you'd like, though!</small>
                         </div>
                         <div class="form-group" :class="{'has-error': !passwordsMatch}">
-                            <input type="password" class="form-control borderless" placeholder="Verify Password" v-model="profile.changePass2">
+                            <input type="password" class="form-control borderless" placeholder="Verify Password" v-model="changePass2">
                             <label class="small text-muted" for="<?=$u=uniqid('label')?>">Verify Password</label>
                             <small class="help-block" v-if="!passwordsMatch">The passwords you've entered don't match!</small>
                         </div>
@@ -80,7 +80,7 @@
     </div>
 </body>
 
-<script src="/dist/js/build.js"></script>
-<script src="/dist/js/profile.js"></script>
+<script src="/src/js/build.js"></script>
+<script src="/src/js/profile.js"></script>
 
 </html>

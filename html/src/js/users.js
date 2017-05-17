@@ -34,6 +34,8 @@ var usersApp = new Vue({
         object: getBlankUser(),
         objectHash: false,
         changingPassword: false,
+        changePass1: null,
+        changePass2: null,
 
         userLevels: {
             1: 'Owner',
@@ -52,11 +54,14 @@ var usersApp = new Vue({
         hasChanged: function() {
             return this.objectHash !== md5(json_encode(this.object));
         },
+        passwordChange: function() {
+            return this.changePass1.length > 0 && this.changePass2.length > 0;
+        },
         passwordVerify: function() {
-            return this.object.changePass1.length === 0 || this.object.changePass1.length > 12;
+            return this.changePass1.length === 0 || this.changePass1.length > 12;
         },
         passwordsMatch: function() {
-            return this.object.changePass1.length === 0 || this.object.changePass1 === this.object.changePass2;
+            return this.changePass1.length === 0 || this.changePass1 === this.changePass2;
         },
     },
 
@@ -69,9 +74,9 @@ var usersApp = new Vue({
 
         // Sets the object as a blank object
         resetObject: function() {
-            this.object = getBlankUser();
-            this.hasChanged  = false;
-            this.objectHash  = md5(json_encode(this.object));
+            this.object           = getBlankUser();
+            this.hasChanged       = false;
+            this.objectHash       = md5(json_encode(this.object));
             this.changingPassword = true;
         },
 
@@ -80,7 +85,7 @@ var usersApp = new Vue({
             $.get({
                 url: '/users',
                 success: function(result) {
-                    scope.users = result;
+                    scope.users = json_decode(result);
                     scope.toggleLoader(false);
                 }
             });
@@ -91,6 +96,7 @@ var usersApp = new Vue({
             var scope = this;
             scope.toggleLoader(true);
             scope.clearMessages();
+            scope.cancelChangePassword();
 
             var userId = getUserId();
 
@@ -113,11 +119,11 @@ var usersApp = new Vue({
                         return;
                     }
 
-                    scope.object = data;
+                    scope.object = json_decode(data);
 
                     scope.cancelChangePassword();
-                    scope.objectHash  = md5(json_encode(scope.object));
-                    scope.hasChanged  = false;
+                    scope.objectHash = md5(json_encode(scope.object));
+                    scope.hasChanged = false;
                     scope.toggleLoader(false);
 
                 },
@@ -140,20 +146,25 @@ var usersApp = new Vue({
             scope.toggleLoader(true);
             scope.clearMessages();
 
-            // passwords must match
-            if (!scope.passwordsMatch) {
-                scope.error = 'Passwords do not match.';
-                return;
+            if (scope.passwordChange) {
+                // passwords must match
+                if (!scope.passwordsMatch) {
+                    scope.error = 'Passwords do not match.';
+                    return;
+                }
+
+                UserKeychain.setPassword(scope.changePass1);
+                scope.object.passhash            = UserKeychain.PassHash;
+                scope.object.contentKeyEncrypted = UserKeychain.getContentKeyEncrypted();
             }
 
-            /** @todo set contentKey */
 
             $.post({
                 url: '/users/' + scope.object.id,
-                data: scope.object,
+                data: json_encode(scope.object),
                 success: function(result) {
                     // Set the data into the object
-                    scope.object = result;
+                    scope.object = json_decode(result);
 
                     // set the hash id
                     location.hash = '#/' + scope.object.id;
@@ -210,14 +221,14 @@ var usersApp = new Vue({
         },
 
         startChangePassword: function() {
-            this.object.changePass1 = '';
-            this.object.changePass2 = '';
-            this.changingPassword = true;
+            this.changePass1 = '';
+            this.changePass2 = '';
+            this.changingPassword   = true;
         },
         cancelChangePassword: function() {
-            this.object.changePass1 = '';
-            this.object.changePass2 = '';
-            this.changingPassword = false;
+            this.changePass1 = '';
+            this.changePass2 = '';
+            this.changingPassword   = false;
         },
 
         // Turns the loader on after a slight delay Or turns it off and clears the timeout

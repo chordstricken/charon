@@ -1,6 +1,7 @@
 <?php
 namespace core\openssl;
 
+use core\Encoding;
 use \Exception;
 
 /**
@@ -53,9 +54,9 @@ class AES {
         if (!isset($obj->iv))
             throw new Exception(__METHOD__ . ' Decryption object missing iv param', 500);
 
-        // verify the tag
-        if (isset($obj->tag))
-            $success = HMAC::verifyTag($obj->cipher, $key, $obj->tag);
+//        // verify the tag
+//        if (isset($obj->tag))
+//            $success = HMAC::verifyTag($obj->cipher, $key, $obj->tag);
 
         // decrypt
         $result = openssl_decrypt($obj->cipher, self::METHOD, $key, 0, hex2bin($obj->iv));
@@ -68,7 +69,8 @@ class AES {
      * Generates the Initialization Vector
      */
     private static function _iv() {
-        return openssl_random_pseudo_bytes(openssl_cipher_iv_length(self::METHOD));
+//        return '0000000000000000';
+        return random_bytes(openssl_cipher_iv_length(self::METHOD));
     }
 
     /**
@@ -77,7 +79,7 @@ class AES {
      * @return string hex
      */
     public static function getRandomKey($length = 32) {
-        return random_bytes($length);
+        return bin2hex(random_bytes($length));
     }
 
 }

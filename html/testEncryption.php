@@ -7,15 +7,16 @@
  */
 require_once(__DIR__ . '/../core.php');
 use core\openssl\AES;
+use core\Encoding;
 
 $semanticString      = new core\SemanticString();
 $pt                  = $semanticString->getSemanticString(50);
 $password            = $semanticString->getSemanticString(5);
 
-$contentKey          = random_bytes(256);
-$contentKeyKey       = hex2bin(hash_pbkdf2('sha256', $password, 'Charon.UserKeychain.ContentKeyKey', 15, false));
+$contentKey          = AES::getRandomKey(32);
+$contentKeyKey       = hex2bin(hash_pbkdf2('sha256', $password, 'Charon.UserKeychain.ContentKeyKey', 15));
 $contentKeyEncrypted = AES::encrypt($contentKey, $contentKeyKey);
-$ptEncrypted         = AES::encrypt($pt, $contentKeyKey);
+$ptEncrypted         = AES::encrypt($pt, hex2bin($contentKey));
 
 ?>
 <!doctype html>
@@ -27,6 +28,7 @@ $ptEncrypted         = AES::encrypt($pt, $contentKeyKey);
 <!--    <script src="/src/js/build/encryption.js"></script>-->
 <!--    <script src="/src/js/build/functions.js"></script>-->
     <script src="/dist/js/build.js"></script>
+    <script src="/src/js/build/encryption.js"></script>
     <style>
         body {
             width: 100%;
@@ -59,17 +61,17 @@ $ptEncrypted         = AES::encrypt($pt, $contentKeyKey);
             <li class="label">contentKeyKey:</li>
             <li><?=json_encode(bin2hex($contentKeyKey))?></li>
 
-            <li class="label">contentKeyEncrypted:</li>
-            <li><?=json_encode($contentKeyEncrypted)?></li>
-
             <li class="label">contentKey:</li>
-            <li><?=json_encode(bin2hex($contentKey))?></li>
+            <li><?=json_encode($contentKey)?></li>
 
             <li class="label">Plaintext Encrypted:</li>
             <li><?=json_encode($ptEncrypted)?></li>
 
             <li class="label">Plaintext:</li>
             <li><?=json_encode($pt)?></li>
+
+            <li class="label">contentKeyEncrypted:</li>
+            <li><?=json_encode($contentKeyEncrypted)?></li>
         </ul>
     </div>
 
@@ -87,20 +89,20 @@ $ptEncrypted         = AES::encrypt($pt, $contentKeyKey);
     };
 
 
-    var $ul = $('#js');
-
-    var password = <?=json_encode($password)?>;
+    var $ul                 = $('#js');
+    var password            = <?=json_encode($password)?>;
     var contentKeyEncrypted = <?=json_encode($contentKeyEncrypted)?>;
-    var ptEncrypted = <?=json_encode($ptEncrypted)?>;
+    var ptEncrypted         = <?=json_encode($ptEncrypted)?>;
+    var ptOriginal          = <?=json_encode($pt)?>;
 
     UserKeychain.setPassword(password);
     UserKeychain.setContentKey(contentKeyEncrypted);
 
     $ul.appendItem('contentKeyKey', UserKeychain.ContentKeyKey);
-    $ul.appendItem('contentKeyEncrypted', contentKeyEncrypted);
     $ul.appendItem('contentKey', UserKeychain.ContentKey);
     $ul.appendItem('Plaintext Encrypted', ptEncrypted);
-    $ul.appendItem('Plaintext', AES.decryptToUtf8(ptEncrypted, UserKeychain.getContentKeyKey()));
+    $ul.appendItem('Plaintext', AES.decryptToUtf8(ptEncrypted, UserKeychain.getContentKey()));
+    $ul.appendItem('contentKeyEncrypted', UserKeychain.getContentKeyEncrypted());
 
 </script>
 </html>

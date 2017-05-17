@@ -48,15 +48,18 @@ var AES = new function() {
      * @param keyObj optional
      */
     this.encrypt = function(plaintext, keyObj) {
+        //
+        // if (plaintext instanceof Object)
+        //     plaintext = json_encode(plaintext);
 
-        if (plaintext instanceof Object)
-            plaintext = json_encode(plaintext);
+        // var iv = CryptoJS.enc.Hex.parse('30303030303030303030303030303030');
+        var iv = CryptoJS.lib.WordArray.random(16);
 
-        var result = CryptoJS.AES.encrypt(plaintext, keyObj || getKey(), {iv: CryptoJS.lib.WordArray.random(16)});
+        var result = CryptoJS.AES.encrypt(plaintext, keyObj || getKey(), {iv: iv});
 
         var retObj = {
             cipher: result.ciphertext.toString(CryptoJS.enc.Hex),
-            iv: result.iv.toString(CryptoJS.enc.Hex)
+            iv:     result.iv.toString(CryptoJS.enc.Hex)
         };
 
         // retObj.tag = HMAC.getTag(retObj.cipher); // @todo implement HMAC
@@ -103,55 +106,77 @@ var AES = new function() {
 };
 
 /**
- * Keychain object used for expanding user keys
+ * Keychain object used for expanding a user password
  */
-var UserKeychain = new function() {
+var Keychain = function() {
+    this.HMACKey       = null; // Hex used for signing requests
+    this.PassHash      = null; // Hex hash of the password
+    this.ContentKey    = null; // Hex used for decrypting Account data
+    this.ContentKeyKey = null; // Hex used for decrypting the contentKey
 
-    var self = this;
+    /**
+     * Saves the object into localStorage
+     */
+    this.saveToStorage = function() {
+        localStorage.setItem('UserKeychain', json_encode({
+            HMACKey: this.HMACKey,
+            PassHash: this.PassHash,
+            ContentKey: this.ContentKey,
+            ContentKeyKey: this.ContentKeyKey,
+        }));
+    };
 
-    // All keys stored into sessionStorage as base64 values
-    self.HMACKey       = localStorage.getItem('UserKeychain.HMACKey'); // used for signing requests
-    self.PassHash      = localStorage.getItem('UserKeychain.PassHash'); // hash of the password
-    self.ContentKey    = localStorage.getItem('UserKeychain.ContentKey'); // used for decrypting Account data
-    self.ContentKeyKey = localStorage.getItem('UserKeychain.ContentKeyKey'); // used for decrypting the contentKey
+    /**
+     * loads the object from localStorage
+     * @returns {Keychain}
+     */
+    this.loadFromStorage = function() {
+        var storageItem = localStorage.getItem('UserKeychain');
+        if (storageItem = json_decode(storageItem)) {
+            this.HMACKey       = storageItem.HMACKey || null;
+            this.PassHash      = storageItem.PassHash || null;
+            this.ContentKey    = storageItem.ContentKey || null;
+            this.ContentKeyKey = storageItem.ContentKeyKey || null;
+        }
+        return this;
+    };
 
     // Returns a CryptoJS instance of the provided keyname
-    self.getKey = function(keyname) {
+    this.getKey = function(keyname) {
         var keyObjName = '_' + keyname;
-        if (self[keyObjName]) return self[keyObjName];
-        self[keyObjName] = CryptoJS.enc.Hex.parse(self[keyname]);
-        return self[keyObjName];
+        if (this[keyObjName]) return this[keyObjName];
+        this[keyObjName] = CryptoJS.enc.Hex.parse(this[keyname]);
+        return this[keyObjName];
     };
 
     // Expands a password into a passkey with the provided CryptoJS PBKDF2 options
-    self.expandKey = function(keyname, passObj, opts) {
-        self['_' + keyname] = CryptoJS.PBKDF2(passObj, 'Charon.UserKeychain.' + keyname, opts);
-        self[keyname] = self['_' + keyname].toString(CryptoJS.enc.Hex);
-        localStorage.setItem('UserKeychain.' + keyname, self[keyname])
+    this.expandKey = function(keyname, passObj, opts) {
+        this['_' + keyname] = CryptoJS.PBKDF2(passObj, 'Charon.UserKeychain.' + keyname, opts);
+        this[keyname] = this['_' + keyname].toString(CryptoJS.enc.Hex);
     };
 
-    self.getHMACKey       = function() { return self.getKey('HMACKey'); };
-    self.getPassHash      = function() { return self.getKey('PassHash'); };
-    self.getContentKey    = function() { return self.getKey('ContentKey'); };
-    self.getContentKeyKey = function() { return self.getKey('ContentKeyKey'); };
+    this.getHMACKey       = function() { return this.getKey('HMACKey'); };
+    this.getPassHash      = function() { return this.getKey('PassHash'); };
+    this.getContentKey    = function() { return this.getKey('ContentKey'); };
+    this.getContentKeyKey = function() { return this.getKey('ContentKeyKey'); };
 
     // expands a password into various keys
-    self.setPassword = function(pass) {
+    this.setPassword = function(pass) {
         var passObj = CryptoJS.enc.Utf8.parse(pass);
 
-        self.expandKey('HMACKey', passObj, {
+        this.expandKey('HMACKey', passObj, {
             iterations: 10,
             hasher: CryptoJS.algo.SHA256,
             keySize: 256/32,
         });
 
-        self.expandKey('PassHash', passObj, {
+        this.expandKey('PassHash', passObj, {
             iterations: 20,
             hasher: CryptoJS.algo.SHA256,
             keySize: 256/32,
         });
 
-        self.expandKey('ContentKeyKey', passObj, {
+        this.expandKey('ContentKeyKey', passObj, {
             iterations: 15,
             hasher: CryptoJS.algo.SHA256,
             keySize: 256/32,
@@ -159,10 +184,21 @@ var UserKeychain = new function() {
     };
 
     // Decrypts the content key and sets it
-    self.setContentKey = function(contentKeyEncrypted) {
-        self._ContentKey = AES.decrypt(contentKeyEncrypted, self.getContentKeyKey());
-        self.ContentKey  = self._ContentKey.toString(CryptoJS.enc.Hex);
-        localStorage.setItem('UserKeychain.ContentKey', self.ContentKey);
-    }
+    this.setContentKey = function(contentKeyEncrypted) {
+        var decObj = AES.decrypt(contentKeyEncrypted, this.getContentKeyKey());
+        this.ContentKey = decObj.toString(CryptoJS.enc.Utf8);
+        this._ContentKey = CryptoJS.enc.Hex.parse(this.ContentKey);
+    };
+
+    // returns the encrypted content key
+    this.getContentKeyEncrypted = function() {
+        return AES.encrypt(this.ContentKey, this.getContentKeyKey());
+    };
 
 };
+
+/**
+ * Current authenticated Keychain
+ * @type {Keychain}
+ */
+var UserKeychain = new Keychain().loadFromStorage();

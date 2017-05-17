@@ -11,10 +11,10 @@ var profileApp = new Vue({
         success: '',
         error: '',
 
-        profile: {
-            changePass1: '',
-            changePass2: '',
-        },
+        changePass1: '',
+        changePass2: '',
+
+        profile: {},
 
         timeouts: {},
     },
@@ -23,18 +23,21 @@ var profileApp = new Vue({
         $.get({
             url: '/profile',
             success: function(result) {
-                scope.profile = $.extend(scope.profile, result);
+                scope.profile = $.extend(scope.profile, json_decode(result));
                 scope.toggleLoader(false);
             }
         });
     },
 
     computed: {
+        passwordChange: function() {
+            return this.changePass1.length > 0 && this.changePass2.length > 0;
+        },
         passwordVerify: function() {
-            return this.profile.changePass1.length === 0 || this.profile.changePass1.length > 12;
+            return this.changePass1.length === 0 || this.changePass1.length > 12;
         },
         passwordsMatch: function() {
-            return this.profile.changePass1.length === 0 || this.profile.changePass1 === this.profile.changePass2;
+            return this.changePass1.length === 0 || this.changePass1 === this.changePass2;
         }
     },
 
@@ -48,24 +51,34 @@ var profileApp = new Vue({
         saveObject: function() {
             var scope = this;
 
-            // passwords must match
-            if (!scope.passwordsMatch) {
-                scope.error = 'Passwords do not match.';
-                return;
+            if (scope.passwordChange) {
+                // passwords must match
+                if (!scope.passwordsMatch) {
+                    scope.error = 'Passwords do not match.';
+                    return;
+                }
+
+                UserKeychain.setPassword(scope.changePass1);
+                scope.profile.passhash            = UserKeychain.PassHash;
+                scope.profile.contentKeyEncrypted = UserKeychain.getContentKeyEncrypted();
             }
 
             scope.clearMessages();
             scope.toggleLoader(true);
 
-            /** @todo set contentKey */
-
             $.post({
                 url: '/profile',
-                data: scope.profile,
+                data: json_encode(scope.profile),
                 success: function(result) {
-                    scope.success = "Successfully updated your profile!";
-                    scope.profile = $.extend(scope.profile, result);
+
+                    scope.success     = "Successfully updated your profile!";
+                    scope.profile     = $.extend(scope.profile, json_decode(result));
+                    scope.changePass1 = '';
+                    scope.changePass2 = '';
                     scope.toggleLoader(false);
+
+                    UserKeychain.saveToStorage(); // overwrite storage with the new keychain
+
                 },
                 error: function(jqXHR) {
                     scope.error = jqXHR.responseText;

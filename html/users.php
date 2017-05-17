@@ -79,11 +79,11 @@
                             <div class="form-group" :class="{'has-error': !passwordVerify || !passwordsMatch}">
                                 <button class="btn btn-primary btn-sm" v-if="!changingPassword" @click="startChangePassword()">Change Password</button>
                                 <div v-if="changingPassword">
-                                    <input type="password" class="form-control borderless" v-model="object.changePass1" />
+                                    <input type="password" class="form-control borderless" v-model="changePass1" />
                                     <label class="small text-muted">New Password</label>
                                     <small class="help-block" v-if="!passwordVerify">Password must be at least 12 characters long. Type whatever you'd like, though!</small>
 
-                                    <input type="password" class="form-control borderless" v-model="object.changePass2" />
+                                    <input type="password" class="form-control borderless" v-model="changePass2" />
                                     <label class="small text-muted">Verify Password</label>
                                     <small class="help-block" v-if="!passwordsMatch">The passwords you've entered don't match!</small>
 

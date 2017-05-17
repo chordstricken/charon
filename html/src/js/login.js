@@ -30,7 +30,12 @@ Vue.component('login-form', {
                 dataType: 'json',
                 success: function(result) {
                     UserKeychain.setContentKey(result.contentKeyEncrypted);
-                    location.reload();
+                    if (UserKeychain.ContentKey) {
+                        UserKeychain.saveToStorage();
+                        location.reload();
+                    } else {
+                        scope.error = 'Error decrypting ContentKey';
+                    }
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     scope.error = jqXHR.responseText;
