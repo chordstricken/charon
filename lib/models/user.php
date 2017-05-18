@@ -108,7 +108,7 @@ class User extends core\Model {
         $contentKeyKey = hex2bin(hash_pbkdf2('sha256', $password, 'Charon.UserKeychain.ContentKeyKey', 15));
 
         // this is a secret key reserved for account locker manipulation. Do not store or share anywhere.
-        return core\openssl\AES::decrypt($this->contentKeyEncrypted, $contentKeyKey);
+        return hex2bin(core\openssl\AES::decrypt($this->contentKeyEncrypted, $contentKeyKey));
     }
 
 }

@@ -59,7 +59,7 @@ class AES {
 //            $success = HMAC::verifyTag($obj->cipher, $key, $obj->tag);
 
         // decrypt
-        $result = openssl_decrypt($obj->cipher, self::METHOD, $key, 0, hex2bin($obj->iv));
+        $result = openssl_decrypt(hex2bin($obj->cipher), self::METHOD, $key, OPENSSL_RAW_DATA, hex2bin($obj->iv));
 
         // never return early to help prevent timing attacks
         return $success ? $result : false;
@@ -69,8 +69,7 @@ class AES {
      * Generates the Initialization Vector
      */
     private static function _iv() {
-//        return '0000000000000000';
-        return random_bytes(openssl_cipher_iv_length(self::METHOD));
+        return openssl_random_pseudo_bytes(openssl_cipher_iv_length(self::METHOD));
     }
 
     /**

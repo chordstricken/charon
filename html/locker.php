@@ -32,14 +32,14 @@ $headerOpts = [
                         <ul class="nav nav-sidebar nav-sidebar-sticky">
                             <li>
                                 <input id="search" type="search" class="form-control sidebar-search" placeholder="Search" v-model="query" autofocus style="padding-right:2em;">
-                                <span class="search-clear" @click="query = ''" v-show="query.length !== 0"><i class="fa fa-times-circle"></i></span>
+                                <span class="search-clear" @click="query = ''" v-show="query"><i class="fa fa-times-circle"></i></span>
                             </li>
                             <li :class="{active: !object.id}">
                                 <a class="index-anchor" href="#/" tabindex="-1"><span class="fa fa-plus"></span> Add New Locker</a>
                             </li>
                         </ul>
                         <ul class="nav nav-sidebar nav-sidebar-content">
-                            <li v-for="(indexItem, key) in index" :class="{active: indexItem.id == object.id}" v-if="query.length === 0 || search(key)">
+                            <li v-for="(indexItem, key) in index" :class="{active: indexItem.id == object.id}" v-if="!query || search(key)">
                                 <a class="index-anchor" :href="'#/' + indexItem.id" tabindex="-1"><i class="fa fa-book"></i> <span v-text="indexItem.name"></span></a>
                             </li>
                         </ul>
@@ -50,7 +50,7 @@ $headerOpts = [
                         <hr class="hidden-sm hidden-md hidden-lg" />
                     </div>
 
-                    <div class="col-xs-12 col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                    <form class="col-xs-12 col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" autocomplete="off" @submit.prevent="">
 
                         <div class="text-center" v-show="loader">
                             <img src="/img/loader.svg" width="100%">
@@ -58,11 +58,11 @@ $headerOpts = [
 
                         <div v-show="!loader">
 
-                            <div class="alert alert-success" v-if="success.length">
+                            <div class="alert alert-success" v-if="success">
                                 <button type="button" class="close" @click="clearMessages">&times;</button>
                                 <span v-text="success"></span>
                             </div>
-                            <div class="alert alert-danger" v-if="error.length">
+                            <div class="alert alert-danger" v-if="error">
                                 <button type="button" class="close" @click="clearMessages">&times;</button>
                                 <span v-text="error"></span>
                             </div>
@@ -94,7 +94,7 @@ $headerOpts = [
 
                             <draggable :list="object.items" :options="{handle:'.sort-handle'}">
 
-                                <div class="row clearfix slide-50" v-if="object.items.length" v-for="(item, key) in object.items">
+                                <div class="row clearfix slide-50" v-if="object.items && object.items.length" v-for="(item, key) in object.items">
 
                                     <div class="col-sm-3 col-xs-5">
                                         <div class="input-group">
@@ -117,7 +117,7 @@ $headerOpts = [
                                         <div class="input-group">
                                             <input type="text" class="form-control borderless" :class="{'alert-info':fieldMatch(item.url)}" v-model="item.url" :focus="highlight" placeholder="URL" autocomplete="off">
 
-                                            <div class="input-group-addon pointer" v-if="item.url.length">
+                                            <div class="input-group-addon pointer" v-if="item.url && item.url.length">
                                                 <a class="fa fa-link btn-link" :href="(item.url.indexOf('//') !== -1 ? item.url : 'http://' + item.url)" target="_new" tabindex="-1"></a>
                                             </div>
                                         </div>
@@ -169,13 +169,13 @@ $headerOpts = [
 
                             <hr />
 
-                            <div class="row" v-if="object.name.length">
+                            <div class="row" v-if="object.name && object.name.length">
                                 <div class="col-md-3 col-md-offset-9 col-sm-12 text-right">
                                     <span data-toggle="popover" data-content="Deletes the Group permanently. You will be prompted for confirmation.">
-                                        <button class="btn btn-danger btn-lg" data-toggle="modal" data-target="#confirm-delete" tabindex="-1">Delete</button>
+                                        <button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#confirm-delete" tabindex="-1">Delete</button>
                                     </span>
                                     <span data-toggle="popover" data-content="Saves the Group">
-                                        <button class="btn btn-success btn-lg" @click="saveObject">Save</button>
+                                        <button type="button" class="btn btn-success btn-lg" @click="saveObject">Save</button>
                                     </span>
                                 </div>
                             </div>
@@ -195,14 +195,14 @@ $headerOpts = [
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                                    <button type="submit" class="btn btn-danger" @click="deleteObject" data-dismiss="modal">Delete</button>
+                                    <button type="button" class="btn btn-danger" @click="deleteObject" data-dismiss="modal">Delete</button>
                                 </div>
                                 </div>
                             </div>
                         </div>
                         <!-- Delete Modal -->
 
-                    </div>
+                    </form>
                 </div>
 
             </div>
@@ -213,7 +213,7 @@ $headerOpts = [
 </body>
 
 <script type="text/x-template" id="tmpl-nav-bar"><?php include(ROOT . '/html/templates/nav-bar.html'); ?></script>
-<script src="/dist/js/build.js"></script>
-<script src="/dist/js/locker.js"></script>
+<script src="/src/js/build.js"></script>
+<script src="/src/js/locker.js"></script>
 
 </html>

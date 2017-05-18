@@ -146,7 +146,7 @@ var lockerApp = new Vue({
             if (typeof obj === "string")
                 obj = json_decode(obj);
 
-            if (obj.items.iv)
+            if (obj.items.iv !== undefined)
                 obj.items = AES.decryptToUtf8(obj.items);
 
             if (typeof obj.items === "string")
@@ -159,7 +159,7 @@ var lockerApp = new Vue({
                         delete item.$$hashKey;
                         item._id = unique_id();
                     }
-                    item.icon = item.icon && item.icon.length ? item.icon : 'fa-key';
+                    item.icon = (item.icon && item.icon.length) ? item.icon : 'fa-key';
                 });
             }
 
@@ -326,7 +326,7 @@ var lockerApp = new Vue({
         search: function(id) {
 
             // only search if scope query is more than 3
-            if (this.query.length < 3) return true;
+            if (this.query && this.query.length < 3) return true;
 
             var regexp = new RegExp(this.query.replace(' ', '.*'), 'i');
 
@@ -347,7 +347,7 @@ var lockerApp = new Vue({
 
         // Determines whether the field matches the query string
         fieldMatch: function(value) {
-            if (value === undefined || !this.query.length)
+            if (value === undefined || !this.query || !this.query.length)
                 return false;
 
             var regexp = new RegExp(this.query.replace(' ', '.*'), 'i');
@@ -385,7 +385,9 @@ $(document).on('keyup', function(e) {
  */
 $(document).on('keyup', '#search', function(e) {
     if (e.keyCode === 13) {
-        $('.nav-sidebar a[href]').eq(1).trigger('click');
+        var hash = $('.nav-sidebar').eq(1).find('a[href]:visible').attr('href');
+        if (hash && hash.length > 3)
+            location.hash = hash;
     }
 });
 
