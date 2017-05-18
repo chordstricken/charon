@@ -74,7 +74,6 @@ abstract class APIRoute {
     protected function checkPermission(array $allowedUserLevels = []) {
         $allowedUserLevels[] = models\User::PERMLEVELS['Owner']; // always allow Owner access
 
-        $this->is_encrypted = false;
         if (!in_array(models\User::me()->permLevel, $allowedUserLevels))
             $this->send('You do not have the necessary permissions', 403);
     }

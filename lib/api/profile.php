@@ -43,6 +43,16 @@ class Profile extends core\APIRoute {
 
         unset($this->data->id, $this->data->accountId, $this->data->permLevel); // avoid spoofing these variables
 
+        // check if email already exists
+        $existingUserCount = models\User::count([
+            'accountId' => models\Account::current()->id,
+            'id'        => ['$ne' => models\User::me()->id],
+            'email'     => $this->data->email,
+        ]);
+        if ($existingUserCount)
+            throw new Exception('A User already exists with this email address.', 400);
+
+
         if (empty($this->data->passhash))
             unset($this->data->passhash);
 

@@ -46,16 +46,41 @@ class Users extends core\APIRoute {
      * @throws Exception
      */
     public function post() {
+        // only admins and above are allowed here
         $this->checkPermission([models\User::PERMLEVELS['Admin']]);
 
         if (!$this->data instanceof stdClass)
             throw new Exception('Invalid Request Object', 400);
 
-        if (isset($this->path[0]) && !$user = models\User::findOne(['id' => $this->path[0]]))
-            throw new Exception('Unable to find that user.', 404);
-        else $user = models\User::new();
+        if (isset($this->path[0])) {
+            $user = models\User::findOne(['id' => $this->path[0]]);
+            if (!$user->id)
+                throw new Exception('Unable to find that user.', 404);
+        }
+
+        $user = $user ?? models\User::new();
+
+        // Check user permissions against object being saved.
+        switch ($user->permLevel) {
+            // only Owners can modify Owners/Admins
+            case models\User::PERMLEVELS['Owner']:
+            case models\User::PERMLEVELS['Admin']:
+                $this->checkPermission();
+                break;
+
+            case models\User::PERMLEVELS['Member']:
+            default:
+                break;
+        }
 
         // check if email already exists
+        $existingUserCount = models\User::count([
+            'accountId' => models\Account::current()->id,
+            'id'        => ['$ne' => $user->id],
+            'email'     => $this->data->email,
+        ]);
+        if ($existingUserCount)
+            throw new Exception('A User already exists with this email address.', 400);
 
         // set password
         if (!empty($this->data->changePass1)) {
@@ -79,11 +104,37 @@ class Users extends core\APIRoute {
      * @throws Exception
      */
     public function delete() {
+        // only admins and above are allowed here
+        $this->checkPermission([models\User::PERMLEVELS['Admin']]);
+
         if (!isset($this->path[0]))
             throw new Exception('Invalid User ID', 400);
 
         if (!$user = models\User::findOne(['id' => $this->path[0], 'accountId' => models\Account::current()->id]))
             throw new Exception('Unable to find that user.', 404);
+
+
+        // Check user permissions against object being saved.
+        switch ($user->permLevel) {
+            // only Owners can modify Owners/Admins
+            case models\User::PERMLEVELS['Owner']:
+            case models\User::PERMLEVELS['Admin']:
+                $this->checkPermission();
+                break;
+
+            case models\User::PERMLEVELS['Member']:
+            default:
+                break;
+        }
+
+        $otherOwners = models\User::count([
+            'accountId' => models\Account::current()->id,
+            'permLevel' => models\User::PERMLEVELS['Owner'],
+            'id'        => ['$ne' => $user->id],
+        ]);
+
+        if (!$otherOwners)
+            throw new Exception('This user is the last Owner in the account. Each Account must have at least one owner.');
 
         $user->delete();
         $this->send("Successfully deleted $user->name");

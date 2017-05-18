@@ -149,9 +149,30 @@ abstract class Model {
                 $objects[$row->{static::ID}] = static::new($row);
 
         } catch (Exception $e) {
-
+            Debug::error($query);
         }
         return $objects;
+    }
+
+    /**
+     * Returns the number of objects matching the query
+     * @param $query
+     * @return int
+     */
+    public static function count($query) {
+        $count = 0;
+        Debug::info($query);
+        try {
+            $dbQuery = new Query($query);
+            $result = self::_db()->executeQuery(static::getDBNamespace(), $dbQuery);
+
+            foreach ($result as $row)
+                $count++;
+
+        } catch (Exception $e) {
+            Debug::error($query);
+        }
+        return $count;
     }
 
     /**
